@@ -40,9 +40,12 @@ window.addEventListener("mouseup", (e) =>{
 
 window.addEventListener("mousemove", (e) =>{
   if (state.keys.includes(keybinds.mouseL)) {
-    state.mouse.isDragged = true;
     state.mouse._x=e.offsetX;
     state.mouse._y=e.offsetY;
+
+    let dist = Math.hypot(state.mouse._x-state.mouse.x,state.mouse._y-state.mouse.y);
+    state.mouse.isDragged = (dist>=state.player.__r);
+    //console.log(dist,state.mouse.isDragged);
   }
 });
 
@@ -62,6 +65,8 @@ let  keybinds = {
     primary: "ShiftLeft",
     secondary: "KeyF",
     tertiary: "Space",
+
+    debug: "Backquote",
 
     mouseL: 0,
     mouseM: 1,

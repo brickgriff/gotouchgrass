@@ -12,12 +12,6 @@ if (typeof window === "undefined") {
   }
 }
 
-// quit signal (Esc)
-window.addEventListener("keydown", (e) =>{
-  //e.preventDefault();
-  if (e.code==="Escape") isQuit = true;
-});  
-
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
@@ -37,14 +31,20 @@ document.body.appendChild(canvas);
 let frame = 0, isQuit = false, start = document.timeline.currentTime;
 const state = World.create(canvas); // generate entities (with draw functions)
 
+// quit signal (Esc)
+window.addEventListener("keydown", (e) =>{
+  //e.preventDefault();
+  if (e.code==="Escape") isQuit = true;
+});  
+
 function gameLoop(now) {
   const elapsed = (now - start) / 1000; // deltaTime in seconds
   const dt = elapsed > 1 ? 1 : elapsed; // capped deltaTime
   //console.log(`gameLoop(frame=${frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
-  requestAnimationFrame(gameLoop);
   World.update(state, dt); // update entities
   Display.draw(state, ctx); // Display.draw(state, ctx); // draw entities
   if (isQuit) return console.log("quit");
+  requestAnimationFrame(gameLoop);
   // prepare for next frame
   frame++;
   start = now;
