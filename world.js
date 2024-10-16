@@ -17,7 +17,7 @@ const World = (function (/*api*/) {
       y: canvas.height/2,
       r: 25, // radius
       _r: 35, // range
-      dg: 15, // drag gate
+      dg: 10, // drag gate
       dl: 50, // drag limit
       sf: 25, // speed factor
       v:0, // value
@@ -197,7 +197,7 @@ const World = (function (/*api*/) {
     state.player.v=Math.max(state.player.v,0);
 
     if (state.player.isLost) dist/=2;
-    if (state.player.isOnWall) dist=-10;
+    if (state.player.isOnWall) dist=5;
     state.player.s=dist=dist/state.player.sf;//*state.player._s); // save player speed as well as translation vector
     // angle from deltaY and deltaX
     //let angle;

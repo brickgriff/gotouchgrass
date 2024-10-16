@@ -123,12 +123,6 @@ const Display = (function(/*api*/) {
       path1.arc(p.x-x,p.y-y,p.r,0,2*Math.PI);
     });
 
-    path1.moveTo(x+300,y);
-    //path1.arc(x,y,300,0,2*Math.PI);// canopy hole arc @ (0,0) r ~300
-    
-    path1.moveTo(x+1000,y-3000);
-    //path1.arc(x,y-3000,1000,0,2*Math.PI);
-
     ctx.clip(path1,"evenodd"); // fill clipping area
 
     ctx.rect(0,0,state.canvas.width,state.canvas.height);
@@ -136,6 +130,8 @@ const Display = (function(/*api*/) {
 
   var canopy = function(state,ctx) {
     ctx.fillStyle = COLORS.DIMGRAY;
+    ctx.strokeStyle = COLORS.DARKSLATEGRAY;
+    ctx.lineWidth=5;
 
     ctx.save();
     ctx.beginPath();
@@ -146,6 +142,7 @@ const Display = (function(/*api*/) {
     }
 
     ctx.fill();
+    ctx.stroke();
     ctx.restore(); // defaults
     let x=state.player.x,y=state.player.y;
 
@@ -160,6 +157,7 @@ const Display = (function(/*api*/) {
       ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
     }
     ctx.fill();
+    ctx.stroke();
     ctx.restore(); // defaults
   };
 
@@ -270,24 +268,30 @@ const Display = (function(/*api*/) {
   };
 
   var foliage = function(state, ctx) {
+    ctx.strokeStyle=COLORS.GREEN;
+    ctx.lineWidth=2;
     state.foliage.forEach(f => {
       ctx.fillStyle=f.metadata.color;
       ctx.beginPath();
       ctx.moveTo(f.x+f.r+state.cx,f.y+state.cy);
       ctx.arc(f.x+state.cx,f.y+state.cy,f.r,0,2*Math.PI);
       ctx.fill();
+      ctx.stroke();
     });
   };
 
   var labels = function(state,ctx) {
     ctx.font="bold italic 50px Arial";
     ctx.textAlign="center";
+    ctx.strokeStyle=COLORS.GREEN;
+    ctx.lineWidth=1;
 
     state.foliage.forEach(f => {
       ctx.fillStyle=f.metadata.color;
       let x1=f.x+state.cx,y1=f.y+state.cy,x2=state.player.x,y2=state.player.y;
       if (Math.hypot(x1-x2,y1-y2) < f.r) {
         ctx.fillText(f.metadata.label,state.cx+f.x,state.cy+f.y+f.r+50);
+        ctx.strokeText(f.metadata.label,state.cx+f.x,state.cy+f.y+f.r+50);
       }
     });
 
@@ -313,7 +317,7 @@ const Display = (function(/*api*/) {
 
   var score = function(state,ctx) {
     ctx.lineWidth=1;
-    ctx.strokeStyle=COLORS.GREEN;
+    ctx.strokeStyle=COLORS.GOLD;
     ctx.beginPath();
     ctx.moveTo(state.player.x+Math.floor(state.player.r+state.player.v),state.player.y);
     ctx.arc(state.player.x,state.player.y,Math.floor(state.player.r+state.player.v),0,2*Math.PI);
