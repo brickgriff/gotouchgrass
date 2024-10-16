@@ -106,6 +106,18 @@
     state.frame = Math.floor(state.f);
     */
 
+    /*ctx.lineWidth = 3;
+    ctx.strokeStyle = COLORS.GREEN;
+
+    state.cells.forEach(cell => {
+      cell.forEach(plant => {
+        var _plant = plant;
+        _plant.x -= state.dx;
+        _plant.y -= state.dy;      
+        plant.t.draw(_plant,ctx,state.player);
+      });
+    })*/;
+
 
 /* CANVAS */
 /*

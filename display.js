@@ -3,7 +3,8 @@
 const COLORS = {BLACK:"black", GREEN:"green", GRAY:"gray", LIGHTGRAY: "lightgray",
 DARKGRAY:"darkgray", BLUE:"blue", GOLD:"gold", LIGHTBLUE:"lightblue", RED:"red",
 SPRINGGREEN: "springgreen", LAWNGREEN: "lawngreen", WHITE: "white", YELLOW: "yellow",
-CYAN: "cyan", MAGENTA: "magenta", DIMGRAY: "dimgray", DARKBLUE:"darkblue"};
+CYAN: "cyan", MAGENTA: "magenta", DIMGRAY: "dimgray", DARKBLUE:"darkblue",
+DARKSLATEGRAY:"darkslategray"};
 /* END LIGHTS */
 
 const Display = (function(/*api*/) {
@@ -22,7 +23,7 @@ const Display = (function(/*api*/) {
     //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
     // how low on points are you?
     if (state.isDebug) return;
-    let ratio = state.player.v > state.player._r-state.player.r ? 0.5 : state.player.v/(state.player._r-state.player.r)/2;
+    let ratio = state.player.v > state.player._r-state.player.r ? 1/2 : state.player.v/(state.player._r-state.player.r)/2;
     ctx.save();
     ctx.globalAlpha=1-ratio;
 
@@ -61,7 +62,7 @@ const Display = (function(/*api*/) {
 
     ctx.beginPath();    
     ctx.clip(path1,"evenodd"); // fill clipping area
-    ctx.fillStyle = state.canopyColor;
+    ctx.fillStyle = state.wallColor;
     ctx.rect(0,0,state.canvas.width,state.canvas.height);
     ctx.fill();
     ctx.restore();
@@ -269,25 +270,25 @@ const Display = (function(/*api*/) {
   };
 
   var foliage = function(state, ctx) {
-    /*ctx.lineWidth = 3;
-    ctx.strokeStyle = COLORS.GREEN;
-
-    state.cells.forEach(cell => {
-      cell.forEach(plant => {
-        var _plant = plant;
-        _plant.x -= state.dx;
-        _plant.y -= state.dy;      
-        plant.t.draw(_plant,ctx,state.player);
-      });
-    })*/;
-    
     state.foliage.forEach(f => {
-    ctx.beginPath();
       ctx.fillStyle=f.metadata.color;
+      ctx.beginPath();
+      ctx.moveTo(f.x+f.r+state.cx,f.y+state.cy);
+      ctx.arc(f.x+state.cx,f.y+state.cy,f.r,0,2*Math.PI);
+      ctx.fill();
+    });
+  };
 
-      ctx.moveTo(state.cx+f.x+f.r,state.cy+f.y);
-      ctx.arc(state.cx+f.x,state.cy+f.y,f.r,0,2*Math.PI);
-    ctx.fill();
+  var labels = function(state,ctx) {
+    ctx.font="bold italic 50px Arial";
+    ctx.textAlign="center";
+
+    state.foliage.forEach(f => {
+      ctx.fillStyle=f.metadata.color;
+      let x1=f.x+state.cx,y1=f.y+state.cy,x2=state.player.x,y2=state.player.y;
+      if (Math.hypot(x1-x2,y1-y2) < f.r) {
+        ctx.fillText(f.metadata.label,state.cx+f.x,state.cy+f.y+f.r+50);
+      }
     });
 
   };
@@ -363,18 +364,20 @@ const Display = (function(/*api*/) {
   }
 
   var checkTerrain = function (state,ctx) {
+    // paths
     let pd = state.pImg.data;
     let pStyle=getCtxColor(ctx,`rgb(${pd[44*4]} ${pd[44*4+1]} ${pd[44*4+2]} / ${pd[44*4+3]})`);
-
+    // foliage
     let fd = state.fImg.data;
     let fStyle=getCtxColor(ctx,`rgb(${fd[44*4]} ${fd[44*4+1]} ${fd[44*4+2]} / ${fd[44*4+3]})`);
-
+    // canopy
     let cd = state.cImg.data;
     let cStyle=getCtxColor(ctx,`rgb(${cd[44*4]} ${cd[44*4+1]} ${cd[44*4+2]} / ${cd[44*4+3]})`);
 
     //console.log(state.pathColor,pStyle);
     state.player.isOverGrass=fStyle===state.grassColor;
     if (state.player.isOverGrass)return; // B-)
+    state.player.isOnWall=fStyle===state.wallColor
     state.player.isLost=pStyle!==state.pathColor;
     state.player.isUnderCanopy=cStyle!==state.playerColor;
   };
@@ -387,6 +390,7 @@ const Display = (function(/*api*/) {
     state.playerColor=getCtxColor(ctx,COLORS.LIGHTGRAY);
     state.pathColor=getCtxColor(ctx,COLORS.DARKGRAY);
     state.grassColor=getCtxColor(ctx,COLORS.LAWNGREEN);
+    state.wallColor=getCtxColor(ctx,COLORS.DARKSLATEGRAY);
 
     background(state,ctx); // defines any non-path we forget
     path(state, ctx);
@@ -394,6 +398,7 @@ const Display = (function(/*api*/) {
     walls(state,ctx);
     player(state, ctx);
     canopy(state,ctx);
+    labels(state, ctx);
     fog(state,ctx);
 
     checkTerrain(state,ctx);

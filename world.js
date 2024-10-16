@@ -26,6 +26,7 @@ const World = (function (/*api*/) {
       isLost:false,
       isOverGrass:true,
       isUnderCanopy:false,
+      isOnWall:false,
     };
 
     var mouse = {
@@ -73,7 +74,7 @@ const World = (function (/*api*/) {
       fps: 30, // 60
 
       pImg:null,fImg:null,cImg:null,isDebug:false,
-      pathColor:null,canopyColor:null,grassColor:null,playerColor:null,
+      pathColor:null,canopyColor:null,grassColor:null,playerColor:null,wallColor:null
     };
 
     const x=canvas.width/2,y=canvas.height/2;
@@ -86,23 +87,22 @@ const World = (function (/*api*/) {
       paths.push(createEntity(x,y,300,{children:[1,2]}));
       paths.push(createEntity(x,y-3000,1000));
       paths.push(createEntity(x-490,y+140,100,{hidden:true}));
-
     })(paths);
 
     ((walls) => {
       walls.push(createEntity(x,y-2200,3000));
-      walls.push(createEntity(x-490,y+140,50));
+      walls.push(createEntity(x-490,y+140,75));
     })(walls);
 
     const grassList = [
-      {x:0,y:0,r:150},
-      {x:5,y:-1000,r:150},
-      {x:-490,y:140,r:85},
-      {x:0,y:-3000,r:500},
+      {x:0,y:0,r:150,l:"Poa annua"},
+      {x:5,y:-1000,r:150,l:"Poa annua"},
+      {x:-490,y:140,r:100,l:"Carex blanda"},
+      {x:0,y:-3000,r:500,l:"Poa annua"},
     ];
     const cloverList = [
-      {x:150,y:250,r:70},
-      {x:-65,y:-1200,r:80},
+      {x:150,y:250,r:70,l:"Trifolium repens"},
+      {x:-65,y:-1200,r:80,l:"Trifolium repens"},
     ];
     const foliageColors = {
       grass:COLORS.LAWNGREEN,
@@ -110,7 +110,7 @@ const World = (function (/*api*/) {
     };
 
     var foliageHelper = (plant,type) => {
-      foliage.push(createEntity(plant.x,plant.y,plant.r,{color:foliageColors[type]}));
+      foliage.push(createEntity(plant.x,plant.y,plant.r,{color:foliageColors[type],label:plant.l}));
     };
     ((foliage) => {
       grassList.forEach(grass => foliageHelper(grass,"grass"));
@@ -190,12 +190,14 @@ const World = (function (/*api*/) {
       state.dx=state.dy=0;
       state.player.isUnderCanopy=false;
       state.player.isLost=false;
+      state.player.isOnWall=false;
       state.player.isOverGrass=true;
     }
 
     state.player.v=Math.max(state.player.v,0);
 
     if (state.player.isLost) dist/=2;
+    if (state.player.isOnWall) dist=-10;
     state.player.s=dist=dist/state.player.sf;//*state.player._s); // save player speed as well as translation vector
     // angle from deltaY and deltaX
     //let angle;
