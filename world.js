@@ -197,11 +197,12 @@ const World = (function (/*api*/) {
     state.player.v=Math.max(state.player.v,0);
 
     if (state.player.isLost) dist/=2;
-    if (state.player.isOnWall) dist=5;
     state.player.s=dist=dist/state.player.sf;//*state.player._s); // save player speed as well as translation vector
     // angle from deltaY and deltaX
     //let angle;
     state.player.t=angle=Math.atan2(vector.y,vector.x);
+    if (state.player.isOnWall) dist=5,angle+=Math.PI;
+
     //state.vector={x:,y:);
     //console.log(state.player.v);
 

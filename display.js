@@ -129,11 +129,8 @@ const Display = (function(/*api*/) {
   };
 
   var canopy = function(state,ctx) {
-    ctx.fillStyle = COLORS.DIMGRAY;
-    ctx.strokeStyle = COLORS.DARKSLATEGRAY;
-    ctx.lineWidth=5;
-
     ctx.save();
+    ctx.fillStyle=COLORS.DARKSLATEGRAY;
     ctx.beginPath();
     canopySketch(state,ctx);
 
@@ -142,13 +139,13 @@ const Display = (function(/*api*/) {
     }
 
     ctx.fill();
-    ctx.stroke();
     ctx.restore(); // defaults
     let x=state.player.x,y=state.player.y;
 
     state.cImg=ctx.getImageData(x-5,y-5,10,10);
 
     ctx.save();
+    ctx.fillStyle = state.canopyColor;
     ctx.beginPath();
     canopySketch(state,ctx);
 
@@ -157,7 +154,6 @@ const Display = (function(/*api*/) {
       ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
     }
     ctx.fill();
-    ctx.stroke();
     ctx.restore(); // defaults
   };
 
