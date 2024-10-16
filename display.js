@@ -84,7 +84,7 @@ const Display = (function(/*api*/) {
     if (state.player.isUnderCanopy) {
       //ctx.moveTo(state.player.x+state.player.r+state.player._r,state.player.y);
       //ctx.arc(state.player.x,state.player.y,state.player.r+state.player._r,0,2*Math.PI,true);
-      ctx.globalAlpha=0.5;
+      ctx.globalAlpha=0.25;
     }
 
     ctx.fill();
