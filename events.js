@@ -50,6 +50,7 @@ window.addEventListener("mousemove", (e) =>{
 });
 
 window.addEventListener("touchstart",(e)=>{
+  e.preventDefault()
   for(let i=0; i<e.changedTouches.length; i++) {
     pushKey({keys:state.keys, key:ongoingTouches.length});
     ongoingTouches.push(copyTouch(e.touches[i]));
@@ -65,6 +66,7 @@ window.addEventListener("touchstart",(e)=>{
 });
 
 var handleTouchFinish = (e)=>{
+  e.preventDefault()
   for(let i=0; i<e.changedTouches.length; i++) {
     let index = ongoingTouchIndexById(e.changedTouches.identifier);
     //let touch=ongoingTouches[index];
@@ -85,6 +87,7 @@ window.addEventListener("touchend",handleTouchFinish);
 window.addEventListener("touchcancel",handleTouchFinish);
 
 window.addEventListener("touchmove",(e)=>{
+  e.preventDefault()
   for(let i=0; i<e.changedTouches.length; i++) {
     let index = ongoingTouchIndexById(e.changedTouches.identifier);
     //let touch=ongoingTouches[index];

@@ -48,19 +48,19 @@ const Display = (function(/*api*/) {
     //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
     ctx.save();
     // punch an even-odd hole in the fog the size of the player wallet
-    let x=state.cx,y=state.cy;
+    let x=state.dx,y=state.dy;
 
     let path1 = new Path2D();// clipping area
     path1.rect(0,0,state.canvas.width,state.canvas.height);
 
     //console.log(state.walls);
     state.walls.forEach(w => {
-      path1.moveTo(x+w.x+w.r,y+w.y);
+      path1.moveTo(w.x+w.r-x,w.y-y);
       path1.arc(x+w.x,y+w.y,w.r,0,2*Math.PI);
     });
-    
-    ctx.clip(path1,"evenodd"); // fill clipping area
 
+    ctx.beginPath();    
+    ctx.clip(path1,"evenodd"); // fill clipping area
     ctx.fillStyle = state.LIGHTBLUE;
     ctx.rect(0,0,state.canvas.width,state.canvas.height);
     ctx.fill();

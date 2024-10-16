@@ -91,7 +91,7 @@ const World = (function (/*api*/) {
 
     ((walls) => {
       walls.push(createEntity(x,y-2200,3000));
-      walls.push(createEntity(x,y,50));
+      walls.push(createEntity(x-490,y+140,50));
     })(walls);
 
     const grassList = [
@@ -203,8 +203,10 @@ const World = (function (/*api*/) {
     //state.vector={x:,y:);
     //console.log(state.player.v);
 
+    // cummulative vector changes
     state.dx+=Math.round(dist*Math.cos(angle));
     state.dy+=Math.round(dist*Math.sin(angle));
+    // relative position of the center of the world
     state.cx=state.canvas.width/2-state.dx;
     state.cy=state.canvas.height/2-state.dy;
 
