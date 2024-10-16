@@ -65,6 +65,10 @@ const Display = (function(/*api*/) {
     ctx.rect(0,0,state.canvas.width,state.canvas.height);
     ctx.fill();
     ctx.restore();
+
+    //foliage image data
+    state.fImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
+
   };
 
   var pathConnect = function(parent,child,ctx) {
@@ -119,6 +123,12 @@ const Display = (function(/*api*/) {
     path1.moveTo(x+1000,y-3000);
     path1.arc(x,y-3000,1000,0,2*Math.PI);
     
+    state.paths.forEach(f => {
+      if (f.hidden) return;
+      path1.moveTo(state.cx+f.x+f.r,state.cy+f.y);
+      path1.arc(state.cx+f.x,state.cy+f.y,f.r,0,2*Math.PI);
+    });
+
     ctx.clip(path1,"evenodd"); // fill clipping area
 
     ctx.rect(0,0,state.canvas.width,state.canvas.height);
@@ -279,8 +289,6 @@ const Display = (function(/*api*/) {
     ctx.fill();
     });
 
-    //foliage image data
-    state.fImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
   };
 
   //draw mouse lines
