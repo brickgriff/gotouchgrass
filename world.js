@@ -181,7 +181,7 @@ const World = (function (/*api*/) {
     if (state.player.isLost) dist/=2;
 
     // revive!
-    if (state.player.v <= 0) {
+    if (state.player.v < 0) {
       state.dx=state.dy=0;
       state.player.isUnderCanopy=false;
       state.player.isLost=false;

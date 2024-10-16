@@ -31,7 +31,7 @@ canvas.style="border:1px solid #cccccc;";
 
 document.body.appendChild(canvas);
 
-let frame = 0, isQuit = false, start = new Date();//document.timeline.currentTime;
+let frame = 0, isQuit = false, start = document.timeline.currentTime;
 const state = World.create(canvas); // generate entities (with draw functions)
 
 // quit signal (Esc)
