@@ -27,6 +27,8 @@ const World = (function (/*api*/) {
       isOverGrass:true,
       isUnderCanopy:false,
       isOnWall:false,
+      isTouchedGrass:false,
+      grassValue:0,
     };
 
     var mouse = {
@@ -39,6 +41,7 @@ const World = (function (/*api*/) {
       maxFrames:6,
       isHeld:false,
       isDragged:false,
+      isClicked:false,
     };
 
     //var cells=new Array(pointWidth*pointHeight).fill([]), zones=[];
@@ -96,17 +99,18 @@ const World = (function (/*api*/) {
 
     const grassList = [
       {x:0,y:0,r:150,l:"Poa annua"},
-      {x:5,y:-1000,r:150,l:"Poa annua"},
+      {x:5,y:-1000,r:150,l:"Panicum virgatum"},
       {x:-490,y:140,r:100,l:"Carex blanda"},
-      {x:0,y:-3000,r:500,l:"Poa annua"},
+      {x:0,y:-3000,r:500,l:"Andropogon gerardii"},
     ];
     const cloverList = [
       {x:150,y:250,r:70,l:"Trifolium repens"},
-      {x:-65,y:-1200,r:80,l:"Trifolium repens"},
+      {x:-65,y:-1200,r:80,l:"Indigofera caroliniana"},
     ];
     const foliageColors = {
       grass:COLORS.LAWNGREEN,
       clover:COLORS.SPRINGGREEN,
+      disturbed:COLORS.GREEN,
     };
 
     var foliageHelper = (plant,type) => {
@@ -177,8 +181,9 @@ const World = (function (/*api*/) {
     if (dist<state.player.dg) dist = 0;
     //console.log("distUpdate", dist);
 
-    let score = (dist+1)*dt;
-
+    let score = (dist+1)*dt+state.player.grassValue;
+    state.player.isTouchedGrass=false;
+    state.player.grassValue=0;
     if (state.player.isOverGrass) {
       state.player.v+=score;
     } else {
@@ -192,6 +197,7 @@ const World = (function (/*api*/) {
       state.player.isLost=false;
       state.player.isOnWall=false;
       state.player.isOverGrass=true;
+      state.player.isTouchedGrass=false;
     }
 
     state.player.v=Math.max(state.player.v,0);

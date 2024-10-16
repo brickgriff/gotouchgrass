@@ -22,18 +22,21 @@ window.addEventListener("mousedown", (e) =>{
 
     state.mouse._x=state.mouse.x;
     state.mouse._y=state.mouse.y;
-  }
 
+    state.mouse.isClicked=false;
+  }
 });
 
 window.addEventListener("mouseup", (e) =>{
   //if (!state.mouse.isDragged && keys.includes(keybinds.mouseL)) state.mouse.isTapped =true;
   dropKey({keys:state.keys, key:e.button});
+  state.mouse.isClicked=!state.mouse.isDragged;
+  //console.log(state.mouse.isClicked);
   if (e.button===keybinds.mouseL) {
     state.mouse.x=state.player.x;
     state.mouse.y=state.player.y;
-    state.mouse._x=state.mouse.x; 
-    state.mouse._y=state.mouse.y;
+    //state.mouse._x=state.mouse.x;
+    //state.mouse._y=state.mouse.y;
     state.mouse.isDragged = false;
   }
 });

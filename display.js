@@ -130,25 +130,23 @@ const Display = (function(/*api*/) {
 
   var canopy = function(state,ctx) {
     ctx.save();
-    ctx.fillStyle=COLORS.DARKSLATEGRAY;
+    ctx.fillStyle=state.canopyColor;
     ctx.beginPath();
     canopySketch(state,ctx);
-
     if (state.player.isUnderCanopy) {
       ctx.globalAlpha=0.1;
     }
-
     ctx.fill();
     ctx.restore(); // defaults
-    let x=state.player.x,y=state.player.y;
 
+    let x=state.player.x,y=state.player.y;
     state.cImg=ctx.getImageData(x-5,y-5,10,10);
 
     ctx.save();
-    ctx.fillStyle = state.canopyColor;
+    ctx.fillStyle=state.canopyColor;
+    ctx.beginPath();
     ctx.beginPath();
     canopySketch(state,ctx);
-
     if (state.player.isUnderCanopy) {
       ctx.moveTo(x+Math.floor(state.player.r+state.player.v),y);
       ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
@@ -273,6 +271,25 @@ const Display = (function(/*api*/) {
       ctx.arc(f.x+state.cx,f.y+state.cy,f.r,0,2*Math.PI);
       ctx.fill();
       ctx.stroke();
+
+      if(state.player.isOverGrass && state.mouse.isClicked
+        && Math.hypot(state.mouse._x-state.cx,state.mouse._y-state.cy)<f.r
+        && Math.hypot(state.player.x-state.cx,state.player.y-state.cy)<f.r) {
+
+        state.player.isTouchedGrass = true;
+        state.player.grassValue = Math.PI*Math.pow(f.r,2)/10000;
+        state.mouse.isClicked=false;
+
+        state.foliage.push({x:f.x+state.cx,y:f.y+state.cy,r:f.r,metadata:{color:COLORS.GREEN}});
+
+/*
+        ctx.beginPath();
+        ctx.moveTo(state.player.x+state.player._r,state.player.y);
+        ctx.arc(state.player.x,state.player.y,state.player.r,0,2*Math.PI);
+        ctx.fill();
+*/
+      }
+
     });
   };
 
