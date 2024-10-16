@@ -12,16 +12,16 @@ const World = (function (/*api*/) {
 
   // create a new state
   api.create = function (canvas) {
-
     var player = {
       x: canvas.width/2,
       y: canvas.height/2,
       r: 25, // radius
-      _r: 10, // + range (radius modifier)
-      __r: 15, // / radius (range modifier)
+      _r: 35, // range
+      dg: 15, // drag gate
+      dl: 50, // drag limit
+      sf: 25, // speed factor
       v:0, // value
       s:0,// speed
-      _s:0, // stamina (speed modifier)
       t:0, // theta
       isLost:false,
       isOverGrass:false,
@@ -40,17 +40,25 @@ const World = (function (/*api*/) {
       isDragged:false,
     };
 
-    var cells=new Array(pointWidth*pointHeight).fill([]), zones=[];
+    //var cells=new Array(pointWidth*pointHeight).fill([]), zones=[];
     //grass(cells);
     //zones.push({x:canvas.width/2,y:canvas.height/2,r:400,c:COLORS.LAWNGREEN,v:1,t:CLADES.GRASS});
     //zones.push({x:canvas.width/2+250,y:canvas.height/2+250,r:120,c:COLORS.SPRINGGREEN,v:3,t:CLADES.CLOVER});
+
+    var paths = [];
+    var walls = [];
+    var foliage = [];
+
     var state = {
       canvas: canvas,
       player: player,
       keys: [],
       mouse: mouse,
-      zones: zones,
-      cells: cells,
+      //zones: zones,
+      //cells: cells,
+      paths: paths,
+      walls: walls,
+      foliage: foliage,
 
       cx: 0,
       cy: 0,
@@ -64,19 +72,81 @@ const World = (function (/*api*/) {
 
       fps: 30, // 60
 
-      tImg:null,fImg:null,bImg:null,isDebug:false,
+      pImg:null,fImg:null,cImg:null,isDebug:false,
+      pathColor:null,canopyColor:null,grassColor:null,playerColor:null,
     };
+
+    const x=canvas.width/2,y=canvas.height/2;
+
+    var createEntity = (x,y,r,metadata) => {
+      return {x:x,y:y,r:r,metadata:metadata};
+    };
+
+    ((paths) => {
+      paths.push(createEntity(x,y,300,{children:[1,2]}));
+      paths.push(createEntity(x,y-3000,1000));
+      paths.push(createEntity(x-490,y+140,100,{hidden:true}));
+
+    })(paths);
+
+    ((walls) => {
+      walls.push(createEntity(x,y-2200,3000));
+      walls.push(createEntity(x,y-2200,2500)); // reversed
+      walls.push(createEntity(x-490,y+140,50));
+    })(walls);
+
+    const grassList = [
+      {x:0,y:0,r:150},
+      {x:5,y:-1000,r:150},
+      {x:-490,y:140,r:85},
+      {x:0,y:-3000,r:500},
+    ];
+    const cloverList = [
+      {x:150,y:250,r:70},
+      {x:-65,y:-1200,r:80},
+    ];
+    const foliageColors = {
+      grass:COLORS.LAWNGREEN,
+      clover:COLORS.SPRINGGREEN,
+    };
+
+    var foliageHelper = (plant,type) => {
+      foliage.push(createEntity(plant.x,plant.y,plant.r,{color:foliageColors[type]}));
+    };
+    ((foliage) => {
+      grassList.forEach(grass => foliageHelper(grass,"grass"));
+      cloverList.forEach(clover => foliageHelper(clover,"clover"));
+    })(foliage);
+
+    /*
+    var grass = (cells) => { 
+      cells.forEach((cell,i) => {
+        let x = cellWidth*(Math.floor(i%pointWidth)+Math.random());
+        let y = cellHeight*(Math.floor(i/pointHeight)+Math.random());
+        cell.push({x:x,y:y,a:0,t:CLADES.GRASS});
+      });
+    };
+    */
 
     return state;
   };
 
-  function grass(cells) { 
-    cells.forEach((cell,i) => {
-      let x = cellWidth*(Math.floor(i%pointWidth)+Math.random());
-      let y = cellHeight*(Math.floor(i/pointHeight)+Math.random());
-      cell.push({x:x,y:y,a:0,t:CLADES.GRASS});
-    });
-  } 
+  // TODO: move to World
+  var getVector = (state) => {
+    if (state.keys.includes(keybinds.mouseL)) {
+      return {x:state.mouse._x-state.mouse.x,y:state.mouse._y-state.mouse.y};
+    } else {
+      let vector = {
+        x:(state.keys.includes(keybinds.right) - state.keys.includes(keybinds.left))*state.player.dl,
+        y:(state.keys.includes(keybinds.down) - state.keys.includes(keybinds.up))*state.player.dl
+      };
+      let angle = Math.atan2(vector.y,vector.x);
+      let dist = Math.min(Math.hypot(vector.x,vector.y),state.player.dl);
+      vector.x=dist*Math.cos(angle);
+      vector.y=dist*Math.sin(angle);
+      return vector;
+    }
+  };
 
   // update the state
   api.update = function (state, dt) {
@@ -102,36 +172,34 @@ const World = (function (/*api*/) {
 
     // use mouse or keyboard
     let vector = getVector(state);
-    // angle from deltaY and deltaX
-    let angle = Math.atan2(vector.y,vector.x);
+    //console.log(vector);
     // distance from deltaX and deltaY
-    let dist=Math.min(Math.hypot(vector.x,vector.y),state.player.r*3);    
-
-    // 15px ~ 50px
-    if (dist<state.player.__r) dist = 0;
-    dist=dist*((1/state.player.__r)+state.player._s); // player speed modifier
+    let dist=Math.min(Math.hypot(vector.x,vector.y),state.player.dl);    
+    if (dist<state.player.dg) dist = 0;
     //console.log("distUpdate", dist);
 
-    state.player.v-=(1/60);
-    if (state.player.isOverGrass) state.player.v+=(2/60);
-    if (state.player.isUnderCanopy) state.player.v-=(1/60);
+    state.player.v-=dt;
+    if (state.player.isOverGrass) state.player.v+=2*dt;
+    if (state.player.isUnderCanopy) state.player.v-=dt;
     state.player.v=Math.max(state.player.v,0);
-    state.player._v=Math.floor(state.player.v);
     if (state.player.isLost) dist/=2;
 
 
-    state.player.s=dist; // save player speed as well as translation vector
-    state.player.t=angle;
+    state.player.s=dist=dist/state.player.sf;//*state.player._s); // save player speed as well as translation vector
+    // angle from deltaY and deltaX
+    //let angle;
+    state.player.t=angle=Math.atan2(vector.y,vector.x);
     //state.vector={x:,y:);
+    //console.log(dist,state.player.s,state.player.t*180/Math.PI);
 
     state.dx+=Math.round(dist*Math.cos(angle));
     state.dy+=Math.round(dist*Math.sin(angle));
     state.cx=state.canvas.width/2-state.dx;
     state.cy=state.canvas.height/2-state.dy;
+
     //console.log(angle*180/Math.PI,dist,vector.x,vector.y);
     //console.log(state.player.isLost,state.player.isOnBareGround);
 
-    console.log(state.player._v, state.player.s);
 /*    state.cells.forEach(cell => {
       cell.forEach(plant =>{
         plant.a++; // increase age

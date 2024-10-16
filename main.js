@@ -15,6 +15,9 @@ if (typeof window === "undefined") {
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
+//const ctxOffscreen = canvas.getContext("2d", { willReadFrequently: true });
+
+
 // TODO: make this configurable in main()
 canvas.width=600;
 canvas.height=900;

@@ -33,6 +33,31 @@
 // /*
 // const Player = (() {})();
 
+    // // fill path
+    // ctx.fillStyle = COLORS.DARKGRAY;
+    // ctx.beginPath();
+    // ctx.arc(x,y,325,0,2*Math.PI); // wooded clearing arc @ (0,0) r 325
+    // ctx.rect(x-100,y-3000,200,3000); // overgrown trail rect @ (-100,-3000) w 200 h 3000
+    // ctx.moveTo(x+1000,y-3000);
+    // ctx.arc(x,y-3000,1000,0,2*Math.PI); // meeting place arc @ (0,-3000) r 1000
+    // ctx.moveTo(x-490+100,y+140);
+    // ctx.arc(x-490,y+140,100,0,Math.PI*2); // secret grove arc @ (-490,140) r 100
+    // ctx.fill();
+
+    // separate stroke path to avoid calling stroke() above
+    //ctx.strokeStyle=COLORS.DARKGRAY;
+    // ctx.lineWidth=100;
+    // ctx.beginPath();
+
+    // let angle = Math.atan2(140,-490);
+    // let dist = Math.hypot(-490,140);
+
+    // ctx.moveTo(x+(dist*Math.cos(angle)),y+(dist*Math.sin(angle)));
+    // ctx.lineTo(x,y); // secret path line (0,0) to (-490,140)
+    // //ctx.stroke();
+
+
+
 // //let keys = [];
 // */
 
@@ -87,6 +112,14 @@
 // TODO: package canvas methods in a class
 // size, events (click, move, etc)
 // create a gray box, centered
+
+// function getVectorMouse(mouse) {
+//   //console.log(mouse);
+//   //let vx = mouse._x-mouse.x;//canvas.width/2;
+//   //let vy = mouse._y-mouse.y;//canvas.height/2;
+//   ///return {vx,vy};
+//   return {x:mouse._x,y:mouse._y};
+// }
 
 function clearCanvas() {
   console.log(`configCanvas()`);
