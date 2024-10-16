@@ -254,7 +254,7 @@ const Display = (function(/*api*/) {
     // vector angle in radians from state (keyboard and/or mouse)
     //let vector = getVector(state);
 
-    let limit = state.player.dl/state.player.sf;
+    let limit = state.player.dl;
     let _x=state.mouse._x,_y=state.mouse._y; // mousemove position
     let x=state.mouse.x,y=state.mouse.y; // mousedown position
 

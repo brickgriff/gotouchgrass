@@ -190,7 +190,7 @@ const World = (function (/*api*/) {
     //let angle;
     state.player.t=angle=Math.atan2(vector.y,vector.x);
     //state.vector={x:,y:);
-    //console.log(dist,state.player.s,state.player.t*180/Math.PI);
+    console.log(state.player.s);
 
     state.dx+=Math.round(dist*Math.cos(angle));
     state.dy+=Math.round(dist*Math.sin(angle));
