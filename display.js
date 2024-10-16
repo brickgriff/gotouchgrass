@@ -17,6 +17,18 @@ const Display = (function(/*api*/) {
     ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
   };
 
+  var foreground = function (state, ctx) {
+    // clear
+    //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
+    // how low on points are you?
+    let ratio = state.player.v > state.player._r ? 1 : state.player.v/state.player._r;
+    ctx.save();
+    ctx.globalAlpha=1-ratio;
+    ctx.fillStyle = state.canopyColor;
+    ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
+    ctx.restore();
+  };
+
   var pathConnect = function(parent,child,ctx) {
     let x1=parent.x-state.dx,y1=parent.y-state.dy;
     let x2=child.x-state.dx,y2=child.y-state.dy;
@@ -254,7 +266,7 @@ const Display = (function(/*api*/) {
     // vector angle in radians from state (keyboard and/or mouse)
     //let vector = getVector(state);
 
-    let limit = state.player.dl;
+    let limit = state.player.dl,gate=state.player.dg;
     let _x=state.mouse._x,_y=state.mouse._y; // mousemove position
     let x=state.mouse.x,y=state.mouse.y; // mousedown position
 
@@ -264,6 +276,11 @@ const Display = (function(/*api*/) {
       ctx.strokeStyle = COLORS.LIGHTGRAY;
       ctx.beginPath();
       ctx.arc(x,y,limit,0,2*Math.PI);
+      ctx.stroke();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = COLORS.LIGHTGRAY;
+      ctx.beginPath();
+      ctx.arc(x,y,gate,0,2*Math.PI);
       ctx.stroke();
     }
 
@@ -319,6 +336,7 @@ const Display = (function(/*api*/) {
     foliage(state,ctx);
     player(state, ctx);
     canopy(state,ctx);
+    foreground(state,ctx);
 
     checkTerrain(state,ctx);
 
@@ -326,9 +344,9 @@ const Display = (function(/*api*/) {
     score(state,ctx);
     joystick(state,ctx);
 
-    // if (state.isDebug) {
-    //   debug(state,ctx);
-    // }
+    if (state.isDebug) {
+      debug(state,ctx);
+    }
 
     // terrain, plants, player, joystick, score, debug (mouse & inputs)
     // each element type is its own private function from above
