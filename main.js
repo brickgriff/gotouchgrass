@@ -19,8 +19,8 @@ const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 
 // TODO: make this configurable in main()
-canvas.width=600;
-canvas.height=900;
+canvas.width=800;
+canvas.height=800;
 
 // TODO: pixelated style?  image-rendering: pixelated; image-rendering: crisp-edges;
 // TODO: auto-resize and auto-rescale (resolution)

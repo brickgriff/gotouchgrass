@@ -44,7 +44,7 @@ window.addEventListener("mousemove", (e) =>{
     state.mouse._y=e.offsetY;
 
     let dist = Math.hypot(state.mouse._x-state.mouse.x,state.mouse._y-state.mouse.y);
-    state.mouse.isDragged = (dist>=state.player.__r);
+    state.mouse.isDragged = (dist>=state.player.dg);
     //console.log(dist,state.mouse.isDragged);
   }
 });
