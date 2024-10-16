@@ -178,14 +178,12 @@ const World = (function (/*api*/) {
     if (dist<state.player.dg) dist = 0;
     //console.log("distUpdate", dist);
 
-    if (state.player.isLost) dist/=2;
-
     let score = (dist+1)*dt;
 
     if (state.player.isOverGrass) {
       state.player.v+=score;
     } else {
-      state.player.v-=(state.player.isUnderCanopy?2:1)*score;
+      state.player.v-=(state.player.isUnderCanopy?2:1)*(state.player.isLost?2:1)*score;
     }
 
     // revive!
@@ -198,12 +196,13 @@ const World = (function (/*api*/) {
 
     state.player.v=Math.max(state.player.v,0);
 
+    if (state.player.isLost) dist/=2;
     state.player.s=dist=dist/state.player.sf;//*state.player._s); // save player speed as well as translation vector
     // angle from deltaY and deltaX
     //let angle;
     state.player.t=angle=Math.atan2(vector.y,vector.x);
     //state.vector={x:,y:);
-    console.log(state.player.v);
+    //console.log(state.player.v);
 
     state.dx+=Math.round(dist*Math.cos(angle));
     state.dy+=Math.round(dist*Math.sin(angle));

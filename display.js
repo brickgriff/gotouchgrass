@@ -22,7 +22,7 @@ const Display = (function(/*api*/) {
     //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
     // how low on points are you?
     if (state.isDebug) return;
-    let ratio = state.player.v > state.player._r ? 1 : state.player.v/state.player._r;
+    let ratio = state.player.v > state.player._r-state.player.r ? 0.5 : state.player.v/(state.player._r-state.player.r)/2;
     ctx.save();
     ctx.globalAlpha=1-ratio;
 
@@ -32,12 +32,36 @@ const Display = (function(/*api*/) {
     let path1 = new Path2D();// clipping area
     path1.rect(0,0,state.canvas.width,state.canvas.height);
     
-    path1.moveTo(x+Math.floor(state.player.r+state.player.v),y);
-    path1.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI);
+    path1.moveTo(x+state.player.r+state.player.v,y);
+    path1.arc(x,y,state.player.r+state.player.v,0,2*Math.PI);
     
     ctx.clip(path1,"evenodd"); // fill clipping area
 
     ctx.fillStyle = state.playerColor;
+    ctx.rect(0,0,state.canvas.width,state.canvas.height);
+    ctx.fill();
+    ctx.restore();
+  };
+
+  var walls = function (state, ctx) {
+    // clear
+    //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
+    ctx.save();
+    // punch an even-odd hole in the fog the size of the player wallet
+    let x=state.cx,y=state.cy;
+
+    let path1 = new Path2D();// clipping area
+    path1.rect(0,0,state.canvas.width,state.canvas.height);
+
+    path1.moveTo(x+3000,y-2200);
+    path1.arc(x,y-2200,3000,0,2*Math.PI);
+    
+    path1.moveTo(x-490+50,y+140);
+    path1.arc(x-490,y+140,50,0,2*Math.PI);
+    
+    ctx.clip(path1,"evenodd"); // fill clipping area
+
+    ctx.fillStyle = state.canopyColor;
     ctx.rect(0,0,state.canvas.width,state.canvas.height);
     ctx.fill();
     ctx.restore();
@@ -89,11 +113,11 @@ const Display = (function(/*api*/) {
     let path1 = new Path2D();// clipping area
     path1.rect(0,0,state.canvas.width,state.canvas.height);
 
-    path1.moveTo(x+295,y);
-    path1.arc(x,y,295,0,2*Math.PI);// canopy hole arc @ (0,0) r ~300
+    path1.moveTo(x+300,y);
+    path1.arc(x,y,300,0,2*Math.PI);// canopy hole arc @ (0,0) r ~300
     
-    path1.moveTo(x+995,y-3000);
-    path1.arc(x,y-3000,995,0,2*Math.PI);
+    path1.moveTo(x+1000,y-3000);
+    path1.arc(x,y-3000,1000,0,2*Math.PI);
     
     ctx.clip(path1,"evenodd"); // fill clipping area
 
@@ -358,6 +382,7 @@ const Display = (function(/*api*/) {
     background(state,ctx); // defines any non-path we forget
     path(state, ctx);
     foliage(state,ctx);
+    walls(state,ctx);
     player(state, ctx);
     canopy(state,ctx);
     fog(state,ctx);
