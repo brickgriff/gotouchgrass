@@ -154,8 +154,10 @@ const Display = (function(/*api*/) {
     ctx.beginPath();
     canopySketch(state,ctx);
 
-    ctx.moveTo(x+Math.floor(state.player.r+state.player.v),y);
-    ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
+    if (state.player.isUnderCanopy) {
+      ctx.moveTo(x+Math.floor(state.player.r+state.player.v),y);
+      ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
+    }
     ctx.fill();
     ctx.restore(); // defaults
   };
