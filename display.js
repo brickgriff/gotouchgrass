@@ -17,14 +17,14 @@ const Display = (function(/*api*/) {
     ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
   };
 
-  var foreground = function (state, ctx) {
+  var fog = function (state, ctx) {
     // clear
     //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
     // how low on points are you?
     let ratio = state.player.v > state.player._r ? 1 : state.player.v/state.player._r;
     ctx.save();
     ctx.globalAlpha=1-ratio;
-    ctx.fillStyle = state.canopyColor;
+    ctx.fillStyle = COLORS.LIGHTGRAY;
     ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
     ctx.restore();
   };
@@ -335,7 +335,7 @@ const Display = (function(/*api*/) {
     foliage(state,ctx);
     player(state, ctx);
     canopy(state,ctx);
-    foreground(state,ctx);
+    fog(state,ctx);
 
     checkTerrain(state,ctx);
 
