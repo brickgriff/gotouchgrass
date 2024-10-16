@@ -25,7 +25,7 @@ const Display = (function(/*api*/) {
     let ratio = state.player.v > state.player._r ? 1 : state.player.v/state.player._r;
     ctx.save();
     ctx.globalAlpha=1-ratio;
-    ctx.fillStyle = COLORS.LIGHTGRAY;
+    ctx.fillStyle = state.playerColor;
     ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
     ctx.restore();
   };
