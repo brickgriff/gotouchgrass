@@ -56,12 +56,12 @@ const Display = (function(/*api*/) {
     //console.log(state.walls);
     state.walls.forEach(w => {
       path1.moveTo(w.x+w.r-x,w.y-y);
-      path1.arc(x+w.x,y+w.y,w.r,0,2*Math.PI);
+      path1.arc(w.x-x,w.y-y,w.r,0,2*Math.PI);
     });
 
     ctx.beginPath();    
     ctx.clip(path1,"evenodd"); // fill clipping area
-    ctx.fillStyle = state.LIGHTBLUE;
+    ctx.fillStyle = state.canopyColor;
     ctx.rect(0,0,state.canvas.width,state.canvas.height);
     ctx.fill();
     ctx.restore();
@@ -111,22 +111,22 @@ const Display = (function(/*api*/) {
   
   // remember the hidden flag on path objects
   var canopySketch=function(state,ctx) {
-    let x=state.cx,y=state.cy;
+    let x=state.dx,y=state.dy;
 
     let path1 = new Path2D();// clipping area
     path1.rect(0,0,state.canvas.width,state.canvas.height);
     //console.log(state.paths);
     state.paths.forEach(p => {
       if (p.metadata && p.metadata.hidden) return;
-      path1.moveTo(x+p.x+p.r,y+p.y);
-      path1.arc(x+p.x,y+p.y,p.r,0,2*Math.PI);
+      path1.moveTo(p.x+p.r-x,p.y-y);
+      path1.arc(p.x-x,p.y-y,p.r,0,2*Math.PI);
     });
 
     path1.moveTo(x+300,y);
-    path1.arc(x,y,300,0,2*Math.PI);// canopy hole arc @ (0,0) r ~300
+    //path1.arc(x,y,300,0,2*Math.PI);// canopy hole arc @ (0,0) r ~300
     
     path1.moveTo(x+1000,y-3000);
-    path1.arc(x,y-3000,1000,0,2*Math.PI);
+    //path1.arc(x,y-3000,1000,0,2*Math.PI);
 
     ctx.clip(path1,"evenodd"); // fill clipping area
 
