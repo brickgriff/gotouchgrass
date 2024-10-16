@@ -24,7 +24,7 @@ const World = (function (/*api*/) {
       s:0,// speed
       t:0, // theta
       isLost:false,
-      isOverGrass:false,
+      isOverGrass:true,
       isUnderCanopy:false,
     };
 
@@ -91,8 +91,7 @@ const World = (function (/*api*/) {
 
     ((walls) => {
       walls.push(createEntity(x,y-2200,3000));
-      walls.push(createEntity(x,y-2200,2500)); // reversed
-      walls.push(createEntity(x-490,y+140,50));
+      walls.push(createEntity(x,y,50));
     })(walls);
 
     const grassList = [

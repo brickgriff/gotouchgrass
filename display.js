@@ -53,22 +53,21 @@ const Display = (function(/*api*/) {
     let path1 = new Path2D();// clipping area
     path1.rect(0,0,state.canvas.width,state.canvas.height);
 
-    path1.moveTo(x+3000,y-2200);
-    path1.arc(x,y-2200,3000,0,2*Math.PI);
-    
-    path1.moveTo(x-490+50,y+140);
-    path1.arc(x-490,y+140,50,0,2*Math.PI);
+    //console.log(state.walls);
+    state.walls.forEach(w => {
+      path1.moveTo(x+w.x+w.r,y+w.y);
+      path1.arc(x+w.x,y+w.y,w.r,0,2*Math.PI);
+    });
     
     ctx.clip(path1,"evenodd"); // fill clipping area
 
-    ctx.fillStyle = state.canopyColor;
+    ctx.fillStyle = state.LIGHTBLUE;
     ctx.rect(0,0,state.canvas.width,state.canvas.height);
     ctx.fill();
     ctx.restore();
 
     //foliage image data
     state.fImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
-
   };
 
   var pathConnect = function(parent,child,ctx) {
@@ -116,18 +115,18 @@ const Display = (function(/*api*/) {
 
     let path1 = new Path2D();// clipping area
     path1.rect(0,0,state.canvas.width,state.canvas.height);
+    //console.log(state.paths);
+    state.paths.forEach(p => {
+      if (p.metadata && p.metadata.hidden) return;
+      path1.moveTo(x+p.x+p.r,y+p.y);
+      path1.arc(x+p.x,y+p.y,p.r,0,2*Math.PI);
+    });
 
     path1.moveTo(x+300,y);
     path1.arc(x,y,300,0,2*Math.PI);// canopy hole arc @ (0,0) r ~300
     
     path1.moveTo(x+1000,y-3000);
     path1.arc(x,y-3000,1000,0,2*Math.PI);
-    
-    state.paths.forEach(f => {
-      if (f.hidden) return;
-      path1.moveTo(state.cx+f.x+f.r,state.cy+f.y);
-      path1.arc(state.cx+f.x,state.cy+f.y,f.r,0,2*Math.PI);
-    });
 
     ctx.clip(path1,"evenodd"); // fill clipping area
 
@@ -155,10 +154,8 @@ const Display = (function(/*api*/) {
     ctx.beginPath();
     canopySketch(state,ctx);
 
-    if (state.player.isUnderCanopy) {
-      ctx.moveTo(x+Math.floor(state.player.r+state.player.v),y);
-      ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
-    }
+    ctx.moveTo(x+Math.floor(state.player.r+state.player.v),y);
+    ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
     ctx.fill();
     ctx.restore(); // defaults
   };
@@ -206,6 +203,8 @@ const Display = (function(/*api*/) {
     ctx.putImageData(state.pImg,x-8,y-8);
     ctx.putImageData(state.fImg,x-5,y-5);
     ctx.putImageData(state.cImg,x-2,y-2);
+
+    state.player.isUnderCanopy=true;
 
     ctx.lineWidth = 1;
     ctx.fillStyle = COLORS.GRAY;
