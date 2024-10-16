@@ -25,8 +25,21 @@ const Display = (function(/*api*/) {
     let ratio = state.player.v > state.player._r ? 1 : state.player.v/state.player._r;
     ctx.save();
     ctx.globalAlpha=1-ratio;
+
+    // punch an even-odd hole in the fog the size of the player wallet
+    let x=state.player.x,y=state.player.y;
+
+    let path1 = new Path2D();// clipping area
+    path1.rect(0,0,state.canvas.width,state.canvas.height);
+    
+    path1.moveTo(x+Math.floor(state.player.r+state.player.v),y);
+    path1.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI);
+    
+    ctx.clip(path1,"evenodd"); // fill clipping area
+
     ctx.fillStyle = state.playerColor;
-    ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
+    ctx.rect(0,0,state.canvas.width,state.canvas.height);
+    ctx.fill();
     ctx.restore();
   };
 
@@ -95,14 +108,25 @@ const Display = (function(/*api*/) {
     canopySketch(state,ctx);
 
     if (state.player.isUnderCanopy) {
-      //ctx.moveTo(state.player.x+state.player.r+state.player._r,state.player.y);
-      //ctx.arc(state.player.x,state.player.y,state.player.r+state.player._r,0,2*Math.PI,true);
       ctx.globalAlpha=0.1;
     }
 
     ctx.fill();
     ctx.restore(); // defaults
-    state.cImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
+    let x=state.player.x,y=state.player.y;
+
+    state.cImg=ctx.getImageData(x-5,y-5,10,10);
+
+    ctx.save();
+    ctx.beginPath();
+    canopySketch(state,ctx);
+
+    if (state.player.isUnderCanopy) {
+      ctx.moveTo(x+Math.floor(state.player.r+state.player.v),y);
+      ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
+    }
+    ctx.fill();
+    ctx.restore(); // defaults
   };
 
   /*
@@ -134,7 +158,7 @@ const Display = (function(/*api*/) {
     // draw range circle
     ctx.setLineDash([10, 10]);
     ctx.beginPath();
-    ctx.arc(state.player.x, state.player.y, state.player.r+state.player._r,0,2*Math.PI);
+    ctx.arc(state.player.x, state.player.y,state.player._r,0,2*Math.PI);
     ctx.stroke();
     ctx.setLineDash([]); // reset line dash
 
@@ -157,13 +181,13 @@ const Display = (function(/*api*/) {
       ctx.moveTo(input.x+input.r,input.y);
       ctx.arc(input.x,input.y,input.r,0,2*Math.PI);
     });
-    ctx.moveTo(x+state.player.r+state.player._r,y);
-    ctx.arc(x,y,state.player.r+state.player._r,0,2*Math.PI);
+    ctx.moveTo(x+state.player._r,y);
+    ctx.arc(x,y,state.player._r,0,2*Math.PI);
     ctx.moveTo(x+state.player.r,y);
     ctx.arc(x,y,state.player.r,0,2*Math.PI);
     //ctx.rect(x-5,y-5,10,10);
     ctx.moveTo(x,y);
-    let dist = state.player.__r*state.player.s;
+    let dist = state.player.dl*state.player.s;
     if (state.player.s > 0) ctx.lineTo(x+(dist*Math.cos(state.player.t)),y+(dist*Math.sin(state.player.t)));
     ctx.stroke();
 
@@ -257,8 +281,8 @@ const Display = (function(/*api*/) {
     ctx.lineWidth=1;
     ctx.strokeStyle=COLORS.GREEN;
     ctx.beginPath();
-    ctx.moveTo(state.player.x+state.player.r+Math.floor(state.player.v),state.player.y);
-    ctx.arc(state.player.x,state.player.y,state.player.r+Math.floor(state.player.v),0,2*Math.PI);
+    ctx.moveTo(state.player.x+Math.floor(state.player.r+state.player.v),state.player.y);
+    ctx.arc(state.player.x,state.player.y,Math.floor(state.player.r+state.player.v),0,2*Math.PI);
     ctx.stroke();
   };
 
