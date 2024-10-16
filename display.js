@@ -284,19 +284,19 @@ const Display = (function(/*api*/) {
       ctx.stroke();
     }
 
-    // if mousemove (isDragged), then draw filled dot  
-    if (state.mouse.isDragged) {
-      // drag distance; length of mousedown to mousemove, in pixels
-      let dist = Math.hypot(_x-x,_y-y);
-      // MIN (drag distance vs capped distance)
-      dist=Math.min(dist, limit);
-      //console.log(dist);
-      let angle = state.player.t;//Math.atan2(vector.y,vector.x);
-      ctx.fillStyle = COLORS.GRAY;
-      ctx.beginPath();
-      ctx.arc(x + (Math.cos(angle) * dist),y + (Math.sin(angle) * dist),limit*0.75,0,2*Math.PI);
-      ctx.fill();
-    }
+    // // if mousemove (isDragged), then draw filled dot  
+    // if (state.mouse.isDragged) {
+    //   // drag distance; length of mousedown to mousemove, in pixels
+    //   let dist = Math.hypot(_x-x,_y-y);
+    //   // MIN (drag distance vs capped distance)
+    //   dist=Math.min(dist, limit);
+    //   //console.log(dist);
+    //   let angle = state.player.t;//Math.atan2(vector.y,vector.x);
+    //   ctx.fillStyle = COLORS.GRAY;
+    //   ctx.beginPath();
+    //   ctx.arc(x + (Math.cos(angle) * dist),y + (Math.sin(angle) * dist),limit*0.75,0,2*Math.PI);
+    //   ctx.fill();
+    // }
   };
 
   var getCtxColor = function(ctx,color) {
