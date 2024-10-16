@@ -180,6 +180,14 @@ const World = (function (/*api*/) {
 
     if (state.player.isLost) dist/=2;
 
+    let score = (dist+1)*dt;
+
+    if (state.player.isOverGrass) {
+      state.player.v+=score;
+    } else {
+      state.player.v-=(state.player.isUnderCanopy?2:1)*score;
+    }
+
     // revive!
     if (state.player.v < 0) {
       state.dx=state.dy=0;
@@ -188,13 +196,6 @@ const World = (function (/*api*/) {
       state.player.isOverGrass=true;
     }
 
-    let score = (dist+1)*dt;
-
-    if (state.player.isOverGrass) {
-      state.player.v+=score;
-    } else {
-      state.player.v-=(state.player.isUnderCanopy?2:1)*score;
-    }
     state.player.v=Math.max(state.player.v,0);
 
     state.player.s=dist=dist/state.player.sf;//*state.player._s); // save player speed as well as translation vector
