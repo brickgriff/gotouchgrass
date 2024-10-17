@@ -272,6 +272,8 @@ const Display = (function(/*api*/) {
       ctx.fill();
       ctx.stroke();
 
+      //var 
+    
       if(state.player.isOverGrass && state.mouse.isClicked
         && Math.hypot(state.mouse._x-state.cx,state.mouse._y-state.cy)<f.r
         && Math.hypot(state.player.x-state.cx,state.player.y-state.cy)<f.r) {
@@ -420,13 +422,13 @@ const Display = (function(/*api*/) {
 
     checkTerrain(state,ctx);
 
+
     inventory(state,ctx);
-    score(state,ctx);
+    if (state.isDebug) score(state,ctx);
+
     joystick(state,ctx);
 
-    if (state.isDebug) {
-      debug(state,ctx);
-    }
+    if (state.isDebug) debug(state,ctx);
 
     // terrain, plants, player, joystick, score, debug (mouse & inputs)
     // each element type is its own private function from above

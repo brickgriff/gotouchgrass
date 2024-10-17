@@ -185,6 +185,7 @@ const World = (function (/*api*/) {
     state.player.isTouchedGrass=false;
     state.player.grassValue=0;
     if (state.player.isOverGrass) {
+      state.player.isLost=false;
       state.player.v+=score;
     } else {
       state.player.v-=(state.player.isUnderCanopy?2:1)*(state.player.isLost?2:1)*score;
