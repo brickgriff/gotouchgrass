@@ -1,8 +1,35 @@
 // canvas is created/configured programmatically now
 //<!--canvas-->
 //<canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;"></canvas>
+let canvas,ctx,state;
+let frame = 0, isQuit = false, start = document.timeline.currentTime;
 
-// ensure there is a global window object
+// quit signal (Esc)
+window.addEventListener("keydown", (e) =>{
+  //e.preventDefault();
+  if (e.code==="Escape") isQuit = true;
+});  
+
+function gameLoop(now,state) {
+  const elapsed = (now - start) / 1000; // deltaTime in seconds
+  const dt = elapsed > 1 ? 1 : elapsed; // capped deltaTime
+/*const*/ ctx = state.canvas.getContext("2d", { willReadFrequently: true });
+
+  //console.log(`gameLoop(frame=${frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
+  ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
+
+  //World.update(state, dt); // update entities
+  //Display.draw(state, ctx); // Display.draw(state, ctx); // draw entities
+  if (isQuit) return console.log("quit");
+  requestAnimationFrame(now=>gameLoop(now,state));
+  // prepare for next frame
+  frame++;
+  start = now;
+}
+
+function main() {
+  //console.log("main");
+  // ensure there is a global window object
 if (typeof window === "undefined") {
   console.log("no window");
   try {
@@ -12,11 +39,10 @@ if (typeof window === "undefined") {
   }
 }
 
-const canvas = document.createElement("canvas");
-const ctx = canvas.getContext("2d", { willReadFrequently: true });
+/*const*/ canvas = document.createElement("canvas");
+/*const*/ state = World.create(canvas); // generate entities (with draw functions)
 
 //const ctxOffscreen = canvas.getContext("2d", { willReadFrequently: true });
-
 
 // TODO: make this configurable in main()
 canvas.width=800;
@@ -31,31 +57,8 @@ canvas.style="border:1px solid #cccccc;";
 
 document.body.appendChild(canvas);
 
-let frame = 0, isQuit = false, start = document.timeline.currentTime;
-const state = World.create(canvas); // generate entities (with draw functions)
 
-// quit signal (Esc)
-window.addEventListener("keydown", (e) =>{
-  //e.preventDefault();
-  if (e.code==="Escape") isQuit = true;
-});  
-
-function gameLoop(now) {
-  const elapsed = (now - start) / 1000; // deltaTime in seconds
-  const dt = elapsed > 1 ? 1 : elapsed; // capped deltaTime
-  //console.log(`gameLoop(frame=${frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
-  World.update(state, dt); // update entities
-  Display.draw(state, ctx); // Display.draw(state, ctx); // draw entities
-  if (isQuit) return console.log("quit");
-  requestAnimationFrame(gameLoop);
-  // prepare for next frame
-  frame++;
-  start = now;
-}
-
-function main() {
-  //console.log("main");
-  requestAnimationFrame(gameLoop);
+  requestAnimationFrame(now=>gameLoop(now,state));
 }
 
 

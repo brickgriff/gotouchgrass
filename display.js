@@ -23,9 +23,9 @@ const Display = (function(/*api*/) {
     //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
     // how low on points are you?
     if (state.isDebug) return;
-    let ratio = state.player.v > state.player._r-state.player.r ? 1/2 : state.player.v/(state.player._r-state.player.r)/2;
+    let ratio = state.player.v > state.player._r-state.player.r ? 1 : state.player.v/(state.player._r-state.player.r);
     ctx.save();
-    ctx.globalAlpha=1-ratio;
+    ctx.globalAlpha=1-ratio/2;
 
     // punch an even-odd hole in the fog the size of the player wallet
     let x=state.player.x,y=state.player.y;
