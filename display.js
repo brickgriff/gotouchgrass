@@ -420,7 +420,7 @@ const Display = (function(/*api*/) {
     let cd = state.cImg.data;
     let cStyle=getCtxColor(ctx,`rgb(${cd[44*4]} ${cd[44*4+1]} ${cd[44*4+2]} / ${cd[44*4+3]})`);
 
-    console.log(state.playerColor,pStyle,cStyle);
+    //console.log(state.playerColor,pStyle,cStyle);
     state.player.isOverGrass=fStyle===state.grassColor;
     if (state.player.isOverGrass)return; // B-)
     state.player.isInsideWall=fStyle===state.wallColor;

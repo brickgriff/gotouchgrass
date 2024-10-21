@@ -139,9 +139,9 @@ let  keybinds = {
 
     loosen: isUsingWASD ? "KeyQ" : "KeyW",
     tighten: isUsingWASD ? "KeyE" : "KeyR",
-    primary: "ShiftLeft",
+    tertiary: "ShiftLeft",
     secondary: "KeyF",
-    tertiary: "Space",
+    primary: "Space",
 
     debug: "Backquote",
 

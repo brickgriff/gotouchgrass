@@ -177,6 +177,15 @@ const World = (function (/*api*/) {
       state.player.isUnderCanopy=false;
     }
 
+    //console.log(state.keys.includes(keybinds.primary));
+    if (state.keys.includes(keybinds.primary)) {
+      //state.isDebug = (state.isDebug^=true)!==0;
+      dropKey({keys:state.keys,key:keybinds.primary});
+      state.mouse.isClicked=true;
+      state.mouse._x = state.cx;
+      state.mouse._y = state.cy;
+    }
+
     // use mouse or keyboard
     let vector = getVector(state);
     //console.log(vector);
