@@ -137,7 +137,7 @@ const Display = (function(/*api*/) {
     ctx.beginPath();
     canopySketch(state,ctx);
     if (state.player.isUnderCanopy) {
-      ctx.globalAlpha=0.1;
+      ctx.globalAlpha=0.5;
     }
     ctx.fill();
     ctx.restore(); // defaults
@@ -173,7 +173,6 @@ const Display = (function(/*api*/) {
   */
 
   var player = function (state, ctx) {
-    // draw player dot
     ctx.fillStyle = COLORS.LIGHTGRAY;
     ctx.strokeStyle = COLORS.LIGHTGRAY;
     ctx.lineWidth = 5;
@@ -181,6 +180,27 @@ const Display = (function(/*api*/) {
     let x=state.player.x,y=state.player.y,_x=x,_y=y,
     r=state.player.r,_r=state.player._r;
 
+    // draw pointer line
+    let dist = state.player.s>0 ? r+10 : 0;
+    //console.log(dist);
+    // calc vector components
+    let vector={
+      x:Math.round(r*Math.cos(state.player.t)),
+      y:Math.round(r*Math.sin(state.player.t))
+    };
+    let x1=x+vector.x,y1=y+vector.y;
+    vector={
+      x:Math.round(dist*Math.cos(state.player.t)),
+      y:Math.round(dist*Math.sin(state.player.t))
+    };
+    let x2=x+vector.x,y2=y+vector.y;
+
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+
+    // draw player dot
     ctx.beginPath();
     // player (r = 0.25m = 25px)
     ctx.arc(x,y,r,0,2*Math.PI);
@@ -190,23 +210,6 @@ const Display = (function(/*api*/) {
     ctx.setLineDash([10, 10]);
     ctx.beginPath();
     ctx.arc(x, y,_r,0,2*Math.PI);
-
-
-    let dist = state.player.s>0 ? r+10 : 0;
-    //console.log(dist);
-    // calc vector components
-    let vector={
-      x:Math.round(dist*Math.cos(state.player.t)),
-      y:Math.round(dist*Math.sin(state.player.t))
-    };
-    //console.log(vector);
-
-    // draw pointer line
-    //x=state.player.x, y=state.player.y; // (canvas.w/2,canvas.h/2)
-    _x+=vector.x,_y+=vector.y;
-
-    ctx.moveTo(x,y);
-    ctx.lineTo(_x,_y);
 
     ctx.stroke();
     ctx.setLineDash([]); // reset line dash
@@ -417,7 +420,7 @@ const Display = (function(/*api*/) {
     let cd = state.cImg.data;
     let cStyle=getCtxColor(ctx,`rgb(${cd[44*4]} ${cd[44*4+1]} ${cd[44*4+2]} / ${cd[44*4+3]})`);
 
-    //console.log(state.pathColor,pStyle);
+    console.log(state.playerColor,pStyle,cStyle);
     state.player.isOverGrass=fStyle===state.grassColor;
     if (state.player.isOverGrass)return; // B-)
     state.player.isInsideWall=fStyle===state.wallColor;
@@ -445,7 +448,6 @@ const Display = (function(/*api*/) {
     fog(state,ctx);
 
     checkTerrain(state,ctx);
-
 
     //inventory(state,ctx);
     if (state.isDebug) score(state,ctx);

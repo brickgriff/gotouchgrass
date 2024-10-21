@@ -171,8 +171,11 @@ const World = (function (/*api*/) {
     // if the player is occupying or clicking a green pixel, score a point
     // rules for spawning new plants
 
-    if (state.keys.includes(keybinds.debug)) state.isDebug = (state.isDebug^=true)!==0;
-    dropKey({keys:state.keys,key:keybinds.debug});
+    if (state.keys.includes(keybinds.debug)) {
+      state.isDebug = (state.isDebug^=true)!==0;
+      dropKey({keys:state.keys,key:keybinds.debug});
+      state.player.isUnderCanopy=false;
+    }
 
     // use mouse or keyboard
     let vector = getVector(state);
