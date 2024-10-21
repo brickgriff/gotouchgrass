@@ -12,9 +12,21 @@ const World = (function (/*api*/) {
 
   // create a new state
   api.create = function (canvas) {
+    canvas.width=document.body.clientWidth;
+    canvas.height=document.body.clientHeight;
+    //var cells=new Array(pointWidth*pointHeight).fill([]), zones=[];
+    //grass(cells);
+    //zones.push({x:canvas.width/2,y:canvas.height/2,r:400,c:COLORS.LAWNGREEN,v:1,t:CLADES.GRASS});
+    //zones.push({x:canvas.width/2+250,y:canvas.height/2+250,r:120,c:COLORS.SPRINGGREEN,v:3,t:CLADES.CLOVER});
+
+    var paths = [];
+    var walls = [];
+    var foliage = [];
+    const x=canvas.width/2,y=canvas.height/2;
+
     var player = {
-      x: canvas.width/2,
-      y: canvas.height/2,
+      x: x,
+      y: y,
       r: 25, // radius
       _r: 35, // range
       dg: 10, // drag gate
@@ -26,7 +38,7 @@ const World = (function (/*api*/) {
       isLost:false,
       isOverGrass:true,
       isUnderCanopy:false,
-      isOnWall:false,
+      isInsideWall:false,
       isTouchedGrass:false,
       grassValue:0,
     };
@@ -43,15 +55,6 @@ const World = (function (/*api*/) {
       isDragged:false,
       isClicked:false,
     };
-
-    //var cells=new Array(pointWidth*pointHeight).fill([]), zones=[];
-    //grass(cells);
-    //zones.push({x:canvas.width/2,y:canvas.height/2,r:400,c:COLORS.LAWNGREEN,v:1,t:CLADES.GRASS});
-    //zones.push({x:canvas.width/2+250,y:canvas.height/2+250,r:120,c:COLORS.SPRINGGREEN,v:3,t:CLADES.CLOVER});
-
-    var paths = [];
-    var walls = [];
-    var foliage = [];
 
     var state = {
       canvas: canvas,
@@ -80,21 +83,19 @@ const World = (function (/*api*/) {
       pathColor:null,canopyColor:null,grassColor:null,playerColor:null,wallColor:null
     };
 
-    const x=canvas.width/2,y=canvas.height/2;
-
     var createEntity = (x,y,r,metadata) => {
       return {x:x,y:y,r:r,metadata:metadata};
     };
 
     ((paths) => {
-      paths.push(createEntity(x,y,300,{children:[1,2]}));
-      paths.push(createEntity(x,y-3000,1000));
-      paths.push(createEntity(x-490,y+140,100,{hidden:true}));
+      paths.push(createEntity(0,0,300,{children:[1,2]}));
+      paths.push(createEntity(0,-3000,1000));
+      paths.push(createEntity(-490,140,100,{hidden:true}));
     })(paths);
 
     ((walls) => {
-      walls.push(createEntity(x,y-2200,3000));
-      walls.push(createEntity(x-490,y+140,75));
+      walls.push(createEntity(0,-2200,3000));
+      walls.push(createEntity(-490,140,75));
     })(walls);
 
     const grassList = [
@@ -196,7 +197,7 @@ const World = (function (/*api*/) {
       state.dx=state.dy=0;
       state.player.isUnderCanopy=false;
       state.player.isLost=false;
-      state.player.isOnWall=false;
+      state.player.isInsideWall=false;
       state.player.isOverGrass=true;
       state.player.isTouchedGrass=false;
     }
@@ -208,7 +209,7 @@ const World = (function (/*api*/) {
     // angle from deltaY and deltaX
     //let angle;
     state.player.t=angle=Math.atan2(vector.y,vector.x);
-    if (state.player.isOnWall) dist=5,angle+=Math.PI;
+    if (state.player.isInsideWall) dist=5,angle+=Math.PI;
 
     //state.vector={x:,y:);
     //console.log(state.player.v);
@@ -217,8 +218,11 @@ const World = (function (/*api*/) {
     state.dx+=Math.round(dist*Math.cos(angle));
     state.dy+=Math.round(dist*Math.sin(angle));
     // relative position of the center of the world
-    state.cx=state.canvas.width/2-state.dx;
-    state.cy=state.canvas.height/2-state.dy;
+    state.player.x=Math.round(state.canvas.width/2);
+    state.player.y=Math.round(state.canvas.height/2);
+    state.cx=state.player.x-state.dx;
+    state.cy=state.player.y-state.dy;
+
 
     //console.log(angle*180/Math.PI,dist,vector.x,vector.y);
     //console.log(state.player.isLost,state.player.isOnBareGround);

@@ -11,6 +11,67 @@
   // ENTITIES - plants, objects, and NPCs
 
 
+/*
+
+I plan to source all plants either from an official source, such as BCRP Forestry/TreeBaltimore or Blue Water Baltimore Nursery, or from seeds, cuttings, and divisions mindfully selected from local wild specimens:
+
+- blackhaw viburnum (Viburnum prunifolium), perennial, 1
+- elderberry (Sambucus canadensis), perennial, 2
+- milkweed (Asclepias sp.), perennial, 3
+- clustered mountain mint (Pycnanthemum muticum), perennial, 2
+- purple coneflower (Echinacea purpurea), perennial, 5
+- black-eyed Susan (Rudbeckia hirta), perennial/biennial, 4
+- meadow phlox (Phlox maculata), perennial, 3
+
+
+*/
+/*
+cozy - farm and forage 
+roguelite - metaprogression
+automation/simulation - manage dynamic processes
+resource management/city builder - start with nothing and build an empire
+vampire survivor - navigate battlefields to collect treasure to outlast endless waves of enemies
+reverse vampire survivor - manage a roster of units to prevent the enemy from accessing the goal
+
+what is the goal?
+your mycorrhizae?
+
+
+you are alone in a small field of grass
+spore pod idea?
+there is trash stuck in the grass
+you cannot move, you can only touch grass
+you can only touch the grass closest to you
+by doing that, you place your first spore
+the spore has a radius of one
+this extends your range to touch more grass
+this places a second spore
+this doubles the radius for the first spore
+by placing spores, you can reach the trash
+trash cans?
+keep it simple, silly
+you are a small fungus creature
+as a decomposer, you eat dead plants
+you do this by touching and absorbing them
+you can't directly use sunlight energy
+you need plants; you need to touch grass
+this only yields a small amount of sugars
+this slightly  enhances your abilities
+the world reacts to you
+there is a seed bank in the ground
+changing soil conditions, changes what thrives
+too much activity causes disturbance
+disturbance alters biodiversity
+
+
+*/
+
+
+/*
+R = SUNLIGHT LEVELS = 0 (total shade) - 255 (total exposure)
+G = pH BALANCE = 75 (very acidic) - 125 (very alkaline)
+B = MOISTURE LEVELS = 50 (dry) - 100 (wet); 100+ (flooded)
+*/
 // /*
 // window.addEventListener("keyup", (e) =>{
 //   e.preventDefault();
@@ -59,7 +120,48 @@
 
 
 // //let keys = [];
+
+/*
+        ctx.beginPath();
+        ctx.moveTo(state.player.x+state.player._r,state.player.y);
+        ctx.arc(state.player.x,state.player.y,state.player.r,0,2*Math.PI);
+        ctx.fill();
+*/
+
 // */
+    // terrain, plants, player, joystick, score, debug (mouse & inputs)
+    // each element type is its own private function from above
+    // set up the stroke and fill colors per element type
+    // finally do the stroke and fill per element type
+    //ctx.save();
+
+    // get image data at the center of the screen
+    // if the color equal dimgray, then player is out of bounds
+    // let x = state.canvas.width/2-state.dx, y = state.canvas.height/2-state.dy;
+
+    //ctx.restore();        
+
+    //ctx.putImageData(state.bImg,x-590,y+40);
+
+    //ctx.moveTo(x-490+105,y+140);
+    //ctx.arc(x-490,y+140,105,0,Math.PI*2);// secret grove arc @ (-490,140) r ~100
+    //ctx.rect(x-100,y-2000,200,1700);// overgrown trail rect @ (-100,-2000,200,1700)
+
+    //ctx.fill();
+
+    // canopy layer
+
+    // ctx.globalAlpha=0.1;
+    // ctx.moveTo(state.player.x+state.player.r+state.player._r,state.player.y);
+    // ctx.arc(state.player.x,state.player.y,state.player.r+state.player._r,0,2*Math.PI);
+    // ctx.fill();
+    // ctx.globalAlpha=1;
+
+    //ctx.clip();
+
+    //joystick(state,ctx);
+    //inventory(state,ctx);
+    //score(state,ctx);
 
 // /*
 // function findAngle(keys) {

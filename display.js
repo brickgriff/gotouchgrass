@@ -48,16 +48,16 @@ const Display = (function(/*api*/) {
     // clear
     //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
     ctx.save();
-    // punch an even-odd hole in the fog the size of the player wallet
-    let x=state.dx,y=state.dy;
 
     let path1 = new Path2D();// clipping area
     path1.rect(0,0,state.canvas.width,state.canvas.height);
 
     //console.log(state.walls);
     state.walls.forEach(w => {
-      path1.moveTo(w.x+w.r-x,w.y-y);
-      path1.arc(w.x-x,w.y-y,w.r,0,2*Math.PI);
+      // punch an even-odd hole in the fog the size of the player wallet
+      let x=w.x+state.cx,y=w.y+state.cy;
+      path1.moveTo(x+w.r+x,y);
+      path1.arc(x,y,w.r,0,2*Math.PI);
     });
 
     ctx.beginPath();    
@@ -71,9 +71,12 @@ const Display = (function(/*api*/) {
     state.fImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
   };
 
+
+  // TODO: experiment with polygons and loops
+  // TODO: add hidden property to paths (likely canopy step)
   var pathConnect = function(parent,child,ctx) {
-    let x1=parent.x-state.dx,y1=parent.y-state.dy;
-    let x2=child.x-state.dx,y2=child.y-state.dy;
+    let x1=parent.x+state.cx,y1=parent.y+state.cy;
+    let x2=child.x+state.cx,y2=child.y+state.cy;
     let x=(x1+x2)/2,y=(y1+y2)/2;
 
     let rx=Math.hypot(x2-x1,y2-y1)/2;
@@ -86,7 +89,8 @@ const Display = (function(/*api*/) {
   };
 
   var pathLoop = function(state,ctx,path) {
-    let x=path.x-state.dx,y=path.y-state.dy;
+    let x=path.x+state.cx,y=path.y+state.cy;
+
     ctx.moveTo(x+path.r,y);
     ctx.arc(x,y,path.r,0,Math.PI*2);
     if (!path.metadata || !path.metadata.children) return;
@@ -112,15 +116,14 @@ const Display = (function(/*api*/) {
   
   // remember the hidden flag on path objects
   var canopySketch=function(state,ctx) {
-    let x=state.dx,y=state.dy;
-
     let path1 = new Path2D();// clipping area
     path1.rect(0,0,state.canvas.width,state.canvas.height);
     //console.log(state.paths);
     state.paths.forEach(p => {
+      let x=p.x+state.cx,y=p.y+state.cy;
       if (p.metadata && p.metadata.hidden) return;
-      path1.moveTo(p.x+p.r-x,p.y-y);
-      path1.arc(p.x-x,p.y-y,p.r,0,2*Math.PI);
+      path1.moveTo(x+p.r,y);
+      path1.arc(x,y,p.r,0,2*Math.PI);
     });
 
     ctx.clip(path1,"evenodd"); // fill clipping area
@@ -142,15 +145,16 @@ const Display = (function(/*api*/) {
     let x=state.player.x,y=state.player.y;
     state.cImg=ctx.getImageData(x-5,y-5,10,10);
 
+    if (!state.player.isUnderCanopy) return;
+
     ctx.save();
     ctx.fillStyle=state.canopyColor;
     ctx.beginPath();
-    ctx.beginPath();
     canopySketch(state,ctx);
-    if (state.player.isUnderCanopy) {
-      ctx.moveTo(x+Math.floor(state.player.r+state.player.v),y);
-      ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
-    }
+    //if (state.player.isUnderCanopy) {
+    ctx.moveTo(x+Math.floor(state.player.r+state.player.v),y);
+    ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
+    //}
     ctx.fill();
     ctx.restore(); // defaults
   };
@@ -173,18 +177,37 @@ const Display = (function(/*api*/) {
     ctx.fillStyle = COLORS.LIGHTGRAY;
     ctx.strokeStyle = COLORS.LIGHTGRAY;
     ctx.lineWidth = 5;
-    //ctx.save();
+
+    let x=state.player.x,y=state.player.y,_x=x,_y=y,
+    r=state.player.r,_r=state.player._r;
 
     ctx.beginPath();
     // player (r = 0.25m = 25px)
-    ctx.arc(state.player.x,state.player.y,state.player.r,0,2*Math.PI);
-
+    ctx.arc(x,y,r,0,2*Math.PI);
     ctx.fill();
     
     // draw range circle
     ctx.setLineDash([10, 10]);
     ctx.beginPath();
-    ctx.arc(state.player.x, state.player.y,state.player._r,0,2*Math.PI);
+    ctx.arc(x, y,_r,0,2*Math.PI);
+
+
+    let dist = state.player.s>0 ? r+10 : 0;
+    //console.log(dist);
+    // calc vector components
+    let vector={
+      x:Math.round(dist*Math.cos(state.player.t)),
+      y:Math.round(dist*Math.sin(state.player.t))
+    };
+    //console.log(vector);
+
+    // draw pointer line
+    //x=state.player.x, y=state.player.y; // (canvas.w/2,canvas.h/2)
+    _x+=vector.x,_y+=vector.y;
+
+    ctx.moveTo(x,y);
+    ctx.lineTo(_x,_y);
+
     ctx.stroke();
     ctx.setLineDash([]); // reset line dash
 
@@ -265,31 +288,32 @@ const Display = (function(/*api*/) {
     ctx.strokeStyle=COLORS.GREEN;
     ctx.lineWidth=2;
     state.foliage.forEach(f => {
+      let x=f.x+state.cx,y=f.y+state.cy;
+
       ctx.fillStyle=f.metadata.color;
       ctx.beginPath();
-      ctx.moveTo(f.x+f.r+state.cx,f.y+state.cy);
-      ctx.arc(f.x+state.cx,f.y+state.cy,f.r,0,2*Math.PI);
+      ctx.moveTo(x+f.r,y);
+      ctx.arc(x,y,f.r,0,2*Math.PI);
       ctx.fill();
       ctx.stroke();
-
-      //var 
     
+      // TODO: bring this back with touch support works
       if(state.player.isOverGrass && state.mouse.isClicked
-        && Math.hypot(state.mouse._x-state.cx,state.mouse._y-state.cy)<f.r
-        && Math.hypot(state.player.x-state.cx,state.player.y-state.cy)<f.r) {
+        && Math.hypot(state.mouse._x-x,state.mouse._y-y)<f.r
+        && Math.hypot(state.player.x-x,state.player.y-y)<f.r) {
+
+        //console.log(state.player.x,state.player.y);
 
         state.player.isTouchedGrass = true;
-        state.player.grassValue = Math.PI*Math.pow(f.r,2)/10000;
+        state.player.grassValue = Math.PI*Math.pow(state.player._r,2)/100;
         state.mouse.isClicked=false;
 
-        state.foliage.push({x:f.x+state.cx,y:f.y+state.cy,r:f.r,metadata:{color:COLORS.GREEN}});
-
-/*
-        ctx.beginPath();
-        ctx.moveTo(state.player.x+state.player._r,state.player.y);
-        ctx.arc(state.player.x,state.player.y,state.player.r,0,2*Math.PI);
-        ctx.fill();
-*/
+        // state.foliage.push({
+        //   x:state.player.x-state.cx,
+        //   y:state.player.y-state.cy,
+        //   r:state.player._r,
+        //   metadata:{color:COLORS.GREEN,label:""}
+        // });
       }
 
     });
@@ -396,7 +420,7 @@ const Display = (function(/*api*/) {
     //console.log(state.pathColor,pStyle);
     state.player.isOverGrass=fStyle===state.grassColor;
     if (state.player.isOverGrass)return; // B-)
-    state.player.isOnWall=fStyle===state.wallColor
+    state.player.isInsideWall=fStyle===state.wallColor;
     state.player.isLost=pStyle!==state.pathColor;
     state.player.isUnderCanopy=cStyle!==state.playerColor;
   };
@@ -423,46 +447,13 @@ const Display = (function(/*api*/) {
     checkTerrain(state,ctx);
 
 
-    inventory(state,ctx);
+    //inventory(state,ctx);
     if (state.isDebug) score(state,ctx);
 
     joystick(state,ctx);
 
     if (state.isDebug) debug(state,ctx);
 
-    // terrain, plants, player, joystick, score, debug (mouse & inputs)
-    // each element type is its own private function from above
-    // set up the stroke and fill colors per element type
-    // finally do the stroke and fill per element type
-    //ctx.save();
-
-    // get image data at the center of the screen
-    // if the color equal dimgray, then player is out of bounds
-    // let x = state.canvas.width/2-state.dx, y = state.canvas.height/2-state.dy;
-
-    //ctx.restore();        
-
-    //ctx.putImageData(state.bImg,x-590,y+40);
-
-    //ctx.moveTo(x-490+105,y+140);
-    //ctx.arc(x-490,y+140,105,0,Math.PI*2);// secret grove arc @ (-490,140) r ~100
-    //ctx.rect(x-100,y-2000,200,1700);// overgrown trail rect @ (-100,-2000,200,1700)
-
-    //ctx.fill();
-
-    // canopy layer
-
-    // ctx.globalAlpha=0.1;
-    // ctx.moveTo(state.player.x+state.player.r+state.player._r,state.player.y);
-    // ctx.arc(state.player.x,state.player.y,state.player.r+state.player._r,0,2*Math.PI);
-    // ctx.fill();
-    // ctx.globalAlpha=1;
-
-    //ctx.clip();
-
-    //joystick(state,ctx);
-    //inventory(state,ctx);
-    //score(state,ctx);
   };
 
   // return the public API

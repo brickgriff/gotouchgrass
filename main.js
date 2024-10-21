@@ -15,11 +15,16 @@ if (typeof window === "undefined") {
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
+// TODO: practice with offscreen canvas
 //const ctxOffscreen = canvas.getContext("2d", { willReadFrequently: true });
-
 // TODO: make this configurable in main()
-canvas.width=800;
-canvas.height=800;
+// canvas.width=800;
+// canvas.height=800;
+
+var resize = (canvas) => {
+  canvas.width=document.body.clientWidth;
+  canvas.height=document.body.clientHeight;
+}
 
 // TODO: pixelated style?  image-rendering: pixelated; image-rendering: crisp-edges;
 // TODO: auto-resize and auto-rescale (resolution)
@@ -31,7 +36,9 @@ canvas.style="border:1px solid #cccccc;";
 document.body.appendChild(canvas);
 
 let frame = 0, isQuit = false, start = document.timeline.currentTime;
-const state = World.create(canvas); // generate entities (with draw functions)
+resize(canvas);
+const state = World.create(canvas);
+// TODO: give entities their own draw functions
 
 // quit signal (Esc)
 window.addEventListener("keydown", (e) =>{
@@ -39,12 +46,17 @@ window.addEventListener("keydown", (e) =>{
   if (e.code==="Escape") isQuit = true;
 });  
 
+// TODO: try a window/cavnas resize listener
+
 function gameLoop(now) {
   const elapsed = (now - start) / 1000; // deltaTime in seconds
   const dt = elapsed > 1 ? 1 : elapsed; // capped deltaTime
 
-  console.log(`gameLoop(frame=${frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //console.log(`gameLoop(frame=${frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
+  //console.log(document.body.clientWidth,document.body.clientHeight,state.player.x,state.player.y);
+  resize(state.canvas); // TODO: only on resize event!  
+  
+  //ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   World.update(state, dt); // update entities
   Display.draw(state, ctx); // Display.draw(state, ctx); // draw entities
