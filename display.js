@@ -1,22 +1,65 @@
-/* LIGHTS */
-// colors, shadows
 const COLORS = {BLACK:"black", GREEN:"green", GRAY:"gray", LIGHTGRAY: "lightgray",
 DARKGRAY:"darkgray", BLUE:"blue", GOLD:"gold", LIGHTBLUE:"lightblue", RED:"red",
 SPRINGGREEN: "springgreen", LAWNGREEN: "lawngreen", WHITE: "white", YELLOW: "yellow",
 CYAN: "cyan", MAGENTA: "magenta", DIMGRAY: "dimgray", DARKBLUE:"darkblue",
-DARKSLATEGRAY:"darkslategray"};
-/* END LIGHTS */
+DARKSLATEGRAY:"darkslategray",SOIL:"#7d644b",DEFAULT:"#cccccc"};
+
+// TODO: give entities their own draw functions
 
 const Display = (function(/*api*/) {
 
   var api = {};
   
   var background = function (state, ctx) {
-    // clear
-    //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
-    ctx.fillStyle = state.canopyColor;
-    ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
+    // center of screen is (0,0)
+    ctx.fillStyle = COLORS.DEFAULT;
+    let x=-state.canvas.width/2, y=-state.canvas.height/2;
+    let w=state.canvas.width, h=state.canvas.height;
+    ctx.clearRect(x,y,w,h);
+    //ctx.fillRect(x,y,w,h);
   };
+
+  // TODO: experiment with polygons and loops
+  var pathConnect = function(parent,child,ctx) {
+    let x1=parent.x+state.cx,y1=parent.y+state.cy;
+    let x2=child.x+state.cx,y2=child.y+state.cy;
+    let x=(x1+x2)/2,y=(y1+y2)/2;
+
+    let rx=Math.hypot(x2-x1,y2-y1)/2;
+    let ry=Math.min(parent.r,child.r)/2;
+
+    let rot=Math.atan2(y2-y1,x2-x1);
+
+    ctx.moveTo(x,y);
+    ctx.ellipse(x,y,rx,ry,rot,0,Math.PI*2);
+  };
+
+  var pathLoop = function(state,ctx,path) {
+    let x=path.x+state.cx,y=path.y+state.cy;
+
+    ctx.moveTo(x+path.r,y);
+    ctx.arc(x,y,path.r,0,Math.PI*2);
+    if (!path.metadata || !path.metadata.children) return;
+    path.metadata.children.forEach(child=>{
+      p=state.paths[child];
+      if (!p) return;
+      pathLoop(state,ctx,p);
+      pathConnect(path,p,ctx);
+    });
+  };
+
+  var path = function(state,ctx) {
+    //let x=state.cx,y=state.cy;
+
+    ctx.fillStyle=state.pathColor;
+    ctx.beginPath();
+    state.paths.forEach((path)=>pathLoop(state,ctx,path));
+    ctx.fill();
+
+    //terrain image data
+    state.pImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
+  };
+
 
   var fog = function (state, ctx) {
     // clear
@@ -62,7 +105,7 @@ const Display = (function(/*api*/) {
 
     ctx.beginPath();    
     ctx.clip(path1,"evenodd"); // fill clipping area
-    ctx.fillStyle = state.wallColor;
+    ctx.fillStyle = state.canopyColor;
     ctx.rect(0,0,state.canvas.width,state.canvas.height);
     ctx.fill();
     ctx.restore();
@@ -71,50 +114,6 @@ const Display = (function(/*api*/) {
     state.fImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
   };
 
-
-  // TODO: experiment with polygons and loops
-  // TODO: add hidden property to paths (likely canopy step)
-  var pathConnect = function(parent,child,ctx) {
-    let x1=parent.x+state.cx,y1=parent.y+state.cy;
-    let x2=child.x+state.cx,y2=child.y+state.cy;
-    let x=(x1+x2)/2,y=(y1+y2)/2;
-
-    let rx=Math.hypot(x2-x1,y2-y1)/2;
-    let ry=Math.min(parent.r,child.r)/2;
-
-    let rot=Math.atan2(y2-y1,x2-x1);
-
-    ctx.moveTo(x,y);
-    ctx.ellipse(x,y,rx,ry,rot,0,Math.PI*2);
-  };
-
-  var pathLoop = function(state,ctx,path) {
-    let x=path.x+state.cx,y=path.y+state.cy;
-
-    ctx.moveTo(x+path.r,y);
-    ctx.arc(x,y,path.r,0,Math.PI*2);
-    if (!path.metadata || !path.metadata.children) return;
-    path.metadata.children.forEach(child=>{
-      p=state.paths[child];
-      if (!p) return;
-      pathLoop(state,ctx,p);
-      pathConnect(path,p,ctx);
-    });
-  };
-
-  var path = function(state,ctx) {
-    //let x=state.cx,y=state.cy;
-
-    ctx.fillStyle=state.pathColor;
-    ctx.beginPath();
-    state.paths.forEach((path)=>pathLoop(state,ctx,path));
-    ctx.fill();
-
-    //terrain image data
-    state.pImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
-  };
-  
-  // remember the hidden flag on path objects
   var canopySketch=function(state,ctx) {
     let path1 = new Path2D();// clipping area
     path1.rect(0,0,state.canvas.width,state.canvas.height);
@@ -181,7 +180,7 @@ const Display = (function(/*api*/) {
     r=state.player.r,_r=state.player._r;
 
     // draw pointer line
-    let dist = state.player.s>0 ? r+10 : 0;
+    let dist = state.player.s>0 ? r+5 : 0;
     //console.log(dist);
     // calc vector components
     let vector={
@@ -216,16 +215,47 @@ const Display = (function(/*api*/) {
 
   };
 
+  var debugMouse = function(state, ctx) {
+    // black line from player to mousemove (distance)
+    ctx.lineWidth=5;
+    ctx.strokeStyle=COLORS.BLACK;
+    ctx.beginPath();
+    ctx.moveTo(state.player.x,state.player.y);
+    ctx.lineTo(state.mouse._x,state.mouse._y);
+    ctx.stroke();
+    // white line from mousedown to mousemove (vector)
+    ctx.lineWidth=5;
+    ctx.strokeStyle=COLORS.WHITE;
+    ctx.beginPath();
+    ctx.moveTo(state.mouse._x,state.mouse._y);
+    ctx.lineTo(state.mouse.x_,state.mouse.y_);
+    ctx.stroke();
+  };
+
   // draw input (debug)
   var debug = function(state, ctx) {
-    mouse(state,ctx);
-    let x = state.player.x, y = state.player.y;
-    // stagger the state images
-    ctx.putImageData(state.pImg,x-8,y-8);
-    ctx.putImageData(state.fImg,x-5,y-5);
-    ctx.putImageData(state.cImg,x-2,y-2);
+    let message="";
 
-    state.player.isUnderCanopy=true;
+    debugMouse(state,ctx);
+
+    let px = state.player.x, py = state.player.y;
+    // add player position to output text
+    message+=`player: {\n  x:${px},\n  y:${py},\n`;
+    message+=`  radius:${state.player.radius},\n`
+    message+=`  reach:${state.player.reach},\n`;
+    message+=`  score:${state.player.score},\n`;
+    message+=`}`;
+    //console.log(state.player);
+
+    // stagger the state images
+    // ctx.putImageData(state.pImg,x-8,y-8);
+    // ctx.putImageData(state.fImg,x-5,y-5);
+    // ctx.putImageData(state.cImg,x-2,y-2);
+    // TODO: while I do what to use pixel colors
+    // to drive state changes, this is inelegant
+
+    // assume under canopy to hide shadows while debugging
+    //state.player.isUnderCanopy=true;
 
     ctx.lineWidth = 1;
     ctx.fillStyle = COLORS.GRAY;
@@ -235,14 +265,14 @@ const Display = (function(/*api*/) {
       ctx.moveTo(input.x+input.r,input.y);
       ctx.arc(input.x,input.y,input.r,0,2*Math.PI);
     });
-    ctx.moveTo(x+state.player._r,y);
-    ctx.arc(x,y,state.player._r,0,2*Math.PI);
-    ctx.moveTo(x+state.player.r,y);
-    ctx.arc(x,y,state.player.r,0,2*Math.PI);
+    ctx.moveTo(px+state.player._r,py);
+    ctx.arc(px,py,state.player._r,0,2*Math.PI);
+    ctx.moveTo(px+state.player.r,py);
+    ctx.arc(px,py,state.player.r,0,2*Math.PI);
     //ctx.rect(x-5,y-5,10,10);
-    ctx.moveTo(x,y);
+    ctx.moveTo(px,py);
     let dist = state.player.dl*state.player.s;
-    if (state.player.s > 0) ctx.lineTo(x+(dist*Math.cos(state.player.t)),y+(dist*Math.sin(state.player.t)));
+    if (state.player.s > 0) ctx.lineTo(px+(dist*Math.cos(state.player.t)),py+(dist*Math.sin(state.player.t)));
     ctx.stroke();
 
     ctx.beginPath();
@@ -251,6 +281,15 @@ const Display = (function(/*api*/) {
       if (state.keys.includes(input.k)) ctx.arc(input.x,input.y,input.r,0,2*Math.PI);
     });
     ctx.fill();
+
+    // debug window?
+    let lw=ctx.lineWidth=1;
+    let rw=250,rh=500;
+    let rx=-canvas.width/2,ry=-canvas.height/2;
+    ctx.strokeStyle="red";
+    ctx.beginPath();
+    ctx.rect(rx,ry,rw,rh);
+    ctx.stroke();
   };
 
   // draw inventory
@@ -320,6 +359,9 @@ const Display = (function(/*api*/) {
       }
 
     });
+
+    //foliage image data
+    state.fImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
   };
 
   var labels = function(state,ctx) {
@@ -339,24 +381,6 @@ const Display = (function(/*api*/) {
 
   };
 
-  //draw mouse lines
-  var mouse = function(state, ctx) {
-    // black line from player to mousemove
-    ctx.lineWidth=5;
-    ctx.strokeStyle=COLORS.BLACK;
-    ctx.beginPath();
-    ctx.moveTo(state.player.x,state.player.y);
-    ctx.lineTo(state.mouse._x,state.mouse._y);
-    ctx.stroke();
-    // white line from mousedown to mousemove
-    ctx.lineWidth=5;
-    ctx.strokeStyle=COLORS.WHITE;
-    ctx.beginPath();
-    ctx.moveTo(state.mouse._x,state.mouse._y);
-    ctx.lineTo(state.mouse.x,state.mouse.y);
-    ctx.stroke();
-  };
-
   var score = function(state,ctx) {
     ctx.lineWidth=1;
     ctx.strokeStyle=COLORS.GOLD;
@@ -371,35 +395,35 @@ const Display = (function(/*api*/) {
     // vector angle in radians from state (keyboard and/or mouse)
     //let vector = getVector(state);
 
-    let limit = state.player.dl,gate=state.player.dg;
-    let _x=state.mouse._x,_y=state.mouse._y; // mousemove position
-    let x=state.mouse.x,y=state.mouse.y; // mousedown position
+    let dMax = state.mouse.dragMax,dMin=state.mouse.drawMin;
+    let _x=state.mouse._x-state.canvas.width/2,_y=state.mouse._y-state.canvas.height/2; // mousemove position
+    let x_=state.mouse.x_-state.canvas.width/2,y_=state.mouse.y_-state.canvas.height/2; // mousedown position
 
     // if mouseleft is pressed, then draw a ring around the mousedown
     if (state.keys.includes(keybinds.mouseL)) {
       ctx.lineWidth = 5;
       ctx.strokeStyle = COLORS.LIGHTGRAY;
       ctx.beginPath();
-      ctx.arc(x,y,limit,0,2*Math.PI);
+      ctx.arc(x_,y_,dMax,0,2*Math.PI);
       ctx.stroke();
       ctx.lineWidth = 2;
       ctx.strokeStyle = COLORS.LIGHTGRAY;
       ctx.beginPath();
-      ctx.arc(x,y,gate,0,2*Math.PI);
+      ctx.arc(x_,y_,dMin,0,2*Math.PI);
       ctx.stroke();
     }
 
     // // if mousemove (isDragged), then draw filled dot  
     if (state.mouse.isDragged) {
       // drag distance; length of mousedown to mousemove, in pixels
-      let dist = Math.hypot(_x-x,_y-y);
+      let dist = Math.hypot(_x-x_,_y-y_);
       // MIN (drag distance vs capped distance)
-      dist=Math.min(dist, limit);
+      dist=Math.min(dist, dMax);
       //console.log(dist);
       let angle = state.player.t;//Math.atan2(vector.y,vector.x);
       ctx.fillStyle = COLORS.GRAY;
       ctx.beginPath();
-      ctx.arc(x + (Math.cos(angle) * dist),y + (Math.sin(angle) * dist),limit*0.75,0,2*Math.PI);
+      ctx.arc(x_ + (Math.cos(angle) * dist),y_ + (Math.sin(angle) * dist),dMax*0.75,0,2*Math.PI);
       ctx.fill();
     }
   };
@@ -439,22 +463,24 @@ const Display = (function(/*api*/) {
     state.wallColor=getCtxColor(ctx,COLORS.DARKSLATEGRAY);
 
     background(state,ctx); // defines any non-path we forget
-    path(state, ctx);
-    foliage(state,ctx);
-    walls(state,ctx);
+    //path(state, ctx);
+    //foliage(state,ctx);
+    //walls(state,ctx);
     player(state, ctx);
-    canopy(state,ctx);
-    labels(state, ctx);
-    fog(state,ctx);
+    //canopy(state,ctx);
+    //state.cImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
+    //labels(state, ctx);
+    //fog(state,ctx);
 
-    checkTerrain(state,ctx);
+    //checkTerrain(state,ctx);
 
     //inventory(state,ctx);
-    if (state.isDebug) score(state,ctx);
-
     joystick(state,ctx);
 
-    if (state.isDebug) debug(state,ctx);
+    if (state.isDebug) {
+      score(state,ctx);
+      debug(state,ctx);
+    }
 
   };
 

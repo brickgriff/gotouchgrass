@@ -1,27 +1,27 @@
-/* ACTION */
-function pushKey({keys, key}) {
+function pushKey(keys, key) {
   if (!keys.includes(key)) keys.push(key);
 }  
-function dropKey({keys, key}) {
+
+function dropKey(keys, key) {
   if (keys.includes(key)) keys.splice(keys.indexOf(key),1);
-}
+}  
 
 window.addEventListener("keydown", (e) =>{
-  pushKey({keys:state.keys, key:e.code});
+  pushKey(state.keys,e.code);
 });
 
 window.addEventListener("keyup", (e) =>{
-  dropKey({keys:state.keys, key:e.code});
+  dropKey(state.keys,e.code);
 });
 
 window.addEventListener("mousedown", (e) =>{
-  pushKey({keys:state.keys, key:e.button});
+  pushKey(state.keys,e.button);
   if (e.button===keybinds.mouseL) {
-    state.mouse.x=e.offsetX;
-    state.mouse.y=e.offsetY;
-
-    state.mouse._x=state.mouse.x;
-    state.mouse._y=state.mouse.y;
+    state.mouse.x_=state.mouse.x=e.offsetX;
+    state.mouse.y_=state.mouse.y=e.offsetY;
+    
+    state.mouse._x=state.mouse.x_;
+    state.mouse._y=state.mouse.y_;
 
     state.mouse.isClicked=false;
   }
@@ -29,14 +29,14 @@ window.addEventListener("mousedown", (e) =>{
 
 window.addEventListener("mouseup", (e) =>{
   //if (!state.mouse.isDragged && keys.includes(keybinds.mouseL)) state.mouse.isTapped =true;
-  dropKey({keys:state.keys, key:e.button});
+  dropKey(state.keys,e.button);
   state.mouse.isClicked=!state.mouse.isDragged;
   //console.log(state.mouse.isClicked);
   if (e.button===keybinds.mouseL) {
-    state.mouse.x=state.player.x;
-    state.mouse.y=state.player.y;
-    //state.mouse._x=state.mouse.x;
-    //state.mouse._y=state.mouse.y;
+    state.mouse.x_=state.mouse.x=state.player.x;
+    state.mouse.y_=state.mouse.y=state.player.y;
+    //state.mouse._x=state.mouse.x_;
+    //state.mouse._y=state.mouse.y_;
     state.mouse.isDragged = false;
   }
 });
@@ -46,8 +46,8 @@ window.addEventListener("mousemove", (e) =>{
     state.mouse._x=e.offsetX;
     state.mouse._y=e.offsetY;
 
-    let dist = Math.hypot(state.mouse._x-state.mouse.x,state.mouse._y-state.mouse.y);
-    state.mouse.isDragged = (dist>=state.player.dg);
+    let dist = Math.hypot(state.mouse._x-state.mouse.x_,state.mouse._y-state.mouse.y_);
+    state.mouse.isDragged = (dist>=state.mouse.dragMin);
     //console.log(dist,state.mouse.isDragged);
   }
 });
@@ -55,17 +55,16 @@ window.addEventListener("mousemove", (e) =>{
 window.addEventListener("touchstart",(e)=>{
   e.preventDefault()
   for(let i=0; i<e.changedTouches.length; i++) {
-    pushKey({keys:state.keys, key:ongoingTouches.length});
+    pushKey(state.keys,ongoingTouches.length);
     ongoingTouches.push(copyTouch(e.touches[i]));
   }
 
   if (ongoingTouches.length > keybinds.mouseL) return;
 
-  state.mouse.x=e.screenX;
-  state.mouse.y=e.screenY;
-
-  state.mouse._x=state.mouse.x;
-  state.mouse._y=state.mouse.y;
+  state.mouse.x_=state.mouse.x=e.screenX;
+  state.mouse.y_=state.mouse.y=e.screenY;
+  state.mouse._x=state.mouse.x_;
+  state.mouse._y=state.mouse.y_;
 });
 
 var handleTouchFinish = (e)=>{
@@ -74,14 +73,14 @@ var handleTouchFinish = (e)=>{
     let index = ongoingTouchIndexById(e.changedTouches.identifier);
     //let touch=ongoingTouches[index];
     if (index===keybinds.mouseL) {
-      state.mouse.x=state.player.x;
-      state.mouse.y=state.player.y;
-      state.mouse._x=state.mouse.x; 
-      state.mouse._y=state.mouse.y;
+      state.mouse.x_=state.mouse.x=state.player.x;
+      state.mouse.y_=state.mouse.y=state.player.y;
+      //state.mouse._x=state.mouse.x_; 
+      //state.mouse._y=state.mouse.y_;
       state.mouse.isDragged = false;
     }
 
-    dropKey({key:index,keys:state.keys});
+    dropKey(index,state.keys);
     ongoingTouches.splice(index,1);
   }
 };
@@ -98,12 +97,12 @@ window.addEventListener("touchmove",(e)=>{
       state.mouse._x=e.offsetX;
       state.mouse._y=e.offsetY;
 
-      let dist = Math.hypot(state.mouse._x-state.mouse.x,state.mouse._y-state.mouse.y);
-      state.mouse.isDragged = (dist>=state.player.dg);
+      let dist = Math.hypot(state.mouse._x-state.mouse.x_,state.mouse._y-state.mouse.y_);
+      state.mouse.isDragged = (dist>=state.mouse.dragMin);
       //console.log(dist,state.mouse.isDragged);
     }
 
-    dropKey({key:index,keys:state.keys});
+    dropKey(index,state.keys);
     ongoingTouches.splice(index,1);
   }
 

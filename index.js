@@ -1,4 +1,9 @@
- // SCREEN - resolution and color space
+// canvas is created/configured programmatically now
+//<!--canvas-->
+//<canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;"></canvas>
+
+
+  // SCREEN - resolution and color space
   // WINDOW - dimensions and the browser DOM
   // CANVAS - size and position
 
@@ -9,6 +14,18 @@
   // WORLD - terrain and weather
   // PLAYER - stats and tools
   // ENTITIES - plants, objects, and NPCs
+
+
+    /*
+    var grass = (cells) => { 
+      cells.forEach((cell,i) => {
+        let x = cellWidth*(Math.floor(i%pointWidth)+Math.random());
+        let y = cellHeight*(Math.floor(i/pointHeight)+Math.random());
+        cell.push({x:x,y:y,a:0,t:CLADES.GRASS});
+      });
+    };
+    */
+
 
 
 /*
