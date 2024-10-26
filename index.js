@@ -26,7 +26,96 @@
     };
     */
 
+/*
 
+const CLADES = {
+  GRASS:{
+    n:"grass",v:1, r:1, g:5,
+    draw:(plant, ctx, player)=>{
+        ctx.fillStyle = COLORS.LAWNGREEN;
+        ctx.fillStyle=plant.t.c;
+        let dist =Math.hypot(plant.x-player.x,plant.y-player.y);
+        if (dist < player._r) {
+          //ctx.fillStyle = COLORS.RED;
+          // TODO: increase points
+        }
+        ctx.beginPath();
+        ctx.arc(plant.x,plant.y,plant.t.r,0,2*Math.PI);
+        ctx.stroke();
+        ctx.fill();
+        // TODO: copy a static image (created during the create phase)
+    }
+  }, 
+  CLOVER:{
+    n:"clover",v:3, r:3, g:1,
+    draw:(state, ctx, index, id)=>{
+      let x=state.zones[index].x,y=state.zones[index].y,r=state.zones[index].v;
+      let angle = 2*Math.PI/3; // 120deg
+      let k = 3; // 360/120 = 2PI / (2PI/3) = 3
+
+      let offset = angle * ((x*y*id) % 3)/3;//Math.random();
+      let offsetX = (x+id) / (x*y);
+      let offsetY = (y+id) / (x*y);
+
+      ctx.beginPath();
+      ctx.fillStyle = COLORS.SPRINGGREEN;
+      ctx.strokeStyle = COLORS.GREEN;
+
+      for (let i = 0; i < k; i++) {
+        let _angle=(angle * i)+offset;
+        let _x = x - state.dx + offsetX + Math.cos(_angle) * r + (10 * id);
+        let _y = y - state.dy + offsetY + Math.sin(_angle) * r + (10 * id);
+
+        ctx.moveTo(_x+r,_y);
+        ctx.arc(_x,_y,r,0,2*Math.PI);
+      }
+
+      ctx.fill();
+      ctx.stroke();
+
+      // a trio of dark green circles
+      //let r = 10;
+      //ctx.moveTo(x+r,y);
+      //ctx.arc(x,y,r,0,2*Math.PI);
+      // choose random angle
+      //let angle = Math.random() * 2 * Math.PI;
+    }
+  }
+};
+
+*/
+
+    // process input flags in state
+    // move the player (change dx & dy)
+    // each element type should also know how to move itself
+    // currently that's just the player
+    // technically the player just sets the global offset for the world
+    // the player stays at the center point
+    // control zones are light, water, energy, and health for plants in the area
+    // control zones also need to move themselves based on game state
+    // game state is modified by the control layer which are event listeners
+    // these listeners are currently in player.js
+    // player.js is mostly concerned with state.player
+
+    // if the player is occupying or clicking a green pixel, score a point
+    // rules for spawning new plants
+
+    // check for camera constraints to move player relative the viewport
+    // relative position of the center of the world
+    //state.player.x=Math.round(state.canvas.width/2);
+    //state.player.y=Math.round(state.canvas.height/2);
+    // state.cx=state.player.x-state.dx;
+    // state.cy=state.player.y-state.dy;
+    
+    //console.log(angle*180/Math.PI,dist,vector.x,vector.y);
+    //console.log(state.player.isLost,state.player.isOnBareGround);
+
+/*    state.cells.forEach(cell => {
+      cell.forEach(plant =>{
+        plant.a++; // increase age
+        // age determines plant size (height and area), needs (costs), and yields (rewards)
+      });
+    });*/
 
 /*
 

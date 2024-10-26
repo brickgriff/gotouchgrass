@@ -1,112 +1,98 @@
-function pushKey(keys, key) {
-  if (!keys.includes(key)) keys.push(key);
-}  
+const inputs = {
+  buttons:[],
+  mouse:{
+    x_:0,
+    y_:0,
+    _x:0,
+    _y:0,
+    dragMin:10,
+    dragMax:50,
+    isDragged:false,isClicked:false,
+  },
+  viewport:{
+    isResized:false,
+  },
+};
 
-function dropKey(keys, key) {
-  if (keys.includes(key)) keys.splice(keys.indexOf(key),1);
+function pushInput(input) {
+  const list = inputs.buttons;
+  if (!list.includes(input)) list.push(input);
 }  
+function dropInput(input) {
+  const list = inputs.buttons;
+  if (list.includes(input)) list.splice(list.indexOf(input),1);
+}
+function findInput(input) {
+  const list = inputs.buttons;
+  return (list.includes(input));
+}
+function getMouse() {
+  return inputs.mouse;
+}
+
+// CHECK BROWSER FEATURES //
+// TODO: practice with offscreen canvas
+//const ctxOffscreen = canvas.getContext("2d", { willReadFrequently: true });
+// TODO: ensure the browser supports innerWidth or clientWidth
+if (typeof window === "undefined") {
+  console.log("no window");
+  try {
+    throw new Error("no window");
+  } catch (e) {
+    console.log(e.message);
+  }
+}
+
+// HANDLE WINDOW EVENTS //
+// suppress system right click menu
+window.addEventListener("contextmenu", (e)=>{e.preventDefault()});
+// trigger resize handler
+window.addEventListener("resize", (e)=>{inputs.viewport.isResized=true});
+// trigger quit signal (Esc)
+// TODO: use Esc to open the appropriate menu for the current game state
+// get game state from... where?
+//window.addEventListener("keydown", (e)=>{inputs.isQuit=(e.code==="Escape")});
 
 window.addEventListener("keydown", (e) =>{
-  pushKey(state.keys,e.code);
+  pushInput(e.code);
 });
 
 window.addEventListener("keyup", (e) =>{
-  dropKey(state.keys,e.code);
+  dropInput(e.code);
 });
 
 window.addEventListener("mousedown", (e) =>{
-  pushKey(state.keys,e.button);
-  if (e.button===keybinds.mouseL) {
-    state.mouse.x_=state.mouse.x=e.offsetX;
-    state.mouse.y_=state.mouse.y=e.offsetY;
-    
-    state.mouse._x=state.mouse.x_;
-    state.mouse._y=state.mouse.y_;
+  pushInput(e.button);
 
-    state.mouse.isClicked=false;
+  if (e.button===keybinds.mouseL) {
+    inputs.mouse.x_=inputs.mouse._x=e.offsetX-document.body.clientWidth/2;
+    inputs.mouse.y_=inputs.mouse._y=e.offsetY-document.body.clientHeight/2;
+    
+    inputs.mouse.isClicked=false;
+    inputs.mouse.isDragged=false;
   }
 });
 
 window.addEventListener("mouseup", (e) =>{
-  //if (!state.mouse.isDragged && keys.includes(keybinds.mouseL)) state.mouse.isTapped =true;
-  dropKey(state.keys,e.button);
-  state.mouse.isClicked=!state.mouse.isDragged;
-  //console.log(state.mouse.isClicked);
-  if (e.button===keybinds.mouseL) {
-    state.mouse.x_=state.mouse.x=state.player.x;
-    state.mouse.y_=state.mouse.y=state.player.y;
-    //state.mouse._x=state.mouse.x_;
-    //state.mouse._y=state.mouse.y_;
-    state.mouse.isDragged = false;
+  inputs.mouse.isClicked=!inputs.mouse.isDragged;
+  if (findInput(keybinds.mouseL)) {
+    //inputs.mouse.x_=0;
+    //inputs.mouse.y_=0;
+    inputs.mouse.isDragged = false;
   }
+  dropInput(e.button);
 });
 
 window.addEventListener("mousemove", (e) =>{
-  if (state.keys.includes(keybinds.mouseL)) {
-    state.mouse._x=e.offsetX;
-    state.mouse._y=e.offsetY;
+  if (findInput(keybinds.mouseL)) {
+    inputs.mouse._x=e.offsetX-document.body.clientWidth/2;
+    inputs.mouse._y=e.offsetY-document.body.clientHeight/2;
 
-    let dist = Math.hypot(state.mouse._x-state.mouse.x_,state.mouse._y-state.mouse.y_);
-    state.mouse.isDragged = (dist>=state.mouse.dragMin);
-    //console.log(dist,state.mouse.isDragged);
+    const dist = Math.hypot(inputs.mouse._x-inputs.mouse.x_,inputs.mouse._y-inputs.mouse.y_);
+    inputs.mouse.isDragged = (dist>=inputs.mouse.dragMin);
   }
 });
 
-window.addEventListener("touchstart",(e)=>{
-  e.preventDefault()
-  for(let i=0; i<e.changedTouches.length; i++) {
-    pushKey(state.keys,ongoingTouches.length);
-    ongoingTouches.push(copyTouch(e.touches[i]));
-  }
-
-  if (ongoingTouches.length > keybinds.mouseL) return;
-
-  state.mouse.x_=state.mouse.x=e.screenX;
-  state.mouse.y_=state.mouse.y=e.screenY;
-  state.mouse._x=state.mouse.x_;
-  state.mouse._y=state.mouse.y_;
-});
-
-var handleTouchFinish = (e)=>{
-  e.preventDefault()
-  for(let i=0; i<e.changedTouches.length; i++) {
-    let index = ongoingTouchIndexById(e.changedTouches.identifier);
-    //let touch=ongoingTouches[index];
-    if (index===keybinds.mouseL) {
-      state.mouse.x_=state.mouse.x=state.player.x;
-      state.mouse.y_=state.mouse.y=state.player.y;
-      //state.mouse._x=state.mouse.x_; 
-      //state.mouse._y=state.mouse.y_;
-      state.mouse.isDragged = false;
-    }
-
-    dropKey(index,state.keys);
-    ongoingTouches.splice(index,1);
-  }
-};
-
-window.addEventListener("touchend",handleTouchFinish);
-window.addEventListener("touchcancel",handleTouchFinish);
-
-window.addEventListener("touchmove",(e)=>{
-  e.preventDefault()
-  for(let i=0; i<e.changedTouches.length; i++) {
-    let index = ongoingTouchIndexById(e.changedTouches.identifier);
-    //let touch=ongoingTouches[index];
-    if (index===keybinds.mouseL) {
-      state.mouse._x=e.offsetX;
-      state.mouse._y=e.offsetY;
-
-      let dist = Math.hypot(state.mouse._x-state.mouse.x_,state.mouse._y-state.mouse.y_);
-      state.mouse.isDragged = (dist>=state.mouse.dragMin);
-      //console.log(dist,state.mouse.isDragged);
-    }
-
-    dropKey(index,state.keys);
-    ongoingTouches.splice(index,1);
-  }
-
-});
 
 const ongoingTouches = [];
 
@@ -125,29 +111,81 @@ function ongoingTouchIndexById(idToFind) {
   return -1; // not found
 }
 
-/* --- */
 
-/* PLAYER */
-// control xyz
-let isUsingWASD = true;
-let  keybinds = {
-    up: isUsingWASD ? "KeyW" : "KeyE",
-    down: isUsingWASD ? "KeyS" : "KeyD",
-    left: isUsingWASD ? "KeyA" : "KeyS",
-    right: isUsingWASD ? "KeyD" : "KeyF",
+window.addEventListener("touchstart",(e)=>{
+  e.preventDefault()
+  for(let i=0; i<e.changedTouches.length; i++) {
+    pushKey(state.keys,ongoingTouches.length);
+    ongoingTouches.push(copyTouch(e.touches[i]));
+  }
 
-    loosen: isUsingWASD ? "KeyQ" : "KeyW",
-    tighten: isUsingWASD ? "KeyE" : "KeyR",
-    tertiary: "ShiftLeft",
-    secondary: "KeyF",
-    primary: "Space",
+  if (ongoingTouches.length > keybinds.mouseL) return;
 
-    debug: "Backquote",
+  inputs.mouse.x_=inputs.mouse.x=e.screenX;
+  inputs.mouse.y_=inputs.mouse.y=e.screenY;
+  inputs.mouse._x=inputs.mouse.x_;
+  inputs.mouse._y=inputs.mouse.y_;
+});
 
-    mouseL: 0,
-    mouseM: 1,
-    mouseR: 2,
+var handleTouchFinish = (e)=>{
+  e.preventDefault()
+  for(let i=0; i<e.changedTouches.length; i++) {
+    let index = ongoingTouchIndexById(e.changedTouches.identifier);
+    //let touch=ongoingTouches[index];
+    if (index===keybinds.mouseL) {
+      inputs.mouse.x_=inputs.mouse.x=state.player.x;
+      inputs.mouse.y_=inputs.mouse.y=state.player.y;
+      //inputs.mouse._x=inputs.mouse.x_; 
+      //inputs.mouse._y=inputs.mouse.y_;
+      inputs.mouse.isDragged = false;
+    }
 
+    dropKey(index,state.keys);
+    ongoingTouches.splice(index,1);
+  }
 };
 
-/* --- */
+window.addEventListener("touchend",handleTouchFinish);
+window.addEventListener("touchcancel",handleTouchFinish);
+
+window.addEventListener("touchmove",(e)=>{
+  e.preventDefault()
+  for(let i=0; i<e.changedTouches.length; i++) {
+    let index = ongoingTouchIndexById(e.changedTouches.identifier);
+    //let touch=ongoingTouches[index];
+    if (index===keybinds.mouseL) {
+      inputs.mouse._x=e.offsetX;
+      inputs.mouse._y=e.offsetY;
+
+      let dist = Math.hypot(inputs.mouse._x-inputs.mouse.x_,inputs.mouse._y-inputs.mouse.y_);
+      inputs.mouse.isDragged = (dist>=inputs.mouse.dragMin);
+      //console.log(dist,inputs.mouse.isDragged);
+    }
+
+    dropKey(index,state.keys);
+    ongoingTouches.splice(index,1);
+  }
+
+});
+
+let isUsingWASD = true;
+const  keybinds = {
+  up: isUsingWASD ? "KeyW" : "KeyE",
+  down: isUsingWASD ? "KeyS" : "KeyD",
+  left: isUsingWASD ? "KeyA" : "KeyS",
+  right: isUsingWASD ? "KeyD" : "KeyF",
+
+  loosen: isUsingWASD ? "KeyQ" : "KeyW",
+  tighten: isUsingWASD ? "KeyE" : "KeyR",
+  tertiary: "ShiftLeft",
+  secondary: "KeyF",
+  primary: "Space",
+
+  debug: "Backquote",
+  menu: "Escape",
+
+  mouseL: 0,
+  mouseM: 1,
+  mouseR: 2,
+
+};

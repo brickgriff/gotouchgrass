@@ -10,14 +10,14 @@ const World = (function (/*api*/) {
   // cell size (1mX1m; ~100pxX100px)
   let cellWidth=100,cellHeight=100;
 
-
-  api.create = function (canvas) {
+  api.create = function (canvas,ctx) {
 
     var paths = []; // boosts walking speed
     var walls = []; // prevents movement
     var foliage = []; // generates resources
 
-    const x=canvas.width/2,y=canvas.height/2;
+    const start=document.timeline.currentTime;
+    //const cx=canvas.width/2,cy=canvas.height/2;
 
     var player = {
       // player is normally at screen center
@@ -30,36 +30,31 @@ const World = (function (/*api*/) {
       // their reach starts at another 10cm
       radius: 25,
       reach: 35,
-      angle:0,
       speed:0,
       speedFactor: 25,
-      score: 0,
+      theta:0,
+      points:0, // "score"? "value"? "experience"?
 
       // old
-      r: 25, // radius
-      _r: 35, // range
-      dg: 10, // drag gate
-      dl: 50, // drag limit
-      sf: 25, // speed factor
-      v:0, // value
-      s:0,// speed
-      t:0, // theta
+      //r: 25, // radius
+      //_r: 35, // range
+      //dg: 10, // drag gate
+      //dl: 50, // drag limit
+      //sf: 25, // speed factor
+      //v:0, // value
+      //s:0,// speed
+      //t:0, // theta
 
       isLost:false,
       isOverGrass:true,
       isUnderCanopy:false,
       isInsideWall:false,
       isTouchingGrass:false,
-      isTouchedGrass:false, // old
   
       touches : {},
     };
 
     var mouse = {
-      // old
-      x: player.x,
-      y: player.y,
-
       // mousedown
       x_:player.x,
       y_:player.y,
@@ -69,26 +64,30 @@ const World = (function (/*api*/) {
 
       frames:0,
       maxFrames:6,
-      dragMin: 10,
-      dragMax: 50,
+      //dragMin: 10,
+      //dragMax: 50,
       
-      isTapped:false,
       isHeld:false,
       isDragged:false,
       isClicked:false,
       // TODO: combine clicked and tapped?
     };
 
+    var viewport = {isResized:false};
+
     var state = {
       canvas: canvas,
+      ctx: ctx,
       player: player,
       keys: [],
       mouse: mouse,
+      viewport: viewport,
       paths: paths,
       walls: walls,
       foliage: foliage,
 
       // old
+      // for centering translations on resize
       cx: 0,
       cy: 0,
 
@@ -96,15 +95,14 @@ const World = (function (/*api*/) {
       dx: 0,
       dy: 0,
 
-      r: 25,
-
-      f: 0,
       frame: 0,
-      maxFrame: 120,
+      start:start,
+
       fps: 30, // 60
 
       pImg:null,fImg:null,cImg:null,
       isDebug:false,
+      isQuit:false,
 
       pathColor:null,
       canopyColor:null,
@@ -113,6 +111,7 @@ const World = (function (/*api*/) {
       wallColor:null,
     };
 
+    resize(state);
 
     var createEntity = (x,y,r,metadata) => {
       return {x:x,y:y,r:r,metadata:metadata};
@@ -163,55 +162,57 @@ const World = (function (/*api*/) {
     return state;
   };
 
+  var getVector = () => {
+    const mouse = getMouse();//inputs.mouse;
+    const dMax = mouse.dragMax;
 
-  var getVector = (state) => {
-    let dMax = state.mouse.dragMax;
-    if (state.keys.includes(keybinds.mouseL)) {
-      return {x:state.mouse._x-state.mouse.x_,y:state.mouse._y-state.mouse.y_};
+    if (findInput(keybinds.mouseL)) {
+      return {x:mouse._x-mouse.x_,y:mouse._y-mouse.y_};
     } else {
-      let vector = {
-        x:(state.keys.includes(keybinds.right) - state.keys.includes(keybinds.left))*dMax,
-        y:(state.keys.includes(keybinds.down) - state.keys.includes(keybinds.up))*dMax
+      const vector = {
+        x:(findInput(keybinds.right) - findInput(keybinds.left))*dMax,
+        y:(findInput(keybinds.down) - findInput(keybinds.up))*dMax
       };
-      let angle = Math.atan2(vector.y,vector.x);
-      let dist = Math.min(Math.hypot(vector.x,vector.y),dMax);
-      vector.x=dist*Math.cos(angle);
-      vector.y=dist*Math.sin(angle);
       return vector;
     }
   };
 
+  var resize = (state) => {
+    state.canvas.width=document.body.clientWidth;
+    state.canvas.height=document.body.clientHeight;
+    state.cx=state.canvas.width/2;
+    state.cy=state.canvas.height/2;
+    state.ctx.translate(state.cx,state.cy);
+  }
 
   // update the state
   api.update = function (state, dt) {
-    //console.log(`update`);
 
-    // toggle debug
-    if (state.keys.includes(keybinds.debug)) {
+    if (inputs.viewport.isResized) {
+      resize(state);
+      inputs.viewport.isResized=false;
+    }
+
+    if (findInput(keybinds.debug)) {
       state.isDebug = (state.isDebug^=true)!==0;
-      // FIXME: prevent rapid toggling!
-      //state.player.isUnderCanopy=false;
+    }
+
+    if (findInput(keybinds.menu)) {
+      state.isQuit = (state.isQuit^=true)!==0;
+      // TODO: set state to menu then draw the menu
+      // TODO: let the menu state changes set state to quit
     }
 
     // primary keypress is the same as clicking at player position
-    //console.log(state.keys.includes(keybinds.primary));
-    if (state.keys.includes(keybinds.primary)) {
-      state.mouse.isClicked=true;
-      state.mouse._x = state.player.x;
-      state.mouse._y = state.player.y;
+    const mouse = getMouse();
+    if (findInput(keybinds.primary)) {
+      mouse.isClicked=true;
+      mouse.x_=mouse._x=state.player.x;
+      mouse.y_=mouse._y=state.player.y;
     }
 
-    // use mouse or keyboard
-    let vector = getVector(state);
-    //console.log(vector);
-    // distance from vector
-    let dist=Math.min(Math.hypot(vector.x,vector.y),state.player.dl);    
-    if (dist<state.mouse.dragMin) dist = 0;
-    //console.log("distUpdate", dist);
-
-    let score = (dist+1)*dt;
+    const score = Math.PI * Math.pow(state.player.radius,2) * dt;
     state.player.isTouchingGrass=false;
-    //state.player.grassValue=0;
     if (state.player.isOverGrass) {
       state.player.isLost=false;
       state.player.score+=score;
@@ -222,47 +223,42 @@ const World = (function (/*api*/) {
     // revive!
     if (state.player.score < 0) {
       state.dx=state.dy=0;
+      state.player.x=state.player.y=0;
       state.player.isUnderCanopy=false;
       state.player.isLost=false;
       state.player.isInsideWall=false;
       state.player.isOverGrass=true;
-      state.player.isTouchedGrass=false;
+      state.player.isTouchingGrass=false;
     }
 
-    state.player.score=state.player.v=Math.max(state.player.score,0);
+    state.player.score=state.player.score*(state.player.score>=0);
 
-    if (state.player.isLost) dist/=2;
-    state.player.speed=state.player.s=dist=dist/state.player.sf;//*state.player._s); // save player speed as well as translation vector
+    // use mouse or keyboard
+    const vector = getVector();
+    const hypot = Math.hypot(vector.x,vector.y);
+    const dMin = mouse.dragMin;
+
+    // vector length
+    const dist=Math.min(hypot * (hypot >= dMin),inputs.mouse.dragMax);
+
+    state.player.speed=dist/state.player.speedFactor;
+    if (state.player.isLost) state.player.speed/=2;
     // angle from deltaY and deltaX
-    //let angle;
-    state.player.angle=state.player.t=angle=Math.atan2(vector.y,vector.x);
-    if (state.player.isInsideWall) dist=5,angle+=Math.PI;
-
-    //state.vector={x:,y:);
-    //console.log(state.player.v);
+    state.player.theta=Math.atan2(vector.y,vector.x);
+    // TODO: turn the player away from the wall, not just away from their intended vector
+    if (state.player.isInsideWall) state.player.theta=(state.player.theta+Math.PI)%(2*Math.PI);
 
     // cummulative vector changes
-    state.dx+=Math.round(dist*Math.cos(angle));
-    state.dy+=Math.round(dist*Math.sin(angle));
-    // relative position of the center of the world
-    //state.player.x=Math.round(state.canvas.width/2);
-    //state.player.y=Math.round(state.canvas.height/2);
-    state.cx=state.player.x-state.dx;
-    state.cy=state.player.y-state.dy;
+    const speed = state.player.speed;
+    const theta = state.player.theta;
+    state.dx+=speed*Math.cos(theta);
+    state.dy+=speed*Math.sin(theta);
 
-
-    //console.log(angle*180/Math.PI,dist,vector.x,vector.y);
-    //console.log(state.player.isLost,state.player.isOnBareGround);
-
-/*    state.cells.forEach(cell => {
-      cell.forEach(plant =>{
-        plant.a++; // increase age
-        // age determines plant size (height and area), needs (costs), and yields (rewards)
-      });
-    });*/
+    // prepare for next frame
+    state.frame++;
+    state.start=dt;
   };
 
   // return the public api
   return api;
-}
-());
+}());

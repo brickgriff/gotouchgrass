@@ -12,17 +12,17 @@ const Display = (function(/*api*/) {
   
   var background = function (state, ctx) {
     // center of screen is (0,0)
-    ctx.fillStyle = COLORS.DEFAULT;
-    let x=-state.canvas.width/2, y=-state.canvas.height/2;
+    ctx.fillStyle = COLORS.SOIL;
+    let x=-state.cx, y=-state.cy;
     let w=state.canvas.width, h=state.canvas.height;
-    ctx.clearRect(x,y,w,h);
-    //ctx.fillRect(x,y,w,h);
+    //ctx.clearRect(x,y,w,h);
+    ctx.fillRect(x,y,w,h);
   };
 
   // TODO: experiment with polygons and loops
-  var pathConnect = function(parent,child,ctx) {
-    let x1=parent.x+state.cx,y1=parent.y+state.cy;
-    let x2=child.x+state.cx,y2=child.y+state.cy;
+  var pathConnect = function(state,parent,child,ctx) {
+    let x1=parent.x-state.dx,y1=parent.y-state.dy;
+    let x2=child.x-state.dx,y2=child.y-state.dy;
     let x=(x1+x2)/2,y=(y1+y2)/2;
 
     let rx=Math.hypot(x2-x1,y2-y1)/2;
@@ -35,7 +35,7 @@ const Display = (function(/*api*/) {
   };
 
   var pathLoop = function(state,ctx,path) {
-    let x=path.x+state.cx,y=path.y+state.cy;
+    let x=path.x-state.dx,y=path.y-state.dy;
 
     ctx.moveTo(x+path.r,y);
     ctx.arc(x,y,path.r,0,Math.PI*2);
@@ -44,13 +44,11 @@ const Display = (function(/*api*/) {
       p=state.paths[child];
       if (!p) return;
       pathLoop(state,ctx,p);
-      pathConnect(path,p,ctx);
+      pathConnect(state,path,p,ctx);
     });
   };
 
   var path = function(state,ctx) {
-    //let x=state.cx,y=state.cy;
-
     ctx.fillStyle=state.pathColor;
     ctx.beginPath();
     state.paths.forEach((path)=>pathLoop(state,ctx,path));
@@ -62,11 +60,9 @@ const Display = (function(/*api*/) {
 
 
   var fog = function (state, ctx) {
-    // clear
-    //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
     // how low on points are you?
     if (state.isDebug) return;
-    let ratio = state.player.v > state.player._r-state.player.r ? 1 : state.player.v/(state.player._r-state.player.r);
+    let ratio = state.player.score > state.player.reach-state.player.radius ? 1 : state.player.score/(state.player.reach-state.player.radius);
     ctx.save();
     ctx.globalAlpha=1-ratio/2;
 
@@ -74,31 +70,29 @@ const Display = (function(/*api*/) {
     let x=state.player.x,y=state.player.y;
 
     let path1 = new Path2D();// clipping area
-    path1.rect(0,0,state.canvas.width,state.canvas.height);
+    path1.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
     
-    path1.moveTo(x+state.player.r+state.player.v,y);
-    path1.arc(x,y,state.player.r+state.player.v,0,2*Math.PI);
+    path1.moveTo(x+state.player.radius+state.player.score,y);
+    path1.arc(x,y,state.player.radius+state.player.score,0,2*Math.PI);
     
     ctx.clip(path1,"evenodd"); // fill clipping area
 
     ctx.fillStyle = state.playerColor;
-    ctx.rect(0,0,state.canvas.width,state.canvas.height);
+    ctx.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
     ctx.fill();
     ctx.restore();
   };
 
   var walls = function (state, ctx) {
-    // clear
-    //ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
     ctx.save();
 
     let path1 = new Path2D();// clipping area
-    path1.rect(0,0,state.canvas.width,state.canvas.height);
+    path1.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
 
     //console.log(state.walls);
     state.walls.forEach(w => {
       // punch an even-odd hole in the fog the size of the player wallet
-      let x=w.x+state.cx,y=w.y+state.cy;
+      let x=w.x-state.dx,y=w.y-state.dy;
       path1.moveTo(x+w.r+x,y);
       path1.arc(x,y,w.r,0,2*Math.PI);
     });
@@ -106,7 +100,7 @@ const Display = (function(/*api*/) {
     ctx.beginPath();    
     ctx.clip(path1,"evenodd"); // fill clipping area
     ctx.fillStyle = state.canopyColor;
-    ctx.rect(0,0,state.canvas.width,state.canvas.height);
+    ctx.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
     ctx.fill();
     ctx.restore();
 
@@ -116,10 +110,10 @@ const Display = (function(/*api*/) {
 
   var canopySketch=function(state,ctx) {
     let path1 = new Path2D();// clipping area
-    path1.rect(0,0,state.canvas.width,state.canvas.height);
+    path1.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
     //console.log(state.paths);
     state.paths.forEach(p => {
-      let x=p.x+state.cx,y=p.y+state.cy;
+      let x=p.x-state.dx,y=p.y-state.dy;
       if (p.metadata && p.metadata.hidden) return;
       path1.moveTo(x+p.r,y);
       path1.arc(x,y,p.r,0,2*Math.PI);
@@ -127,7 +121,7 @@ const Display = (function(/*api*/) {
 
     ctx.clip(path1,"evenodd"); // fill clipping area
 
-    ctx.rect(0,0,state.canvas.width,state.canvas.height);
+    ctx.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
   };
 
   var canopy = function(state,ctx) {
@@ -151,48 +145,34 @@ const Display = (function(/*api*/) {
     ctx.beginPath();
     canopySketch(state,ctx);
     //if (state.player.isUnderCanopy) {
-    ctx.moveTo(x+Math.floor(state.player.r+state.player.v),y);
-    ctx.arc(x,y,Math.floor(state.player.r+state.player.v),0,2*Math.PI,true);
+    ctx.moveTo(x+Math.floor(state.player.r+state.player.score),y);
+    ctx.arc(x,y,Math.floor(state.player.r+state.player.score),0,2*Math.PI,true);
     //}
     ctx.fill();
     ctx.restore(); // defaults
   };
-
-  /*
-  var ball = function (state, ctx) {
-    ctx.strokeStyle = '#ffffff';
-    ctx.fillStyle = '#ff0000';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(state.x-state.dx, state.y-state.dy, state.r,0,Math.PI * 2);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fill();
-  };
-  */
 
   var player = function (state, ctx) {
     ctx.fillStyle = COLORS.LIGHTGRAY;
     ctx.strokeStyle = COLORS.LIGHTGRAY;
     ctx.lineWidth = 5;
 
-    let x=state.player.x,y=state.player.y,_x=x,_y=y,
-    r=state.player.r,_r=state.player._r;
+    const x=Math.round(state.player.x),y=Math.round(state.player.y),
+    r=state.player.radius,_r=state.player.reach,
+    s=state.player.speed,t=state.player.theta;
 
     // draw pointer line
-    let dist = state.player.s>0 ? r+5 : 0;
-    //console.log(dist);
-    // calc vector components
-    let vector={
-      x:Math.round(r*Math.cos(state.player.t)),
-      y:Math.round(r*Math.sin(state.player.t))
+    const dist = s>0 ? r+5 : 0;
+    
+    const vector={
+      x:Math.round(r*Math.cos(t)),
+      y:Math.round(r*Math.sin(t))
     };
-    let x1=x+vector.x,y1=y+vector.y;
-    vector={
-      x:Math.round(dist*Math.cos(state.player.t)),
-      y:Math.round(dist*Math.sin(state.player.t))
-    };
-    let x2=x+vector.x,y2=y+vector.y;
+    const x1=x+vector.x,y1=y+vector.y;
+
+    vector.x=Math.round(dist*Math.cos(t));
+    vector.y=Math.round(dist*Math.sin(t));
+    const x2=x+vector.x,y2=y+vector.y;
 
     ctx.beginPath();
     ctx.moveTo(x1,y1);
@@ -205,7 +185,7 @@ const Display = (function(/*api*/) {
     ctx.arc(x,y,r,0,2*Math.PI);
     ctx.fill();
     
-    // draw range circle
+    // draw reach circle
     ctx.setLineDash([10, 10]);
     ctx.beginPath();
     ctx.arc(x, y,_r,0,2*Math.PI);
@@ -221,14 +201,14 @@ const Display = (function(/*api*/) {
     ctx.strokeStyle=COLORS.BLACK;
     ctx.beginPath();
     ctx.moveTo(state.player.x,state.player.y);
-    ctx.lineTo(state.mouse._x,state.mouse._y);
+    ctx.lineTo(inputs.mouse._x,inputs.mouse._y);
     ctx.stroke();
     // white line from mousedown to mousemove (vector)
     ctx.lineWidth=5;
     ctx.strokeStyle=COLORS.WHITE;
     ctx.beginPath();
-    ctx.moveTo(state.mouse._x,state.mouse._y);
-    ctx.lineTo(state.mouse.x_,state.mouse.y_);
+    ctx.moveTo(inputs.mouse._x,inputs.mouse._y);
+    ctx.lineTo(inputs.mouse.x_,inputs.mouse.y_);
     ctx.stroke();
   };
 
@@ -255,7 +235,7 @@ const Display = (function(/*api*/) {
     // to drive state changes, this is inelegant
 
     // assume under canopy to hide shadows while debugging
-    //state.player.isUnderCanopy=true;
+    state.player.isUnderCanopy=true;
 
     ctx.lineWidth = 1;
     ctx.fillStyle = COLORS.GRAY;
@@ -265,27 +245,27 @@ const Display = (function(/*api*/) {
       ctx.moveTo(input.x+input.r,input.y);
       ctx.arc(input.x,input.y,input.r,0,2*Math.PI);
     });
-    ctx.moveTo(px+state.player._r,py);
-    ctx.arc(px,py,state.player._r,0,2*Math.PI);
-    ctx.moveTo(px+state.player.r,py);
-    ctx.arc(px,py,state.player.r,0,2*Math.PI);
+    ctx.moveTo(px+state.player.reach,py);
+    ctx.arc(px,py,state.player.reach,0,2*Math.PI);
+    ctx.moveTo(px+state.player.radius,py);
+    ctx.arc(px,py,state.player.radius,0,2*Math.PI);
     //ctx.rect(x-5,y-5,10,10);
     ctx.moveTo(px,py);
-    let dist = state.player.dl*state.player.s;
-    if (state.player.s > 0) ctx.lineTo(px+(dist*Math.cos(state.player.t)),py+(dist*Math.sin(state.player.t)));
+    let dist = inputs.mouse.dragMax*state.player.speed;
+    if (state.player.speed > 0) ctx.lineTo(px+(dist*Math.cos(state.player.theta)),py+(dist*Math.sin(state.player.theta)));
     ctx.stroke();
 
     ctx.beginPath();
     inputMap.forEach((input) => {
       ctx.moveTo(input.x+input.r,input.y);
-      if (state.keys.includes(input.k)) ctx.arc(input.x,input.y,input.r,0,2*Math.PI);
+      if (findInput(input.k)) ctx.arc(input.x,input.y,input.r,0,2*Math.PI);
     });
     ctx.fill();
 
     // debug window?
     let lw=ctx.lineWidth=1;
     let rw=250,rh=500;
-    let rx=-canvas.width/2,ry=-canvas.height/2;
+    let rx=-state.cx,ry=-state.cy;
     ctx.strokeStyle="red";
     ctx.beginPath();
     ctx.rect(rx,ry,rw,rh);
@@ -330,7 +310,7 @@ const Display = (function(/*api*/) {
     ctx.strokeStyle=COLORS.GREEN;
     ctx.lineWidth=2;
     state.foliage.forEach(f => {
-      let x=f.x+state.cx,y=f.y+state.cy;
+      let x=f.x-state.dx,y=f.y-state.dy;
 
       ctx.fillStyle=f.metadata.color;
       ctx.beginPath();
@@ -340,15 +320,15 @@ const Display = (function(/*api*/) {
       ctx.stroke();
     
       // TODO: bring this back with touch support works
-      if(state.player.isOverGrass && state.mouse.isClicked
-        && Math.hypot(state.mouse._x-x,state.mouse._y-y)<f.r
+      if(state.player.isOverGrass && inputs.mouse.isClicked
+        && Math.hypot(inputs.mouse._x-x,inputs.mouse._y-y)<f.r
         && Math.hypot(state.player.x-x,state.player.y-y)<f.r) {
 
         //console.log(state.player.x,state.player.y);
 
         state.player.isTouchedGrass = true;
         state.player.grassValue = Math.PI*Math.pow(state.player._r,2)/100;
-        state.mouse.isClicked=false;
+        inputs.mouse.isClicked=false;
 
         // state.foliage.push({
         //   x:state.player.x-state.cx,
@@ -372,10 +352,10 @@ const Display = (function(/*api*/) {
 
     state.foliage.forEach(f => {
       ctx.fillStyle=f.metadata.color;
-      let x1=f.x+state.cx,y1=f.y+state.cy,x2=state.player.x,y2=state.player.y;
+      let x1=f.x-state.dx,y1=f.y-state.dy,x2=state.player.x,y2=state.player.y;
       if (Math.hypot(x1-x2,y1-y2) < f.r) {
-        ctx.fillText(f.metadata.label,state.cx+f.x,state.cy+f.y+f.r+50);
-        ctx.strokeText(f.metadata.label,state.cx+f.x,state.cy+f.y+f.r+50);
+        ctx.fillText(f.metadata.label,-state.dx+f.x,-state.dy+f.y+f.r+50);
+        ctx.strokeText(f.metadata.label,-state.dx+f.x,-state.dy+f.y+f.r+50);
       }
     });
 
@@ -385,8 +365,8 @@ const Display = (function(/*api*/) {
     ctx.lineWidth=1;
     ctx.strokeStyle=COLORS.GOLD;
     ctx.beginPath();
-    ctx.moveTo(state.player.x+Math.floor(state.player.r+state.player.v),state.player.y);
-    ctx.arc(state.player.x,state.player.y,Math.floor(state.player.r+state.player.v),0,2*Math.PI);
+    ctx.moveTo(state.player.x+Math.floor(state.player.radius+state.player.score),state.player.y);
+    ctx.arc(state.player.x,state.player.y,Math.floor(state.player.radius+state.player.score),0,2*Math.PI);
     ctx.stroke();
   };
 
@@ -395,12 +375,13 @@ const Display = (function(/*api*/) {
     // vector angle in radians from state (keyboard and/or mouse)
     //let vector = getVector(state);
 
-    let dMax = state.mouse.dragMax,dMin=state.mouse.drawMin;
-    let _x=state.mouse._x-state.canvas.width/2,_y=state.mouse._y-state.canvas.height/2; // mousemove position
-    let x_=state.mouse.x_-state.canvas.width/2,y_=state.mouse.y_-state.canvas.height/2; // mousedown position
+    const mouse = getMouse();
+    const dMax = mouse.dragMax,dMin=mouse.dragMin;
+    const x_=mouse.x_,y_=mouse.y_; // mousedown position
+    const _x=mouse._x,_y=mouse._y; // mousemove position
 
     // if mouseleft is pressed, then draw a ring around the mousedown
-    if (state.keys.includes(keybinds.mouseL)) {
+    if (findInput(keybinds.mouseL) || findInput(keybinds.primary)) {
       ctx.lineWidth = 5;
       ctx.strokeStyle = COLORS.LIGHTGRAY;
       ctx.beginPath();
@@ -414,14 +395,12 @@ const Display = (function(/*api*/) {
     }
 
     // // if mousemove (isDragged), then draw filled dot  
-    if (state.mouse.isDragged) {
+    if (mouse.isDragged) {
       // drag distance; length of mousedown to mousemove, in pixels
-      let dist = Math.hypot(_x-x_,_y-y_);
       // MIN (drag distance vs capped distance)
-      dist=Math.min(dist, dMax);
-      //console.log(dist);
-      let angle = state.player.t;//Math.atan2(vector.y,vector.x);
-      ctx.fillStyle = COLORS.GRAY;
+      const dist=Math.min(Math.hypot(_x-x_,_y-y_), dMax);
+      const angle=state.player.theta;
+      ctx.fillStyle=COLORS.GRAY;
       ctx.beginPath();
       ctx.arc(x_ + (Math.cos(angle) * dist),y_ + (Math.sin(angle) * dist),dMax*0.75,0,2*Math.PI);
       ctx.fill();
@@ -463,16 +442,16 @@ const Display = (function(/*api*/) {
     state.wallColor=getCtxColor(ctx,COLORS.DARKSLATEGRAY);
 
     background(state,ctx); // defines any non-path we forget
-    //path(state, ctx);
-    //foliage(state,ctx);
-    //walls(state,ctx);
+    path(state, ctx);
+    foliage(state,ctx);
+    walls(state,ctx);
     player(state, ctx);
     //canopy(state,ctx);
-    //state.cImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
-    //labels(state, ctx);
+    state.cImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
+    labels(state, ctx);
     //fog(state,ctx);
 
-    //checkTerrain(state,ctx);
+    checkTerrain(state,ctx);
 
     //inventory(state,ctx);
     joystick(state,ctx);
@@ -506,59 +485,3 @@ let inputMap = [
 
 ];
 
-/* ENTITIES */
-
-const CLADES = {
-  GRASS:{
-    n:"grass",v:1, r:1, g:5,
-    draw:(plant, ctx, player)=>{
-        ctx.fillStyle = COLORS.LAWNGREEN;
-        ctx.fillStyle=plant.t.c;
-        let dist =Math.hypot(plant.x-player.x,plant.y-player.y);
-        if (dist < player._r) {
-          //ctx.fillStyle = COLORS.RED;
-          // TODO: increase points
-        }
-        ctx.beginPath();
-        ctx.arc(plant.x,plant.y,plant.t.r,0,2*Math.PI);
-        ctx.stroke();
-        ctx.fill();
-        // TODO: copy a static image (created during the create phase)
-    }
-  }, 
-  CLOVER:{
-    n:"clover",v:3, r:3, g:1,
-    draw:(state, ctx, index, id)=>{
-      let x=state.zones[index].x,y=state.zones[index].y,r=state.zones[index].v;
-      let angle = 2*Math.PI/3; // 120deg
-      let k = 3; // 360/120 = 2PI / (2PI/3) = 3
-
-      let offset = angle * ((x*y*id) % 3)/3;//Math.random();
-      let offsetX = (x+id) / (x*y);
-      let offsetY = (y+id) / (x*y);
-
-      ctx.beginPath();
-      ctx.fillStyle = COLORS.SPRINGGREEN;
-      ctx.strokeStyle = COLORS.GREEN;
-
-      for (let i = 0; i < k; i++) {
-        let _angle=(angle * i)+offset;
-        let _x = x - state.dx + offsetX + Math.cos(_angle) * r + (10 * id);
-        let _y = y - state.dy + offsetY + Math.sin(_angle) * r + (10 * id);
-
-        ctx.moveTo(_x+r,_y);
-        ctx.arc(_x,_y,r,0,2*Math.PI);
-      }
-
-      ctx.fill();
-      ctx.stroke();
-
-      // a trio of dark green circles
-      //let r = 10;
-      //ctx.moveTo(x+r,y);
-      //ctx.arc(x,y,r,0,2*Math.PI);
-      // choose random angle
-      //let angle = Math.random() * 2 * Math.PI;
-    }
-  }
-};
