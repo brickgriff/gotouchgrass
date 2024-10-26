@@ -231,7 +231,7 @@ const Display = (function(/*api*/) {
     // ctx.putImageData(state.pImg,x-8,y-8);
     // ctx.putImageData(state.fImg,x-5,y-5);
     // ctx.putImageData(state.cImg,x-2,y-2);
-    // TODO: while I do what to use pixel colors
+    // TODO: while I do want to use pixel colors
     // to drive state changes, this is inelegant
 
     // assume under canopy to hide shadows while debugging
@@ -443,15 +443,15 @@ const Display = (function(/*api*/) {
 
     background(state,ctx); // defines any non-path we forget
     path(state, ctx);
-    foliage(state,ctx);
-    walls(state,ctx);
+    //foliage(state,ctx);
+    //walls(state,ctx);
     player(state, ctx);
     //canopy(state,ctx);
     state.cImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
-    labels(state, ctx);
+    //labels(state, ctx);
     //fog(state,ctx);
 
-    checkTerrain(state,ctx);
+    //checkTerrain(state,ctx);
 
     //inventory(state,ctx);
     joystick(state,ctx);

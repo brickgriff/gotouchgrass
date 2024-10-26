@@ -31,19 +31,10 @@ const World = (function (/*api*/) {
       radius: 25,
       reach: 35,
       speed:0,
+      // TODO: apply this to the framerate, rather than the speed
       speedFactor: 25,
       theta:0,
       points:0, // "score"? "value"? "experience"?
-
-      // old
-      //r: 25, // radius
-      //_r: 35, // range
-      //dg: 10, // drag gate
-      //dl: 50, // drag limit
-      //sf: 25, // speed factor
-      //v:0, // value
-      //s:0,// speed
-      //t:0, // theta
 
       isLost:false,
       isOverGrass:true,
@@ -64,24 +55,18 @@ const World = (function (/*api*/) {
 
       frames:0,
       maxFrames:6,
-      //dragMin: 10,
-      //dragMax: 50,
       
       isHeld:false,
       isDragged:false,
       isClicked:false,
-      // TODO: combine clicked and tapped?
     };
 
-    var viewport = {isResized:false};
 
     var state = {
       canvas: canvas,
       ctx: ctx,
       player: player,
-      keys: [],
       mouse: mouse,
-      viewport: viewport,
       paths: paths,
       walls: walls,
       foliage: foliage,
@@ -145,8 +130,8 @@ const World = (function (/*api*/) {
 
     pushEntities(paths,[
       [0,0,300,{type:"path",children:[1,2]}],
-      [0,-3000,1000,{type:"path"}],
-      [-490,140,100,{hidden:true}],
+      //[0,-3000,1000,{type:"path"}],
+      //[-490,140,100,{hidden:true}],
     ]);
     pushEntities(walls, [
       [0,-2200,3000],
@@ -195,6 +180,7 @@ const World = (function (/*api*/) {
 
     if (findInput(keybinds.debug)) {
       state.isDebug = (state.isDebug^=true)!==0;
+      // FIXME: flickering
     }
 
     if (findInput(keybinds.menu)) {

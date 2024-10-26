@@ -48,10 +48,6 @@ if (typeof window === "undefined") {
 window.addEventListener("contextmenu", (e)=>{e.preventDefault()});
 // trigger resize handler
 window.addEventListener("resize", (e)=>{inputs.viewport.isResized=true});
-// trigger quit signal (Esc)
-// TODO: use Esc to open the appropriate menu for the current game state
-// get game state from... where?
-//window.addEventListener("keydown", (e)=>{inputs.isQuit=(e.code==="Escape")});
 
 window.addEventListener("keydown", (e) =>{
   pushInput(e.code);
@@ -93,6 +89,8 @@ window.addEventListener("mousemove", (e) =>{
   }
 });
 
+
+// FIXME: touch events
 
 const ongoingTouches = [];
 
