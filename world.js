@@ -198,6 +198,9 @@ const World = (function (/*api*/) {
       mouse.y_=mouse._y=state.player.y;
     }
 
+    // TODO: make plants grow
+    // TODO: use a worker thread!!!
+
     const score = Math.PI * Math.pow(state.player.radius,2) * dt;
     state.player.isTouchingGrass=false;
     if (state.player.isOverGrass) {
