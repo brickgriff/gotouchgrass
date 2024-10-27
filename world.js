@@ -70,6 +70,7 @@ const World = (function (/*api*/) {
       paths: paths,
       walls: walls,
       foliage: foliage,
+      entities:[],
 
       // old
       // for centering translations on resize
@@ -142,24 +143,66 @@ const World = (function (/*api*/) {
       ...cloverList.map(clover=>foliageHelper(clover,"clover")),
     ]);
 
+    // TODO: limit simulation steps per frame/second
+    // TODO: create more plant variety!!!
+    // TODO: simulate light, water, and humus competition
+    pushEntities(state.entities,(()=>{
+      let list = [],w=canvas.width,h=canvas.height;
+      //console.log(w,h);
+      let I=10000,R=100,W=50,H=50;
+      //let maxX = Math.floor((I-1)%W);
+      //let maxY = Math.floor((I-1)/W);
+      //console.log("num:",I,"maxX:",maxX,"maxY:",maxY);
+      
+      // TODO: use a worker thread past 1K plants
+      for (let i = 0; i < I; i++) {
+        let r = Math.random()*R; // pick a radius
+        let offset = Math.random()*2*R-(R/2);
+        let x=Math.floor((i%W)-(W/2))*2*R+offset;
+        offset = Math.random()*2*R-(R/2);
+        let y=Math.floor((i/W)-(H/2))*2*R+offset;
+        
+
+        let color = Math.random()*100;
+        if (color>10) color = "limegreen";
+        else color = "springgreen";
+
+        //console.log({i:i,x:x,y:y,r:r});
+        list.push([
+          x,
+          y,
+          r,
+          {type:"plant",color:color,label:"grass"} //metadata
+        ]);
+      }
+
+      return list;
+
+    })());
+
     // load plant sprites with offscreen canvas and save to bitmaps
 
     return state;
   };
 
+  // this should return [-1,1] for vector x and y
   var getVector = () => {
     const mouse = getMouse();//inputs.mouse;
     const dMax = mouse.dragMax;
+    const vector = {};
 
     if (findInput(keybinds.mouseL)) {
-      return {x:mouse._x-mouse.x_,y:mouse._y-mouse.y_};
+        vector.x=mouse._x-mouse.x_;
+        vector.y=mouse._y-mouse.y_;
     } else {
-      const vector = {
-        x:(findInput(keybinds.right) - findInput(keybinds.left))*dMax,
-        y:(findInput(keybinds.down) - findInput(keybinds.up))*dMax
-      };
-      return vector;
+        vector.x=(findInput(keybinds.right) - findInput(keybinds.left))*dMax;
+        vector.y=(findInput(keybinds.down) - findInput(keybinds.up))*dMax;
     }
+
+    const dist=Math.hypot(vector.x,vector.y);
+    const angle=Math.atan2(vector.y,vector.x);
+
+    return vector;
   };
 
   var resize = (state) => {
@@ -198,8 +241,14 @@ const World = (function (/*api*/) {
       mouse.y_=mouse._y=state.player.y;
     }
 
-    // TODO: make plants grow
     // TODO: use a worker thread!!!
+    // TODO: count simulation steps then space out calculations by at least 6-30 frames
+    state.entities.filter(e=>e.metadata.type==="plant").forEach(p=>{
+      let rand = Math.random();
+      let isGrowing=rand>0.75;
+      if (p.metadata.color==="limegreen")isGrowing=rand>0.25;
+      if (isGrowing)p.r+=1/1000;
+    });
 
     const score = Math.PI * Math.pow(state.player.radius,2) * dt;
     state.player.isTouchingGrass=false;

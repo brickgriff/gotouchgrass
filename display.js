@@ -383,6 +383,7 @@ const Display = (function(/*api*/) {
     ctx.lineWidth = 1;
     ctx.fillStyle = COLORS.GRAY;
     ctx.strokeStyle = COLORS.LIGHTGRAY;
+
     ctx.beginPath();
     inputMap.forEach((input) => {
       ctx.moveTo(input.x-state.cx+500+input.r,input.y-state.cy);
@@ -433,7 +434,20 @@ const Display = (function(/*api*/) {
     // TODO: give entities their own draw functions
 
     background(state,ctx); // defines any non-path we forget
-    path(state, ctx);
+    //path(state, ctx);
+
+    state.entities.filter(e=>e.metadata.type==="plant").forEach(p=>{
+      ctx.beginPath();
+      ctx.lineWidth=2;
+      ctx.strokeStyle=p.metadata.color;
+      ctx.fillStyle=p.metadata.color;
+      let r = Math.round(p.r)
+      ctx.moveTo(p.x-state.dx+r,p.y-state.dy);
+      ctx.arc(p.x-state.dx,p.y-state.dy,r,0,2*Math.PI);
+      ctx.stroke();
+      ctx.fill();
+    });
+
     //foliage(state,ctx);
     //walls(state,ctx);
     player(state, ctx);
