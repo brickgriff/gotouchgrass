@@ -1,13 +1,4 @@
-const COLORS = {BLACK:"black", GREEN:"green", GRAY:"gray", LIGHTGRAY: "lightgray",
-DARKGRAY:"darkgray", BLUE:"blue", GOLD:"gold", LIGHTBLUE:"lightblue", RED:"red",
-SPRINGGREEN: "springgreen", LAWNGREEN: "lawngreen", WHITE: "white", YELLOW: "yellow",
-CYAN: "cyan", MAGENTA: "magenta", DIMGRAY: "dimgray", DARKBLUE:"darkblue",
-DARKSLATEGRAY:"darkslategray",SOIL:"#7d644b",DEFAULT:"#cccccc"};
-
-// TODO: give entities their own draw functions
-
 const Display = (function(/*api*/) {
-
   var api = {};
   
   var background = function (state, ctx) {
@@ -58,29 +49,42 @@ const Display = (function(/*api*/) {
     state.pImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
   };
 
+  var foliage = function(state, ctx) {
+    ctx.strokeStyle=COLORS.GREEN;
+    ctx.lineWidth=2;
+    state.foliage.forEach(f => {
+      let x=f.x-state.dx,y=f.y-state.dy;
 
-  var fog = function (state, ctx) {
-    // how low on points are you?
-    if (state.isDebug) return;
-    let ratio = state.player.score > state.player.reach-state.player.radius ? 1 : state.player.score/(state.player.reach-state.player.radius);
-    ctx.save();
-    ctx.globalAlpha=1-ratio/2;
-
-    // punch an even-odd hole in the fog the size of the player wallet
-    let x=state.player.x,y=state.player.y;
-
-    let path1 = new Path2D();// clipping area
-    path1.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
+      ctx.fillStyle=f.metadata.color;
+      ctx.beginPath();
+      ctx.moveTo(x+f.r,y);
+      ctx.arc(x,y,f.r,0,2*Math.PI);
+      ctx.fill();
+      ctx.stroke();
     
-    path1.moveTo(x+state.player.radius+state.player.score,y);
-    path1.arc(x,y,state.player.radius+state.player.score,0,2*Math.PI);
-    
-    ctx.clip(path1,"evenodd"); // fill clipping area
+      // TODO: bring this back with touch support works
+      if(state.player.isOverGrass && inputs.mouse.isClicked
+        && Math.hypot(inputs.mouse._x-x,inputs.mouse._y-y)<f.r
+        && Math.hypot(state.player.x-x,state.player.y-y)<f.r) {
 
-    ctx.fillStyle = state.playerColor;
-    ctx.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
-    ctx.fill();
-    ctx.restore();
+        //console.log(state.player.x,state.player.y);
+
+        state.player.isTouchedGrass = true;
+        state.player.grassValue = Math.PI*Math.pow(state.player._r,2)/100;
+        inputs.mouse.isClicked=false;
+
+        // state.foliage.push({
+        //   x:state.player.x-state.cx,
+        //   y:state.player.y-state.cy,
+        //   r:state.player._r,
+        //   metadata:{color:COLORS.GREEN,label:""}
+        // });
+      }
+
+    });
+
+    //foliage image data
+    state.fImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
   };
 
   var walls = function (state, ctx) {
@@ -106,50 +110,6 @@ const Display = (function(/*api*/) {
 
     //foliage image data
     state.fImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
-  };
-
-  var canopySketch=function(state,ctx) {
-    let path1 = new Path2D();// clipping area
-    path1.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
-    //console.log(state.paths);
-    state.paths.forEach(p => {
-      let x=p.x-state.dx,y=p.y-state.dy;
-      if (p.metadata && p.metadata.hidden) return;
-      path1.moveTo(x+p.r,y);
-      path1.arc(x,y,p.r,0,2*Math.PI);
-    });
-
-    ctx.clip(path1,"evenodd"); // fill clipping area
-
-    ctx.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
-  };
-
-  var canopy = function(state,ctx) {
-    ctx.save();
-    ctx.fillStyle=state.canopyColor;
-    ctx.beginPath();
-    canopySketch(state,ctx);
-    if (state.player.isUnderCanopy) {
-      ctx.globalAlpha=0.5;
-    }
-    ctx.fill();
-    ctx.restore(); // defaults
-
-    let x=state.player.x,y=state.player.y;
-    state.cImg=ctx.getImageData(x-5,y-5,10,10);
-
-    if (!state.player.isUnderCanopy) return;
-
-    ctx.save();
-    ctx.fillStyle=state.canopyColor;
-    ctx.beginPath();
-    canopySketch(state,ctx);
-    //if (state.player.isUnderCanopy) {
-    ctx.moveTo(x+Math.floor(state.player.r+state.player.score),y);
-    ctx.arc(x,y,Math.floor(state.player.r+state.player.score),0,2*Math.PI,true);
-    //}
-    ctx.fill();
-    ctx.restore(); // defaults
   };
 
   var player = function (state, ctx) {
@@ -195,81 +155,107 @@ const Display = (function(/*api*/) {
 
   };
 
-  var debugMouse = function(state, ctx) {
-    // black line from player to mousemove (distance)
-    ctx.lineWidth=5;
-    ctx.strokeStyle=COLORS.BLACK;
-    ctx.beginPath();
-    ctx.moveTo(state.player.x,state.player.y);
-    ctx.lineTo(inputs.mouse._x,inputs.mouse._y);
-    ctx.stroke();
-    // white line from mousedown to mousemove (vector)
-    ctx.lineWidth=5;
-    ctx.strokeStyle=COLORS.WHITE;
-    ctx.beginPath();
-    ctx.moveTo(inputs.mouse._x,inputs.mouse._y);
-    ctx.lineTo(inputs.mouse.x_,inputs.mouse.y_);
-    ctx.stroke();
+  var canopySketch=function(state,ctx) {
+    let path1 = new Path2D();// clipping area
+    path1.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
+    //console.log(state.paths);
+    state.paths.forEach(p => {
+      let x=p.x-state.dx,y=p.y-state.dy;
+      if (p.metadata && p.metadata.hidden) return;
+      path1.moveTo(x+p.r,y);
+      path1.arc(x,y,p.r,0,2*Math.PI);
+    });
+
+    ctx.clip(path1,"evenodd"); // fill clipping area
+
+    ctx.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
   };
 
-  // draw input (debug)
-  var debug = function(state, ctx) {
-    let message="";
-
-    debugMouse(state,ctx);
-
-    let px = state.player.x, py = state.player.y;
-    // add player position to output text
-    message+=`player: {\n  x:${px},\n  y:${py},\n`;
-    message+=`  radius:${state.player.radius},\n`
-    message+=`  reach:${state.player.reach},\n`;
-    message+=`  score:${state.player.score},\n`;
-    message+=`}`;
-    //console.log(state.player);
-
-    // stagger the state images
-    // ctx.putImageData(state.pImg,x-8,y-8);
-    // ctx.putImageData(state.fImg,x-5,y-5);
-    // ctx.putImageData(state.cImg,x-2,y-2);
-    // TODO: while I do want to use pixel colors
-    // to drive state changes, this is inelegant
-
-    // assume under canopy to hide shadows while debugging
-    state.player.isUnderCanopy=true;
-
-    ctx.lineWidth = 1;
-    ctx.fillStyle = COLORS.GRAY;
-    ctx.strokeStyle = COLORS.LIGHTGRAY;
+  var canopy = function(state,ctx) {
+    ctx.save();
+    ctx.fillStyle=state.canopyColor;
     ctx.beginPath();
-    inputMap.forEach((input) => {
-      ctx.moveTo(input.x+input.r,input.y);
-      ctx.arc(input.x,input.y,input.r,0,2*Math.PI);
-    });
-    ctx.moveTo(px+state.player.reach,py);
-    ctx.arc(px,py,state.player.reach,0,2*Math.PI);
-    ctx.moveTo(px+state.player.radius,py);
-    ctx.arc(px,py,state.player.radius,0,2*Math.PI);
-    //ctx.rect(x-5,y-5,10,10);
-    ctx.moveTo(px,py);
-    let dist = inputs.mouse.dragMax*state.player.speed;
-    if (state.player.speed > 0) ctx.lineTo(px+(dist*Math.cos(state.player.theta)),py+(dist*Math.sin(state.player.theta)));
-    ctx.stroke();
-
-    ctx.beginPath();
-    inputMap.forEach((input) => {
-      ctx.moveTo(input.x+input.r,input.y);
-      if (findInput(input.k)) ctx.arc(input.x,input.y,input.r,0,2*Math.PI);
-    });
+    canopySketch(state,ctx);
+    if (state.player.isUnderCanopy) {
+      ctx.globalAlpha=0.5;
+    }
     ctx.fill();
+    ctx.restore(); // defaults
 
-    // debug window?
-    let lw=ctx.lineWidth=1;
-    let rw=250,rh=500;
-    let rx=-state.cx,ry=-state.cy;
-    ctx.strokeStyle="red";
+    let x=state.player.x,y=state.player.y;
+    state.cImg=ctx.getImageData(x-5,y-5,10,10);
+
+    if (!state.player.isUnderCanopy) return;
+
+    ctx.save();
+    ctx.fillStyle=state.canopyColor;
     ctx.beginPath();
-    ctx.rect(rx,ry,rw,rh);
-    ctx.stroke();
+    canopySketch(state,ctx);
+    //if (state.player.isUnderCanopy) {
+    ctx.moveTo(x+Math.floor(state.player.r+state.player.points),y);
+    ctx.arc(x,y,Math.floor(state.player.r+state.player.points),0,2*Math.PI,true);
+    //}
+    ctx.fill();
+    ctx.restore(); // defaults
+  };
+    
+  var labels = function(state,ctx) {
+    ctx.font="bold italic 50px Arial";
+    ctx.textAlign="center";
+    ctx.strokeStyle=COLORS.GREEN;
+    ctx.lineWidth=1;
+
+    state.foliage.forEach(f => {
+      ctx.fillStyle=f.metadata.color;
+      let x1=f.x-state.dx,y1=f.y-state.dy,x2=state.player.x,y2=state.player.y;
+      if (Math.hypot(x1-x2,y1-y2) < f.r) {
+        ctx.fillText(f.metadata.label,-state.dx+f.x,-state.dy+f.y+f.r+50);
+        ctx.strokeText(f.metadata.label,-state.dx+f.x,-state.dy+f.y+f.r+50);
+      }
+    });
+  };
+
+  var fog = function (state, ctx) {
+    // how low on points are you?
+    if (state.isDebug) return;
+    let ratio = state.player.points > state.player.reach-state.player.radius ? 1 : state.player.points/(state.player.reach-state.player.radius);
+    ctx.save();
+    ctx.globalAlpha=1-ratio/2;
+
+    // punch an even-odd hole in the fog the size of the player wallet
+    let x=state.player.x,y=state.player.y;
+
+    let path1 = new Path2D();// clipping area
+    path1.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
+    
+    path1.moveTo(x+state.player.radius+state.player.points,y);
+    path1.arc(x,y,state.player.radius+state.player.points,0,2*Math.PI);
+    
+    ctx.clip(path1,"evenodd"); // fill clipping area
+
+    ctx.fillStyle = state.playerColor;
+    ctx.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
+    ctx.fill();
+    ctx.restore();
+  };
+
+  var checkTerrain = function (state,ctx) {
+    // paths
+    let pd = state.pImg.data;
+    let pStyle=getCtxColor(ctx,`rgb(${pd[44*4]} ${pd[44*4+1]} ${pd[44*4+2]} / ${pd[44*4+3]})`);
+    // foliage
+    let fd = state.fImg.data;
+    let fStyle=getCtxColor(ctx,`rgb(${fd[44*4]} ${fd[44*4+1]} ${fd[44*4+2]} / ${fd[44*4+3]})`);
+    // canopy
+    let cd = state.cImg.data;
+    let cStyle=getCtxColor(ctx,`rgb(${cd[44*4]} ${cd[44*4+1]} ${cd[44*4+2]} / ${cd[44*4+3]})`);
+
+    //console.log(state.playerColor,pStyle,cStyle);
+    state.player.isOverGrass=fStyle===state.grassColor;
+    if (state.player.isOverGrass)return; // B-)
+    state.player.isInsideWall=fStyle===state.wallColor;
+    state.player.isLost=pStyle!==state.pathColor;
+    state.player.isUnderCanopy=cStyle!==state.playerColor;
   };
 
   // draw inventory
@@ -304,70 +290,6 @@ const Display = (function(/*api*/) {
     ctx.stroke();
     ctx.fill();  
     //console.log(_x,_y);  
-  };
-
-  var foliage = function(state, ctx) {
-    ctx.strokeStyle=COLORS.GREEN;
-    ctx.lineWidth=2;
-    state.foliage.forEach(f => {
-      let x=f.x-state.dx,y=f.y-state.dy;
-
-      ctx.fillStyle=f.metadata.color;
-      ctx.beginPath();
-      ctx.moveTo(x+f.r,y);
-      ctx.arc(x,y,f.r,0,2*Math.PI);
-      ctx.fill();
-      ctx.stroke();
-    
-      // TODO: bring this back with touch support works
-      if(state.player.isOverGrass && inputs.mouse.isClicked
-        && Math.hypot(inputs.mouse._x-x,inputs.mouse._y-y)<f.r
-        && Math.hypot(state.player.x-x,state.player.y-y)<f.r) {
-
-        //console.log(state.player.x,state.player.y);
-
-        state.player.isTouchedGrass = true;
-        state.player.grassValue = Math.PI*Math.pow(state.player._r,2)/100;
-        inputs.mouse.isClicked=false;
-
-        // state.foliage.push({
-        //   x:state.player.x-state.cx,
-        //   y:state.player.y-state.cy,
-        //   r:state.player._r,
-        //   metadata:{color:COLORS.GREEN,label:""}
-        // });
-      }
-
-    });
-
-    //foliage image data
-    state.fImg=ctx.getImageData(state.player.x-5,state.player.y-5,10,10);
-  };
-
-  var labels = function(state,ctx) {
-    ctx.font="bold italic 50px Arial";
-    ctx.textAlign="center";
-    ctx.strokeStyle=COLORS.GREEN;
-    ctx.lineWidth=1;
-
-    state.foliage.forEach(f => {
-      ctx.fillStyle=f.metadata.color;
-      let x1=f.x-state.dx,y1=f.y-state.dy,x2=state.player.x,y2=state.player.y;
-      if (Math.hypot(x1-x2,y1-y2) < f.r) {
-        ctx.fillText(f.metadata.label,-state.dx+f.x,-state.dy+f.y+f.r+50);
-        ctx.strokeText(f.metadata.label,-state.dx+f.x,-state.dy+f.y+f.r+50);
-      }
-    });
-
-  };
-
-  var score = function(state,ctx) {
-    ctx.lineWidth=1;
-    ctx.strokeStyle=COLORS.GOLD;
-    ctx.beginPath();
-    ctx.moveTo(state.player.x+Math.floor(state.player.radius+state.player.score),state.player.y);
-    ctx.arc(state.player.x,state.player.y,Math.floor(state.player.radius+state.player.score),0,2*Math.PI);
-    ctx.stroke();
   };
 
   // joystick
@@ -407,29 +329,96 @@ const Display = (function(/*api*/) {
     }
   };
 
+  var score = function(state,ctx) {
+    ctx.lineWidth=1;
+    ctx.strokeStyle=COLORS.GOLD;
+    ctx.beginPath();
+    ctx.moveTo(state.player.x+Math.floor(state.player.radius+state.player.points),state.player.y);
+    ctx.arc(state.player.x,state.player.y,Math.floor(state.player.radius+state.player.points),0,2*Math.PI);
+    ctx.stroke();
+  };
+  
+  var debugMouse = function(state, ctx) {
+    // black line from player to mousemove (distance)
+    ctx.lineWidth=5;
+    ctx.strokeStyle=COLORS.BLACK;
+    ctx.beginPath();
+    ctx.moveTo(state.player.x,state.player.y);
+    ctx.lineTo(inputs.mouse._x,inputs.mouse._y);
+    ctx.stroke();
+    // white line from mousedown to mousemove (vector)
+    ctx.lineWidth=5;
+    ctx.strokeStyle=COLORS.WHITE;
+    ctx.beginPath();
+    ctx.moveTo(inputs.mouse._x,inputs.mouse._y);
+    ctx.lineTo(inputs.mouse.x_,inputs.mouse.y_);
+    ctx.stroke();
+  };
+
+  // draw input (debug)
+  var debug = function(state, ctx) {
+    let message="";
+
+    debugMouse(state,ctx);
+
+    let px = state.player.x, py = state.player.y;
+    // add player position to output text
+    message+=`player: {\n  x:${px},\n  y:${py},\n`;
+    message+=`  radius:${state.player.radius},\n`
+    message+=`  reach:${state.player.reach},\n`;
+    message+=`  score:${state.player.points},\n`;
+    message+=`}`;
+    //console.log(state.player);
+
+    // stagger the state images
+    // ctx.putImageData(state.pImg,x-8,y-8);
+    // ctx.putImageData(state.fImg,x-5,y-5);
+    // ctx.putImageData(state.cImg,x-2,y-2);
+    // TODO: while I do want to use pixel colors
+    // to drive state changes, this is inelegant
+
+    // assume under canopy to hide shadows while debugging
+    state.player.isUnderCanopy=true;
+
+    ctx.lineWidth = 1;
+    ctx.fillStyle = COLORS.GRAY;
+    ctx.strokeStyle = COLORS.LIGHTGRAY;
+    ctx.beginPath();
+    inputMap.forEach((input) => {
+      ctx.moveTo(input.x-state.cx+500+input.r,input.y-state.cy);
+      ctx.arc(input.x-state.cx+500,input.y-state.cy,input.r,0,2*Math.PI);
+    });
+    ctx.moveTo(px+state.player.reach,py);
+    ctx.arc(px,py,state.player.reach,0,2*Math.PI);
+    ctx.moveTo(px+state.player.radius,py);
+    ctx.arc(px,py,state.player.radius,0,2*Math.PI);
+    //ctx.rect(x-5,y-5,10,10);
+    ctx.moveTo(px,py);
+    let dist = inputs.mouse.dragMax*state.player.speed;
+    if (state.player.speed > 0) ctx.lineTo(px+(dist*Math.cos(state.player.theta)),py+(dist*Math.sin(state.player.theta)));
+    ctx.stroke();
+
+    ctx.beginPath();
+    inputMap.forEach((input) => {
+      ctx.moveTo(input.x-state.cx+500+input.r,input.y-state.cy);
+      if (findInput(input.k)) ctx.arc(input.x-state.cx+500,input.y-state.cy,input.r,0,2*Math.PI);
+    });
+    ctx.fill();
+
+    // debug window?
+    let lw=ctx.lineWidth=1;
+    let rw=250,rh=500;
+    let rx=-state.cx,ry=-state.cy;
+    ctx.strokeStyle="red";
+    ctx.beginPath();
+    ctx.rect(rx,ry,rw,rh);
+    ctx.stroke();
+  };
+
   var getCtxColor = function(ctx,color) {
     ctx.fillStyle=color;
     return ctx.fillStyle;
   }
-
-  var checkTerrain = function (state,ctx) {
-    // paths
-    let pd = state.pImg.data;
-    let pStyle=getCtxColor(ctx,`rgb(${pd[44*4]} ${pd[44*4+1]} ${pd[44*4+2]} / ${pd[44*4+3]})`);
-    // foliage
-    let fd = state.fImg.data;
-    let fStyle=getCtxColor(ctx,`rgb(${fd[44*4]} ${fd[44*4+1]} ${fd[44*4+2]} / ${fd[44*4+3]})`);
-    // canopy
-    let cd = state.cImg.data;
-    let cStyle=getCtxColor(ctx,`rgb(${cd[44*4]} ${cd[44*4+1]} ${cd[44*4+2]} / ${cd[44*4+3]})`);
-
-    //console.log(state.playerColor,pStyle,cStyle);
-    state.player.isOverGrass=fStyle===state.grassColor;
-    if (state.player.isOverGrass)return; // B-)
-    state.player.isInsideWall=fStyle===state.wallColor;
-    state.player.isLost=pStyle!==state.pathColor;
-    state.player.isUnderCanopy=cStyle!==state.playerColor;
-  };
 
   // public api is a function
   api.draw = function (state, ctx) {
@@ -440,6 +429,8 @@ const Display = (function(/*api*/) {
     state.pathColor=getCtxColor(ctx,COLORS.DARKGRAY);
     state.grassColor=getCtxColor(ctx,COLORS.LAWNGREEN);
     state.wallColor=getCtxColor(ctx,COLORS.DARKSLATEGRAY);
+
+    // TODO: give entities their own draw functions
 
     background(state,ctx); // defines any non-path we forget
     path(state, ctx);
@@ -465,10 +456,17 @@ const Display = (function(/*api*/) {
 
   // return the public API
   return api;
-
 }());
 
-let inputMap = [
+const COLORS = {
+  BLACK:"black", GREEN:"green", GRAY:"gray", LIGHTGRAY: "lightgray",
+  DARKGRAY:"darkgray", BLUE:"blue", GOLD:"gold", LIGHTBLUE:"lightblue", RED:"red",
+  SPRINGGREEN: "springgreen", LAWNGREEN: "lawngreen", WHITE: "white", YELLOW: "yellow",
+  CYAN: "cyan", MAGENTA: "magenta", DIMGRAY: "dimgray", DARKBLUE:"darkblue",
+  DARKSLATEGRAY:"darkslategray",SOIL:"#7d644b",DEFAULT:"#cccccc"
+};
+
+const inputMap = [
   {x:100,y:100,r:10,k:keybinds.up},
   {x:75,y:125,r:10,k:keybinds.left},
   {x:100,y:125,r:10,k:keybinds.down},
@@ -476,8 +474,8 @@ let inputMap = [
   {x:75,y:100,r:10,k:keybinds.loosen},
   {x:125,y:100,r:10,k:keybinds.tighten},
 
-  {x:175,y:100,r:10,k:keybinds.primary},
-  {x:150,y:100,r:10,k:keybinds.secondary},
+  {x:175,y:100,r:10,k:keybinds.secondary},
+  {x:150,y:100,r:10,k:keybinds.primary},
   {x:200,y:100,r:10,k:keybinds.tertiary},
   {x:150,y:125,r:10,k:keybinds.mouseL},
   {x:175,y:125,r:10,k:keybinds.mouseM},

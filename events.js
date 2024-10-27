@@ -72,8 +72,8 @@ window.addEventListener("mousedown", (e) =>{
 window.addEventListener("mouseup", (e) =>{
   inputs.mouse.isClicked=!inputs.mouse.isDragged;
   if (findInput(keybinds.mouseL)) {
-    //inputs.mouse.x_=0;
-    //inputs.mouse.y_=0;
+    inputs.mouse._x=inputs.mouse.x_=0;
+    inputs.mouse._y=inputs.mouse.y_=0;
     inputs.mouse.isDragged = false;
   }
   dropInput(e.button);
@@ -166,6 +166,7 @@ window.addEventListener("touchmove",(e)=>{
 
 });
 
+// FIXME: how to switch bw WASD and ESDF
 let isUsingWASD = true;
 const  keybinds = {
   up: isUsingWASD ? "KeyW" : "KeyE",

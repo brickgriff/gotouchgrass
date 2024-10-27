@@ -172,6 +172,7 @@ const World = (function (/*api*/) {
 
   // update the state
   api.update = function (state, dt) {
+    //console.log(`update(frame=${state.frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
 
     if (inputs.viewport.isResized) {
       resize(state);
@@ -201,13 +202,13 @@ const World = (function (/*api*/) {
     state.player.isTouchingGrass=false;
     if (state.player.isOverGrass) {
       state.player.isLost=false;
-      state.player.score+=score;
+      state.player.points+=score;
     } else {
-      state.player.score-=(state.player.isUnderCanopy?2:1)*(state.player.isLost?2:1)*score;
+      state.player.points-=(state.player.isUnderCanopy?2:1)*(state.player.isLost?2:1)*score;
     }
 
     // revive!
-    if (state.player.score < 0) {
+    if (state.player.points < 0) {
       state.dx=state.dy=0;
       state.player.x=state.player.y=0;
       state.player.isUnderCanopy=false;
@@ -217,7 +218,7 @@ const World = (function (/*api*/) {
       state.player.isTouchingGrass=false;
     }
 
-    state.player.score=state.player.score*(state.player.score>=0);
+    state.player.points=state.player.points*(state.player.points>=0);
 
     // use mouse or keyboard
     const vector = getVector();

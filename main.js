@@ -1,3 +1,7 @@
+/*
+  @Author: BrickGriff@GitHub.com
+*/
+
 // RUN GAME LOOP //
 function mainLoop(now,state) {
   const elapsed = (now - state.start) / 1000; // deltaTime in seconds
@@ -7,19 +11,22 @@ function mainLoop(now,state) {
 
   World.update(state, dt); // update entities
   Display.draw(state, state.ctx); // draw entities
+  // FIXME: the above may be unnecessary since state.ctx is inside state...
+  // maybe Display is allowed to use other canvas contexts to draw
+  // ... like maybe an offscreen canvas context
 
   if (state.isQuit) return console.log("quit");
-  requestAnimationFrame(now=>mainLoop(now,state));
+
+  requestAnimationFrame(now=>mainLoop(now,state)); // keep state private
 }
 
 // MAIN FUNCTION //
 function main() {  
   const canvas = document.createElement("canvas"); // default canvas
   const ctx = canvas.getContext("2d", { willReadFrequently: true }); // now we can draw
+  const state = World.create(canvas,ctx); // initialize!
 
   document.body.appendChild(canvas); // add it to body
 
-  const state = World.create(canvas,ctx); // initialize!
-
-  requestAnimationFrame(now=>mainLoop(now,state));
+  requestAnimationFrame(now=>mainLoop(now,state)); // keep state private
 }
