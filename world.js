@@ -257,8 +257,8 @@ const World = (function (/*api*/) {
       if (p.t===undefined) p.t=100;
       //if (p.metadata.id===100) console.log(i,p.r,p.t);
       let rand = Math.random();
-      let isGrowing=rand>0.75;
-      if (p.metadata.color==="limegreen")isGrowing=rand>0.25;
+      let isGrowing=rand>0.6;
+      if (p.metadata.color==="limegreen")isGrowing=rand>.4;
       if (isGrowing) {
         p.r+=1/100;
         if (p.r > 100) p.t--;
