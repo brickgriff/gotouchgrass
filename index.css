@@ -12,6 +12,7 @@ canvas {
     margin: auto;
     display: block;
     /*
+    image-rendering: pixelated;
     width: 800;
     heigth: 800;
     */

@@ -99,14 +99,6 @@ const World = (function (/*api*/) {
 
     resize(state);
 
-    var createEntity = (x,y,r,metadata) => {
-      return {x:x,y:y,r:r,metadata:metadata};
-    };
-
-    var pushEntities = (list,entities) => {
-      entities.forEach(e=>list.push(createEntity(...e)));
-    };
-
     const grassList = [
       {x:0,y:0,r:150,l:"Poa annua"},
       {x:5,y:-1000,r:150,l:"Panicum virgatum"},
@@ -147,43 +139,61 @@ const World = (function (/*api*/) {
     // TODO: create more plant variety!!!
     // TODO: simulate light, water, and humus competition
     pushEntities(state.entities,(()=>{
-      let list = [],w=canvas.width,h=canvas.height;
+      let list = [];//,w=canvas.width,h=canvas.height;
       //console.log(w,h);
-      let I=10000,R=100,W=50,H=50;
+      let I=10000,R=100,W=100,H=100;
       //let maxX = Math.floor((I-1)%W);
       //let maxY = Math.floor((I-1)/W);
       //console.log("num:",I,"maxX:",maxX,"maxY:",maxY);
-      
+      let id=0;
+
       // TODO: use a worker thread past 1K plants
       for (let i = 0; i < I; i++) {
-        let r = Math.random()*R; // pick a radius
-        let offset = Math.random()*2*R-(R/2);
-        let x=Math.floor((i%W)-(W/2))*2*R+offset;
-        offset = Math.random()*2*R-(R/2);
-        let y=Math.floor((i/W)-(H/2))*2*R+offset;
-        
-
-        let color = Math.random()*100;
-        if (color>10) color = "limegreen";
-        else color = "springgreen";
-
-        //console.log({i:i,x:x,y:y,r:r});
-        list.push([
-          x,
-          y,
-          r,
-          {type:"plant",color:color,label:"grass"} //metadata
-        ]);
+        list.push(addEntityToList(i,R,W,H,id++));
       }
 
       return list;
 
     })());
 
+
     // load plant sprites with offscreen canvas and save to bitmaps
 
     return state;
   };
+
+    var createEntity = (x,y,r,metadata) => {
+      return {x:x,y:y,r:r,metadata:metadata};
+    };
+
+    var pushEntities = (list,entities) => {
+      //console.log("list:",list,"entities:",entities);
+      entities.forEach(e=>list.push(createEntity(...e)));
+    };
+
+    var addEntityToList = (i,R,W,H,id) => {
+      let r = 0;//Math.random()*R; // pick a radius
+      let offset = Math.random()*2*R-(R/2);
+      let x=Math.floor((i%W)-(W/2))*2*R+offset;
+      offset = Math.random()*2*R-(R/2);
+      let y=Math.floor((i/W)-(H/2))*2*R+offset;
+      
+
+      let color = Math.random()*100;
+      if (color>10) color = "limegreen";
+      else if (color>8) color = "springgreen";
+      else if (color>5) color = "lawngreen";
+      else color = "green";
+
+      //console.log({i:i,x:x,y:y,r:r});
+      return [
+        x,
+        y,
+        r,
+        {type:"plant",color:color,label:"grass",id:id} //metadata
+      ];
+    };
+
 
   // this should return [-1,1] for vector x and y
   var getVector = () => {
@@ -243,11 +253,20 @@ const World = (function (/*api*/) {
 
     // TODO: use a worker thread!!!
     // TODO: count simulation steps then space out calculations by at least 6-30 frames
-    state.entities.filter(e=>e.metadata.type==="plant").forEach(p=>{
+    state.entities.filter(e=>e.metadata.type==="plant").forEach((p,i)=>{
+      if (p.t===undefined) p.t=100;
+      //if (p.metadata.id===100) console.log(i,p.r,p.t);
       let rand = Math.random();
       let isGrowing=rand>0.75;
       if (p.metadata.color==="limegreen")isGrowing=rand>0.25;
-      if (isGrowing)p.r+=1/1000;
+      if (isGrowing) {
+        p.r+=1/100;
+        if (p.r > 100) p.t--;
+        if (p.t<=0) {
+          state.entities.splice(i,1);
+          pushEntities(state.entities, [addEntityToList(i,100,100,100,state.entities[state.entities.findLastIndex(e=>e.metadata.type==="plant"&&e.metadata.id>0)].metadata.id+1)]);
+        }
+      }
     });
 
     const score = Math.PI * Math.pow(state.player.radius,2) * dt;

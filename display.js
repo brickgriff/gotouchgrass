@@ -436,17 +436,20 @@ const Display = (function(/*api*/) {
     background(state,ctx); // defines any non-path we forget
     //path(state, ctx);
 
-    state.entities.filter(e=>e.metadata.type==="plant").forEach(p=>{
+    ctx.save();
+    state.entities.filter(e=>e && e.metadata && e.metadata.type==="plant").forEach(p=>{
       ctx.beginPath();
       ctx.lineWidth=2;
       ctx.strokeStyle=p.metadata.color;
-      ctx.fillStyle=p.metadata.color;
+      //ctx.fillStyle=p.metadata.color;
       let r = Math.round(p.r)
       ctx.moveTo(p.x-state.dx+r,p.y-state.dy);
       ctx.arc(p.x-state.dx,p.y-state.dy,r,0,2*Math.PI);
+      ctx.globalAlpha=p.t/100;
       ctx.stroke();
-      ctx.fill();
+      //ctx.fill();
     });
+    ctx.restore();
 
     //foliage(state,ctx);
     //walls(state,ctx);
