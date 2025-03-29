@@ -5,10 +5,9 @@ Food Forest Simulator
 
 Screen <!-- Air/Space -->
 
-Animations <!-- Water/Time -->
+State <!-- Water/Time -->
 
-Objects <!-- Earth/Matter -->
+Entities <!-- Earth/Matter -->
 
-Collisions <!-- Fire/Energy -->
+Events <!-- Fire/Energy -->
 
-blah <!-- comment -->
