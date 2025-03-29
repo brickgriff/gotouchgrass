@@ -3,11 +3,11 @@ Go Touch Grass
 Food Forest Simulator
 ---
 
-Screen <!-- Air/Space -->
+### Screen <!-- Air/Space -->
 
-State <!-- Water/Time -->
+### State <!-- Water/Time -->
 
-Entities <!-- Earth/Matter -->
+### Entities <!-- Earth/Matter -->
 
-Events <!-- Fire/Energy -->
+### Events <!-- Fire/Energy -->
 
