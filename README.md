@@ -10,22 +10,22 @@
 
 
 ### Screen <!-- Air/Space -->
-[x] HTML Canvas
-[ ] draw basic scene
+- [x] HTML Canvas
+- [ ] draw basic scene
 
 ### State <!-- Water/Time -->
-[x] calculate frames per second
+- [x] calculate frames per second
 
 ### Entities <!-- Earth/Matter -->
-[ ] player dot
+- [ ] player dot
 
 ### Events <!-- Fire/Energy -->
-[x] resize
-[ ] pause
-[ ] quit
-[ ] mouse
-- [ ] mouseup
-- [ ] mousedown
-- [ ] mousemove
-- [ ] mousescroll
+- [x] resize
+- [ ] pause
+- [ ] quit
+- [ ] mouse
+-- [ ] mouseup
+-- [ ] mousedown
+-- [ ] mousemove
+-- [ ] mousescroll
 
