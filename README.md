@@ -3,25 +3,12 @@ Go Touch Grass
 Food Forest Simulator
 ---
 
-Space (Air)
+Screen <!-- Air/Space -->
 
-Time/Water
+Animations <!-- Water/Time -->
 
-Earth
+Objects <!-- Earth/Matter -->
 
-Fire
+Collisions <!-- Fire/Energy -->
 
 blah <!-- comment -->
-
-blah [comment]: <> (comment)
-
-blah [//]: <> (comment)
-
-blah [//]: # "comment"
-
-blah [//]: # 'comment'
-
-blah [//]: # (comment)
-
-blah [//]: # comment
-
