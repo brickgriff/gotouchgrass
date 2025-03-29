@@ -12,6 +12,7 @@ const inputs = {
   viewport:{
     isResized:false,
   },
+  isResized:false,
 };
 
 function pushInput(input) {
@@ -46,8 +47,13 @@ if (typeof window === "undefined") {
 // HANDLE WINDOW EVENTS //
 // suppress system right click menu
 window.addEventListener("contextmenu", (e)=>{e.preventDefault()});
+
 // trigger resize handler
-window.addEventListener("resize", (e)=>{inputs.viewport.isResized=true});
+window.addEventListener("resize", (e)=>{
+  // inputs.isResized=true;
+  console.log(document.getElementById("inputs").innerHtml);
+  document.getElementById("inputs").innerHtml.isResized=true;
+});
 
 window.addEventListener("keydown", (e) =>{
   pushInput(e.code);

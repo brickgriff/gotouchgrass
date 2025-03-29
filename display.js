@@ -1,6 +1,6 @@
 const Display = (function(/*api*/) {
   var api = {};
-  
+  /*
   var background = function (state, ctx) {
     // center of screen is (0,0)
     ctx.fillStyle = COLORS.SOIL;
@@ -420,11 +420,11 @@ const Display = (function(/*api*/) {
     ctx.fillStyle=color;
     return ctx.fillStyle;
   }
-
+*/
   // public api is a function
   api.draw = function (state, ctx) {
     //console.log(`draw`);
-
+/*
     state.canopyColor=getCtxColor(ctx,COLORS.DIMGRAY);
     state.playerColor=getCtxColor(ctx,COLORS.LIGHTGRAY);
     state.pathColor=getCtxColor(ctx,COLORS.DARKGRAY);
@@ -468,6 +468,7 @@ const Display = (function(/*api*/) {
       score(state,ctx);
       debug(state,ctx);
     }
+    */
 
   };
 

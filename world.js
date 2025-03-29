@@ -11,7 +11,7 @@ const World = (function (/*api*/) {
   let cellWidth=100,cellHeight=100;
 
   api.create = function (canvas,ctx) {
-
+/*
     var paths = []; // boosts walking speed
     var walls = []; // prevents movement
     var foliage = []; // generates resources
@@ -60,17 +60,17 @@ const World = (function (/*api*/) {
       isDragged:false,
       isClicked:false,
     };
-
+*/
 
     var state = {
       canvas: canvas,
       ctx: ctx,
-      player: player,
-      mouse: mouse,
-      paths: paths,
-      walls: walls,
-      foliage: foliage,
-      entities:[],
+      // player: player,
+      // mouse: mouse,
+      // paths: paths,
+      // walls: walls,
+      // foliage: foliage,
+      // entities:[],
 
       // old
       // for centering translations on resize
@@ -78,27 +78,27 @@ const World = (function (/*api*/) {
       cy: 0,
 
       // world offset
-      dx: 0,
-      dy: 0,
+      // dx: 0,
+      // dy: 0,
 
       frame: 0,
-      start:start,
+      time:0,
 
-      fps: 30, // 60
+      // fps: 30, // 60
 
-      pImg:null,fImg:null,cImg:null,
-      isDebug:false,
-      isQuit:false,
+      // pImg:null,fImg:null,cImg:null,
+      // isDebug:false,
+      // isQuit:false,
 
-      pathColor:null,
-      canopyColor:null,
-      grassColor:null,
-      playerColor:null,
-      wallColor:null,
+      // pathColor:null,
+      // canopyColor:null,
+      // grassColor:null,
+      // playerColor:null,
+      // wallColor:null,
     };
 
     resize(state);
-
+/*
     const grassList = [
       {x:0,y:0,r:150,l:"Poa annua"},
       {x:5,y:-1000,r:150,l:"Panicum virgatum"},
@@ -156,12 +156,13 @@ const World = (function (/*api*/) {
 
     })());
 
-
+*/
     // load plant sprites with offscreen canvas and save to bitmaps
 
     return state;
   };
 
+/*
     var createEntity = (x,y,r,metadata) => {
       return {x:x,y:y,r:r,metadata:metadata};
     };
@@ -214,8 +215,9 @@ const World = (function (/*api*/) {
 
     return vector;
   };
-
+*/
   var resize = (state) => {
+    //console.log("resize");
     state.canvas.width=document.body.clientWidth;
     state.canvas.height=document.body.clientHeight;
     state.cx=state.canvas.width/2;
@@ -227,11 +229,14 @@ const World = (function (/*api*/) {
   api.update = function (state, dt) {
     //console.log(`update(frame=${state.frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
 
-    if (inputs.viewport.isResized) {
+    var inputsEl=document.getElementById("inputs").innerHtml;
+    console.log(inputsEl);
+    if (inputsEl.isResized) {
       resize(state);
-      inputs.viewport.isResized=false;
+      //inputs.isResized=false;
+      inputsEl.isResized=false;
     }
-
+/*
     if (findInput(keybinds.debug)) {
       state.isDebug = (state.isDebug^=true)!==0;
       // FIXME: flickering
@@ -311,12 +316,12 @@ const World = (function (/*api*/) {
     const theta = state.player.theta;
     state.dx+=speed*Math.cos(theta);
     state.dy+=speed*Math.sin(theta);
-
+*/
     // prepare for next frame
     state.frame++;
-    state.start=dt;
+    state.time+=dt;
+    
   };
-
   // return the public api
   return api;
 }());

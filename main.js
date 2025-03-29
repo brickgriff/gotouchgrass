@@ -2,15 +2,16 @@
   @Author: BrickGriff@GitHub.com
 */
 
-// RUN GAME LOOP //
 function mainLoop(now,state) {
-  const elapsed = (now - state.start) / 1000; // deltaTime in seconds
-  const dt = elapsed > 1 ? 1 : elapsed; // cap deltaTime @ 1s
+  // time tracking
+  const elapsed = (now - state.time||0); // deltaTime in millis
+  const dt = elapsed > 1000 ? 1000 : elapsed; // cap deltaTime @ 1000ms
   
-  //console.log(`gameLoop(frame=${state.frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
+  console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${Math.floor(1000/dt)})`);
 
   World.update(state, dt); // update entities
   Display.draw(state, state.ctx); // draw entities
+
   // FIXME: the above may be unnecessary since state.ctx is inside state...
   // maybe Display is allowed to use other canvas contexts to draw
   // ... like maybe an offscreen canvas context
@@ -20,13 +21,28 @@ function mainLoop(now,state) {
   requestAnimationFrame(now=>mainLoop(now,state)); // keep state private
 }
 
-// MAIN FUNCTION //
 function main() {  
   const canvas = document.createElement("canvas"); // default canvas
   const ctx = canvas.getContext("2d", { willReadFrequently: true }); // now we can draw
-  const state = World.create(canvas,ctx); // initialize!
 
-  document.body.appendChild(canvas); // add it to body
+  document.body.appendChild(canvas); // add to body
+
+  const state = World.create(canvas,ctx); // initialize!
+  //const state = {canvas:canvas,ctx:ctx,time:0,frame:0}; // minimum requirement
+
+  const inputsPara = document.createElement("p");
+  inputsPara.id="inputs";
+  inputsPara.innerHtml=inputs;
+  
+  document.body.appendChild(inputsPara);
+
+  const statePara = document.createElement("p");
+  statePara.id="state";
+  statePara.innerHtml=state;
+  
+  document.body.appendChild(statePara);
 
   requestAnimationFrame(now=>mainLoop(now,state)); // keep state private
 }
+
+// x() -> xLoop(acc,cur)
