@@ -30,17 +30,17 @@ function main() {
   const state = World.create(canvas,ctx); // initialize!
   //const state = {canvas:canvas,ctx:ctx,time:0,frame:0}; // minimum requirement
 
-  const inputsPara = document.createElement("p");
+  /*const inputsPara = document.createElement("p");
   inputsPara.id="inputs";
-  inputsPara.innerHtml=inputs;
-  
-  document.body.appendChild(inputsPara);
+  inputsPara.inputs=inputs;
+  */
+  document.inputs=inputs;
 
-  const statePara = document.createElement("p");
+  /*const statePara = document.createElement("p");
   statePara.id="state";
-  statePara.innerHtml=state;
-  
-  document.body.appendChild(statePara);
+  statePara.state=state;
+  */
+  document.state=state;
 
   requestAnimationFrame(now=>mainLoop(now,state)); // keep state private
 }

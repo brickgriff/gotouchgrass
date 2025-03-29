@@ -51,8 +51,9 @@ window.addEventListener("contextmenu", (e)=>{e.preventDefault()});
 // trigger resize handler
 window.addEventListener("resize", (e)=>{
   // inputs.isResized=true;
-  console.log(document.getElementById("inputs").innerHtml);
-  document.getElementById("inputs").innerHtml.isResized=true;
+  // console.log(document.getElementById("inputs").innerHtml);
+  //document.getElementById("inputs").isResized=true;
+  document.inputs.isResized=true;
 });
 
 window.addEventListener("keydown", (e) =>{

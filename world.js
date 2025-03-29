@@ -229,7 +229,8 @@ const World = (function (/*api*/) {
   api.update = function (state, dt) {
     //console.log(`update(frame=${state.frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
 
-    var inputsEl=document.getElementById("inputs").innerHtml;
+    //var inputsEl=document.getElementById("inputs");
+    var inputsEl=document.inputs;
     console.log(inputsEl);
     if (inputsEl.isResized) {
       resize(state);
