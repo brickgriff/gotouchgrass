@@ -24,8 +24,8 @@
 - [ ] pause
 - [ ] quit
 - [ ] mouse
--- [ ] mouseup
--- [ ] mousedown
--- [ ] mousemove
--- [ ] mousescroll
+  - [ ] mouseup
+  - [ ] mousedown
+  - [ ] mousemove
+  - [ ] mousescroll
 
