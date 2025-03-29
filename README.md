@@ -11,13 +11,27 @@
 
 ### Screen <!-- Air/Space -->
 - [x] HTML Canvas
-- [ ] draw basic scene
+  - [ ] colors
+  - [ ] shapes
+  - [ ] gradients
+  - [ ] modes
+- [ ] draw background
+<!-- - [ ] 3d??? -->
 
 ### State <!-- Water/Time -->
 - [x] calculate frames per second
+- [ ] animations
+- [ ] simulations
+- [ ] score
+- [ ] save data system
 
 ### Entities <!-- Earth/Matter -->
-- [ ] player dot
+- [ ] player
+- [ ] plants/foliage
+- [ ] soil/terrain
+- [ ] pathways
+- [ ] walls
+- [ ] objects
 
 ### Events <!-- Fire/Energy -->
 - [x] resize
