@@ -62,3 +62,8 @@
     - tar.exe (creates tarballs, not zip files)
     - jar (seems to work the best)
     - 7z (???)
+  - order of operations
+    - dev using stackblitz or sublime
+    - version control with github
+    - archive with jar (after pull)
+    - upload to itch.io (then refresh)
