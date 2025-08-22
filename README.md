@@ -43,3 +43,5 @@
   - [ ] mousemove
   - [ ] mousescroll
 
+- [ ] make sure the dynamic canvas plays nicely with the browser frame in itch.io.
+- [ ] automate zip file creation

@@ -12,10 +12,10 @@ function mainLoop(now) {
   //console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${Math.floor(1000/dt)})`);
 
    // minimum-dimension
-  const mindim = Math.min(self.innerWidth,self.innerHeight);
+  //const mindim = Math.min(self.innerWidth,self.innerHeight);
 
-  state.canvas.width = mindim;
-  state.canvas.height = mindim;
+  state.canvas.width = self.innerWidth;//mindim;
+  state.canvas.height = self.innerHeight;//mindim;
 
   const ctx = state.ctx;
   const cx = state.canvas.width/2;
@@ -72,10 +72,8 @@ here's what I remember:
 I had a world manager system that worked with a frame drawing service
 the two of them would share updates via the event manager
 the README will help but it's gonna be vague
-1. dynamic canvas settings: I want the canvas to
-auto-resize, stay centered, and refresh properly
-2. player interaction: events! events! events!
-3. some more key points: state management, 
+- player interaction: events! events! events!
+- some more key points: state management, 
 ecosystem simulation, debug menu, dev console,
 worker services, and off-screen canvas for 
 sprites and collision detection (you'll see)
