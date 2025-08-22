@@ -21,8 +21,8 @@ function mainLoop(now,state) {
   ctx.fillStyle = "#555"; // gray 0.31
   ctx.fillRect(0,0,state.canvas.width,state.canvas.height);
   
-  ctx.fillStyle = "#000"; // black
-  ctx.fillRect(10,10,10,10);
+  //ctx.fillStyle = "#000"; // black
+  //ctx.fillRect(10,10,10,10);
 
   ctx.beginPath();
   ctx.fillStyle = "#EEE"; // gray 0.94
