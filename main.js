@@ -11,7 +11,18 @@ function mainLoop(now) {
   
   //console.log(`gameLoop(now=${now}, frame=${state.frame++}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
-  const speed = 0.01;
+   // minimum-dimension
+  const mindim = Math.min(self.innerWidth,self.innerHeight);
+  state.canvas.width = self.innerWidth;//mindim;
+  state.canvas.height = self.innerHeight;//mindim;
+
+  const ctx = state.ctx;
+  const cx = state.canvas.width/2;
+  const cy = state.canvas.height/2;
+
+  ctx.translate(cx,cy);
+
+  const speed = 0.01*mindim; // some percent of mindim
   if (state.inputs.buttons.includes(keybinds.up)) {
     state.dy+=speed;
   }
@@ -25,17 +36,6 @@ function mainLoop(now) {
     state.dx-=speed;
   }
 
-   // minimum-dimension
-  const mindim = Math.min(self.innerWidth,self.innerHeight);
-  state.canvas.width = self.innerWidth;//mindim;
-  state.canvas.height = self.innerHeight;//mindim;
-
-  const ctx = state.ctx;
-  const cx = state.canvas.width/2;
-  const cy = state.canvas.height/2;
-
-  ctx.translate(cx,cy);
-  
   // draw background
   ctx.fillStyle = "dimgray";
   ctx.fillRect(-cx,-cy,state.canvas.width,state.canvas.height);
@@ -50,9 +50,9 @@ function mainLoop(now) {
   // draw three circles
   ctx.beginPath();
   ctx.strokeStyle = "lawngreen";
-  let x = .1*mindim+state.dx*mindim;
-  let y = -.1*mindim+state.dy*mindim;
-  let r = mindim * .01;
+  let x = .1*mindim+state.dx;
+  let y = -.1*mindim+state.dy;
+  let r = .01*mindim;
   ctx.moveTo(x+r,y);
   ctx.arc(x,y,r,0,Math.PI*2);
   // x-=.5*mindim;
@@ -75,20 +75,18 @@ function mainLoop(now) {
   // ... like maybe an offscreen canvas context
 
   if (state.isQuit) return console.log("quit");
+
   state.time = now;
   requestAnimationFrame(now=>mainLoop(now)); // keep state private
 }
 
 /* ENTRY POINT */
 /*
-here's what I remember:
-I had a world manager system that worked with a frame drawing service
-the two of them would share updates via the event manager
-the README will help but it's gonna be vague
-- player interaction: events! events! events!
-- some more key points: state management, 
-ecosystem simulation, debug menu, dev console,
-worker services, and off-screen canvas for 
+- state management, 
+- ecosystem simulation, 
+- debug menu, dev console,
+- worker services, and 
+- off-screen canvas for 
 sprites and collision detection (you'll see)
 */
 
@@ -102,16 +100,17 @@ function main() {
 
   document.body.appendChild(canvas); // add to body
 
-  // before we switch back to the standard state initializer
+  // before we switch back to the standard state initializer...
   //const state = World.create(canvas,ctx); // initialize!
-  const state = {canvas:canvas,ctx:ctx,frame:0,dx:0,dy:0,inputs:inputs}; // minimum requirement
+  const state = {canvas:canvas,ctx:ctx,frame:0,dx:0,dy:0}; // minimum requirement
   document.state = state;
+  document.state.inputs = inputs;
 
+  // experimenting with storing vars in the document
   /*const inputsPara = document.createElement("p");
   inputsPara.id="inputs";
   inputsPara.inputs=inputs;
-  */
-  /*const statePara = document.createElement("p");
+  const statePara = document.createElement("p");
   statePara.id="state";
   statePara.state=state;
   */
