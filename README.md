@@ -30,11 +30,12 @@
 - [ ] simulations
 - [ ] score
 - [ ] save data system
+- [ ] SPRNG (seeded pseudo-random number generator)
 
 ### Entities <!-- Earth/Matter -->
 - [ ] player
-- [ ] plants/foliage
-- [ ] soil/terrain
+- [ ] foliage
+- [ ] terrain
 - [ ] pathways
 - [ ] walls
 - [ ] objects
@@ -52,19 +53,21 @@
 - [ ] touch
 
 - [x] make sure the dynamic canvas plays nicely with the browser frame in itch.io
-  - looks like it keeps a square aspect ratio; it doesn't update when self/window/document changes
-  - double-confirm which events get fired, if any
-- [x] automate zip file creation
-  - command line script ready
-  - try using
+  - [x] looks like it keeps a square aspect ratio; it doesn't update when self/window/document changes
+  - [x] double-confirm which events get fired, if any
+- [ ] automate zip file creation
+  - [x] command line script ready
+    - double-confirm proper archive structure
+  - [x] try using
     - winrar (not yet installed)
     - gzip (just a compression algo)
     - tar (creates tarballs, not zip files)
     - tar.exe (creates tarballs, not zip files)
     - jar (seems to work the best)
     - 7z (???)
-  - order of operations
-    - dev using stackblitz or sublime
-    - version control with github
-    - archive with jar (after pull)
+  - [x] order of operations
+    - dev using stackblitz or sublime (feature branch)
+    - version control with github (push into work)
+    - archive locally with jar (after pull from work)
     - upload to itch.io (then refresh)
+  - [ ] can GitHub Actions/Deployments do this?

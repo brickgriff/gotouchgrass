@@ -98,10 +98,6 @@ function mainLoop(now) {
 sprites and collision detection (you'll see)
 */
 
-/* RANDOM NOTES */
-/*
-try to keep style config in the css
-*/
 function main() {
   const canvas = document.createElement("canvas"); // default canvas
   const ctx = canvas.getContext("2d", { willReadFrequently: true }); // now we can draw
@@ -111,9 +107,8 @@ function main() {
   // before we switch back to the standard state initializer...
   //const state = World.create(canvas,ctx); // initialize!
   const state = { canvas: canvas, ctx: ctx }; // minimum requirement
+  state.inputs = inputs; // from events.js
   document.state = state;
-  document.state.inputs = inputs;
 
-  // do we need to pass state around or can we add it to the document?
-  requestAnimationFrame(now => mainLoop(now)); // keep state private
+  requestAnimationFrame(now => mainLoop(now));
 }
