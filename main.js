@@ -75,17 +75,17 @@ function mainLoop(now) {
   ctx.arc(0, 0, 0.5 * mindim, 0, Math.PI * 2);
   ctx.stroke();
 
+  // TODO: switch back
+  // world can create entities
+  // display can draw them
+  // they both share player position and velocity
   //World.update(state, dt); // update entities
   //Display.draw(state, state.ctx); // draw entities
-
-  // FIXME: the above may be unnecessary since state.ctx is inside state...
-  // maybe Display is allowed to use other canvas contexts to draw
-  // ... like maybe an offscreen canvas context
 
   if (state.isQuit) return console.log("quit");
 
   state.time = now;
-  requestAnimationFrame(now => mainLoop(now)); // keep state private
+  requestAnimationFrame(now => mainLoop(now));
 }
 
 /* ENTRY POINT */
@@ -104,7 +104,7 @@ function main() {
 
   document.body.appendChild(canvas); // add to body
 
-  // before we switch back to the standard state initializer...
+  // TODO: switch back to the standard state initializer...
   //const state = World.create(canvas,ctx); // initialize!
   const state = { canvas: canvas, ctx: ctx }; // minimum requirement
   state.inputs = inputs; // from events.js
