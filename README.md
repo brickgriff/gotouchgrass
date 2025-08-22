@@ -43,7 +43,7 @@
   - [ ] mousemove
   - [ ] mousescroll
 
-- [ ] make sure the dynamic canvas plays nicely with the browser frame in itch.io
+- [x] make sure the dynamic canvas plays nicely with the browser frame in itch.io
   - looks like it keeps a square aspect ratio; it doesn't update when self/window/document changes
   - double-confirm which events get fired, if any
 - [ ] automate zip file creation
