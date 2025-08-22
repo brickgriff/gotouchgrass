@@ -53,7 +53,7 @@ window.addEventListener("resize", (e)=>{
   // inputs.isResized=true;
   // console.log(document.getElementById("inputs").innerHtml);
   //document.getElementById("inputs").isResized=true;
-  document.inputs.isResized=true;
+  document.state.events.isResized=true;
 });
 
 window.addEventListener("keydown", (e) =>{
@@ -174,7 +174,7 @@ window.addEventListener("touchmove",(e)=>{
 });
 
 // FIXME: how to switch bw WASD and ESDF
-let isUsingWASD = true;
+let isUsingWASD = false;
 const  keybinds = {
   up: isUsingWASD ? "KeyW" : "KeyE",
   down: isUsingWASD ? "KeyS" : "KeyD",

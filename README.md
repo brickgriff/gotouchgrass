@@ -10,17 +10,20 @@
 
 
 ### Screen <!-- Air/Space -->
-- [x] HTML Canvas
+- [ ] HTML Canvas
   - [ ] colors
   - [ ] shapes
   - [ ] gradients
   - [ ] modes
 - [ ] draw background
+  - [X] css for both canvas and html,body
+  - [ ] dynamic feedback
 <!-- - [ ] 3d??? -->
 
 ### State <!-- Water/Time -->
 - [x] calculate frames per second
 - [ ] animations
+  - [ ] normalize diagonal movement
 - [ ] simulations
 - [ ] score
 - [ ] save data system
@@ -37,11 +40,13 @@
 - [x] resize
 - [ ] pause
 - [ ] quit
+- [ ] keyboard
 - [ ] mouse
   - [ ] mouseup
   - [ ] mousedown
   - [ ] mousemove
   - [ ] mousescroll
+- [ ] touch
 
 - [x] make sure the dynamic canvas plays nicely with the browser frame in itch.io
   - looks like it keeps a square aspect ratio; it doesn't update when self/window/document changes
