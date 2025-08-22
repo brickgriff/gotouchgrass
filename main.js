@@ -2,14 +2,17 @@
   @Author: BrickGriff@GitHub.Com
 */
 
-function mainLoop(now,state) {
+function mainLoop(now) {
+  const state = document.state;
+
   // time tracking
   const elapsed = (now - state.time||0); // deltaTime in millis
   const dt = elapsed > 1000 ? 1000 : elapsed; // cap deltaTime @ 1000ms
   
   //console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${Math.floor(1000/dt)})`);
 
-  const mindim = Math.min(self.innerWidth,self.innerHeight); // minimum-dimension
+   // minimum-dimension
+  const mindim = Math.min(self.innerWidth,self.innerHeight);
 
   state.canvas.width = mindim;
   state.canvas.height = mindim;
@@ -91,6 +94,8 @@ function main() {
   // before we switch back to the standard state initializer
   //const state = World.create(canvas,ctx); // initialize!
   const state = {canvas:canvas,ctx:ctx,time:0,frame:0}; // minimum requirement
+  document.state = state;
+  document.inputs = inputs;
 
   /*const inputsPara = document.createElement("p");
   inputsPara.id="inputs";
@@ -102,7 +107,7 @@ function main() {
   statePara.id="state";
   statePara.state=state;
   */
-  //document.state=state;
 
-  requestAnimationFrame(now=>mainLoop(now,state)); // keep state private
+  // do we need to pass state around or can we add it to the document?
+  requestAnimationFrame(now=>mainLoop(now)); // keep state private
 }
