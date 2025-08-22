@@ -25,35 +25,35 @@ function mainLoop(now) {
 
   // init displacement vector
   if (state.dx == undefined || state.dy == undefined) { state.dx = 0; state.dy = 0; }
-  const speed = 0.01 * mindim; // some percent of mindim
+  const speed = 0.01; // some percent of mindim
 
   const vector = {};
 
-  vector.x=(state.inputs.buttons.includes(keybinds.right) - state.inputs.buttons.includes(keybinds.left));
-  vector.y=(state.inputs.buttons.includes(keybinds.down) - state.inputs.buttons.includes(keybinds.up));
+  vector.x = (state.inputs.buttons.includes(keybinds.right) - state.inputs.buttons.includes(keybinds.left));
+  vector.y = (state.inputs.buttons.includes(keybinds.down) - state.inputs.buttons.includes(keybinds.up));
 
-  const displacement=Math.hypot(vector.x,vector.y);
-  const angle=Math.atan2(vector.y,vector.x);
+  const displacement = Math.hypot(vector.x, vector.y);
+  const angle = Math.atan2(vector.y, vector.x);
 
-  state.dx -= speed * (displacement==0?0:1) * Math.cos(angle);
-  state.dy -= speed * (displacement==0?0:1) * Math.sin(angle);
+  state.dx -= speed * (displacement == 0 ? 0 : 1) * Math.cos(angle);
+  state.dy -= speed * (displacement == 0 ? 0 : 1) * Math.sin(angle);
 
   // draw background
   ctx.fillStyle = "dimgray";
   ctx.fillRect(-cx, -cy, state.canvas.width, state.canvas.height);
 
   // draw center dot
-  const pr = mindim * .05;
+  const pr = .05 * mindim;
   ctx.beginPath();
   ctx.fillStyle = "lightgray";
   ctx.arc(0, 0, pr, 0, Math.PI * 2);
   ctx.fill();
 
-  // draw three circles
+  // draw plant circles
   ctx.beginPath();
   ctx.strokeStyle = "lawngreen";
-  let x = .1 * mindim + state.dx;
-  let y = -.1 * mindim + state.dy;
+  let x = (.1 + state.dx) * mindim;
+  let y = (-.1 + state.dy) * mindim;
   let r = .01 * mindim;
   ctx.moveTo(x + r, y);
   ctx.arc(x, y, r, 0, Math.PI * 2);

@@ -23,7 +23,8 @@
 ### State <!-- Water/Time -->
 - [x] calculate frames per second
 - [ ] animations
-  - [ ] normalize diagonal movement
+  - [x] normalize diagonal movement
+  - [x] normalize entity placement
   - [ ] walking speed in state
   - [ ] zoom level in state
 - [ ] simulations
