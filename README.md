@@ -10,17 +10,23 @@
 
 
 ### Screen <!-- Air/Space -->
-- [x] HTML Canvas
+- [ ] HTML Canvas
   - [ ] colors
   - [ ] shapes
   - [ ] gradients
   - [ ] modes
 - [ ] draw background
+  - [X] css for both canvas and html,body
+  - [ ] dynamic feedback
 <!-- - [ ] 3d??? -->
 
 ### State <!-- Water/Time -->
 - [x] calculate frames per second
 - [ ] animations
+  - [x] normalize diagonal movement
+  - [x] normalize entity placement
+  - [ ] walking speed in state
+  - [ ] zoom level in state
 - [ ] simulations
 - [ ] score
 - [ ] save data system
@@ -37,9 +43,28 @@
 - [x] resize
 - [ ] pause
 - [ ] quit
+- [ ] keyboard
 - [ ] mouse
   - [ ] mouseup
   - [ ] mousedown
   - [ ] mousemove
   - [ ] mousescroll
+- [ ] touch
 
+- [x] make sure the dynamic canvas plays nicely with the browser frame in itch.io
+  - looks like it keeps a square aspect ratio; it doesn't update when self/window/document changes
+  - double-confirm which events get fired, if any
+- [x] automate zip file creation
+  - command line script ready
+  - try using
+    - winrar (not yet installed)
+    - gzip (just a compression algo)
+    - tar (creates tarballs, not zip files)
+    - tar.exe (creates tarballs, not zip files)
+    - jar (seems to work the best)
+    - 7z (???)
+  - order of operations
+    - dev using stackblitz or sublime
+    - version control with github
+    - archive with jar (after pull)
+    - upload to itch.io (then refresh)

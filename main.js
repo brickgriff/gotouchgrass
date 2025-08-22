@@ -2,53 +2,71 @@
   @Author: BrickGriff@GitHub.Com
 */
 
-function mainLoop(now,state) {
+function mainLoop(now) {
+  const state = document.state;
+
   // time tracking
-  const elapsed = (now - state.time||0); // deltaTime in millis
+  if (!state.frame) state.frame = 0; // init frame
+  const elapsed = (now - (state.time || now)); // deltaTime in millis
   const dt = elapsed > 1000 ? 1000 : elapsed; // cap deltaTime @ 1000ms
-  
-  //console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${Math.floor(1000/dt)})`);
 
-  const mindim = Math.min(self.innerWidth,self.innerHeight); // minimum-dimension
+  //console.log(`gameLoop(now=${now}, frame=${state.frame++}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
-  state.canvas.width = mindim;
-  state.canvas.height = mindim;
+  // minimum-dimension
+  const mindim = Math.min(self.innerWidth, self.innerHeight);
+  state.canvas.width = self.innerWidth;
+  state.canvas.height = self.innerHeight;
 
   const ctx = state.ctx;
-  const cx = state.canvas.width/2;
-  const cy = state.canvas.height/2;
+  const cx = state.canvas.width / 2;
+  const cy = state.canvas.height / 2;
 
-  ctx.fillStyle = "#555"; // gray 0.31
-  ctx.fillRect(0,0,state.canvas.width,state.canvas.height);
-  
-  //ctx.fillStyle = "#000"; // black
-  //ctx.fillRect(10,10,10,10);
+  ctx.translate(cx, cy);
 
+  // init displacement vector
+  if (state.dx == undefined || state.dy == undefined) { state.dx = 0; state.dy = 0; }
+  const speed = 0.01; // some percent of mindim
+
+  const vector = {};
+
+  vector.x = (state.inputs.buttons.includes(keybinds.right) - state.inputs.buttons.includes(keybinds.left));
+  vector.y = (state.inputs.buttons.includes(keybinds.down) - state.inputs.buttons.includes(keybinds.up));
+
+  const displacement = Math.hypot(vector.x, vector.y);
+  const angle = Math.atan2(vector.y, vector.x);
+
+  state.dx -= speed * (displacement == 0 ? 0 : 1) * Math.cos(angle);
+  state.dy -= speed * (displacement == 0 ? 0 : 1) * Math.sin(angle);
+
+  // draw background
+  ctx.fillStyle = "dimgray";
+  ctx.fillRect(-cx, -cy, state.canvas.width, state.canvas.height);
+
+  // draw center dot
+  const pr = .05 * mindim;
   ctx.beginPath();
-  ctx.fillStyle = "#EEE"; // gray 0.94
-  ctx.strokeStyle = "#AAA"; // gray 0.06
-  ctx.arc(cx,cy,15,0,Math.PI*2);
+  ctx.fillStyle = "lightgray";
+  ctx.arc(0, 0, pr, 0, Math.PI * 2);
   ctx.fill();
-  ctx.stroke();
 
-  // draw three circles
+  // draw plant circles
   ctx.beginPath();
-  ctx.strokeStyle = "green";
-  let x = cx+19;
-  let y = cy-23;
-  let r = 4;
-  ctx.moveTo(x+r,y);
-  ctx.arc(x,y,r,0,Math.PI*2);
-  x-=41;
-  y+=49;
-  r+=2;
-  ctx.moveTo(x+r,y);
-  ctx.arc(x,y,r,0,Math.PI*2);
-  r-=3;
-  x-=6;
-  y+=4;
-  ctx.moveTo(x+r,y);
-  ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.strokeStyle = "lawngreen";
+  let x = (.1 + state.dx) * mindim;
+  let y = (-.1 + state.dy) * mindim;
+  let r = .01 * mindim;
+  ctx.moveTo(x + r, y);
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  // x-=.5*mindim;
+  // y+=.44*mindim;
+  // r+=.01*mindim;
+  // ctx.moveTo(x+r,y);
+  // ctx.arc(x,y,r,0,Math.PI*2);
+  // r-=.008 * mindim;
+  // x-=6;
+  // y-=54;
+  // ctx.moveTo(x+r,y);
+  // ctx.arc(x,y,r,0,Math.PI*2);
   ctx.stroke();
 
   //World.update(state, dt); // update entities
@@ -60,21 +78,17 @@ function mainLoop(now,state) {
 
   if (state.isQuit) return console.log("quit");
 
-  requestAnimationFrame(now=>mainLoop(now,state)); // keep state private
+  state.time = now;
+  requestAnimationFrame(now => mainLoop(now)); // keep state private
 }
 
 /* ENTRY POINT */
 /*
-here's what I remember:
-I had a world manager system that worked with a frame drawing service
-the two of them would share updates via the event manager
-the README will help but it's gonna be vague
-1. dynamic canvas settings: I want the canvas to
-auto-resize, stay centered, and refresh properly
-2. player interaction: events! events! events!
-3. some more key points: state management, 
-ecosystem simulation, debug menu, dev console,
-worker services, and off-screen canvas for 
+- state management, 
+- ecosystem simulation, 
+- debug menu, dev console,
+- worker services, and 
+- off-screen canvas for 
 sprites and collision detection (you'll see)
 */
 
@@ -88,21 +102,12 @@ function main() {
 
   document.body.appendChild(canvas); // add to body
 
-  // before we switch back to the standard state initializer
+  // before we switch back to the standard state initializer...
   //const state = World.create(canvas,ctx); // initialize!
-  const state = {canvas:canvas,ctx:ctx,time:0,frame:0}; // minimum requirement
+  const state = { canvas: canvas, ctx: ctx }; // minimum requirement
+  document.state = state;
+  document.state.inputs = inputs;
 
-  /*const inputsPara = document.createElement("p");
-  inputsPara.id="inputs";
-  inputsPara.inputs=inputs;
-  */
-  //document.inputs=inputs;
-
-  /*const statePara = document.createElement("p");
-  statePara.id="state";
-  statePara.state=state;
-  */
-  //document.state=state;
-
-  requestAnimationFrame(now=>mainLoop(now,state)); // keep state private
+  // do we need to pass state around or can we add it to the document?
+  requestAnimationFrame(now => mainLoop(now)); // keep state private
 }
