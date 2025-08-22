@@ -11,21 +11,22 @@ function mainLoop(now) {
   
   //console.log(`gameLoop(now=${now}, frame=${state.frame++}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
+  const speed = 0.01;
   if (state.inputs.buttons.includes(keybinds.up)) {
-    state.dy+=5;
+    state.dy+=speed;
   }
   if (state.inputs.buttons.includes(keybinds.down)) {
-    state.dy-=5;
+    state.dy-=speed;
   }
   if (state.inputs.buttons.includes(keybinds.left)) {
-    state.dx+=5;
+    state.dx+=speed;
   }
   if (state.inputs.buttons.includes(keybinds.right)) {
-    state.dx-=5;
+    state.dx-=speed;
   }
 
    // minimum-dimension
-  //const mindim = Math.min(self.innerWidth,self.innerHeight);
+  const mindim = Math.min(self.innerWidth,self.innerHeight);
   state.canvas.width = self.innerWidth;//mindim;
   state.canvas.height = self.innerHeight;//mindim;
 
@@ -40,29 +41,30 @@ function mainLoop(now) {
   ctx.fillRect(-cx,-cy,state.canvas.width,state.canvas.height);
 
   // draw center dot
+  const pr = mindim * .05;
   ctx.beginPath();
   ctx.fillStyle = "lightgray";
-  ctx.arc(0,0,15,0,Math.PI*2);
+  ctx.arc(0,0,pr,0,Math.PI*2);
   ctx.fill();
 
   // draw three circles
   ctx.beginPath();
   ctx.strokeStyle = "lawngreen";
-  let x = 19+state.dx;
-  let y = -23+state.dy;
-  let r = 4;
+  let x = .1*mindim+state.dx*mindim;
+  let y = -.1*mindim+state.dy*mindim;
+  let r = mindim * .01;
   ctx.moveTo(x+r,y);
   ctx.arc(x,y,r,0,Math.PI*2);
-  x-=41;
-  y+=49;
-  r+=2;
-  ctx.moveTo(x+r,y);
-  ctx.arc(x,y,r,0,Math.PI*2);
-  r-=3;
-  x-=6;
-  y-=54;
-  ctx.moveTo(x+r,y);
-  ctx.arc(x,y,r,0,Math.PI*2);
+  // x-=.5*mindim;
+  // y+=.44*mindim;
+  // r+=.01*mindim;
+  // ctx.moveTo(x+r,y);
+  // ctx.arc(x,y,r,0,Math.PI*2);
+  // r-=.008 * mindim;
+  // x-=6;
+  // y-=54;
+  // ctx.moveTo(x+r,y);
+  // ctx.arc(x,y,r,0,Math.PI*2);
   ctx.stroke();
 
   //World.update(state, dt); // update entities
