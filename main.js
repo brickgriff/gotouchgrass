@@ -32,30 +32,11 @@ function mainLoop(now) {
   vector.x=(state.inputs.buttons.includes(keybinds.right) - state.inputs.buttons.includes(keybinds.left));
   vector.y=(state.inputs.buttons.includes(keybinds.down) - state.inputs.buttons.includes(keybinds.up));
 
-  //console.log(vector);
-
-  const dist=Math.hypot(vector.x,vector.y);
+  const displacement=Math.hypot(vector.x,vector.y);
   const angle=Math.atan2(vector.y,vector.x);
 
-  // console.log(dist,angle);
-
-  state.dx -= speed * (dist==0?0:1) * Math.cos(angle);
-  state.dy -= speed * (dist==0?0:1) * Math.sin(angle);
-
-  // console.log(speed * (dist==0?0:1), angle);
-
-  // if (state.inputs.buttons.includes(keybinds.up)) {
-  //   state.dy += speed;
-  // }
-  // if (state.inputs.buttons.includes(keybinds.down)) {
-  //   state.dy -= speed;
-  // }
-  // if (state.inputs.buttons.includes(keybinds.left)) {
-  //   state.dx += speed;
-  // }
-  // if (state.inputs.buttons.includes(keybinds.right)) {
-  //   state.dx -= speed;
-  // }
+  state.dx -= speed * (displacement==0?0:1) * Math.cos(angle);
+  state.dy -= speed * (displacement==0?0:1) * Math.sin(angle);
 
   // draw background
   ctx.fillStyle = "dimgray";
