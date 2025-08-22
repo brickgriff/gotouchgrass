@@ -1,4 +1,10 @@
 {
+  "name": "gotouchgrass",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "npm install && servor --reload"
+  },
   "dependencies": {
     "servor": "^4.0.2"
   }
