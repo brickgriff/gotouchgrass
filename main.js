@@ -52,6 +52,14 @@ function mainLoop(now) {
   // draw plant circles
   ctx.beginPath();
   ctx.strokeStyle = "lawngreen";
+  var n = 100;
+  while (n--) {
+    let x1 = (Math.random()-0.5)*mindim;
+    let y1 = (Math.random()-0.5)*mindim;
+    let r1 = Math.random()*0.025*mindim;
+    ctx.moveTo(x1+r1,y1);
+    ctx.arc(x1,y1,r1,0,Math.PI*2);
+  }
   let x = (.1 + state.dx) * mindim;
   let y = (-.1 + state.dy) * mindim;
   let r = .01 * mindim;
