@@ -25,7 +25,7 @@ function mainLoop(now) {
 
   // init displacement vector
   if (state.dx == undefined || state.dy == undefined) { state.dx = 0; state.dy = 0; }
-  const speed = 0.01; // some percent of mindim
+  const speed = 0.005; // some percent of mindim
 
   const vector = {};
 
@@ -67,6 +67,12 @@ function mainLoop(now) {
   // y-=54;
   // ctx.moveTo(x+r,y);
   // ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.strokeStyle = "black";
+  ctx.moveTo(0 + 0.5*mindim, 0);
+  ctx.arc(0, 0, 0.5*mindim, 0, Math.PI * 2);
   ctx.stroke();
 
   //World.update(state, dt); // update entities
