@@ -5,13 +5,14 @@ html, body {
   border: 0;
   overflow: hidden;
   display: block;
+  background-color: gray;
 }
 
 canvas {
     padding: 0;
     margin: auto;
     display: block;
-    border: 1px solid black;
+    border: 1px solid dimgray;
 
     /*
     image-rendering: pixelated;
