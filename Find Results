@@ -1,0 +1,32 @@
+Searching 11 files for "TODO|FIXME" (regex)
+
+J:\local\code\apps\gotouchgrass\display.js:
+   13:   // TODO: experiment with polygons and loops
+   65:       // TODO: bring this back with touch support works
+  263:     // TODO: move vector normalization to util api
+  377:     // TODO: while I do want to use pixel colors
+  434:     // TODO: give entities their own draw functions
+
+J:\local\code\apps\gotouchgrass\events.js:
+   34: // TODO: practice with offscreen canvas
+   36: // TODO: ensure the browser supports innerWidth or clientWidth
+   93: // FIXME: touch events
+  169: // FIXME: how to switch bw WASD and ESDF
+
+J:\local\code\apps\gotouchgrass\main.js:
+   14:   // FIXME: the above may be unnecessary since state.ctx is inside state...
+
+J:\local\code\apps\gotouchgrass\world.js:
+   34:       // TODO: apply this to the framerate, rather than the speed
+  146:     // TODO: limit simulation steps per frame/second
+  147:     // TODO: create more plant variety!!!
+  148:     // TODO: simulate light, water, and humus competition
+  157:       // TODO: use a worker thread past 1K plants
+  227:       // FIXME: flickering
+  232:       // TODO: set state to menu then draw the menu
+  233:       // TODO: let the menu state changes set state to quit
+  244:     // TODO: use a worker thread!!!
+  245:     // TODO: count simulation steps then space out calculations by at least 6-30 frames
+  287:     // TODO: turn the player away from the wall, not just away from their intended vector
+
+21 matches across 4 files

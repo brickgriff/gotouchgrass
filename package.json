@@ -1,4 +1,10 @@
 {
+  "name": "gotouchgrass",
+  "version": "0.1.0",
+  "license": "MIT",
+  // "stackblitz": {
+  //   "startCommand": "npm install && npm start"
+  // },
   "scripts": {
     "start": "servor --reload"
   },
