@@ -24,6 +24,8 @@
 - [x] calculate frames per second
 - [ ] animations
   - [ ] normalize diagonal movement
+  - [ ] walking speed in state
+  - [ ] zoom level in state
 - [ ] simulations
 - [ ] score
 - [ ] save data system
@@ -52,3 +54,11 @@
   - looks like it keeps a square aspect ratio; it doesn't update when self/window/document changes
   - double-confirm which events get fired, if any
 - [ ] automate zip file creation
+  - command line script ready
+  - try using
+    - winrar (not yet installed)
+    - gzip (just a compression algo)
+    - tar (creates tarballs, not zip files)
+    - tar.exe (creates tarballs, not zip files)
+    - jar (seems to work the best)
+    - 7z (???)
