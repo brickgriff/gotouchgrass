@@ -4,57 +4,78 @@
 
 function mainLoop(now) {
   const state = document.state;
-  
+
   // time tracking
-  const elapsed = (now - (state.time||now)); // deltaTime in millis
+  if (!state.frame) state.frame = 0; // init frame
+  const elapsed = (now - (state.time || now)); // deltaTime in millis
   const dt = elapsed > 1000 ? 1000 : elapsed; // cap deltaTime @ 1000ms
-  
+
   //console.log(`gameLoop(now=${now}, frame=${state.frame++}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
-   // minimum-dimension
-  const mindim = Math.min(self.innerWidth,self.innerHeight);
-  state.canvas.width = self.innerWidth;//mindim;
-  state.canvas.height = self.innerHeight;//mindim;
+  // minimum-dimension
+  const mindim = Math.min(self.innerWidth, self.innerHeight);
+  state.canvas.width = self.innerWidth;
+  state.canvas.height = self.innerHeight;
 
   const ctx = state.ctx;
-  const cx = state.canvas.width/2;
-  const cy = state.canvas.height/2;
+  const cx = state.canvas.width / 2;
+  const cy = state.canvas.height / 2;
 
-  ctx.translate(cx,cy);
+  ctx.translate(cx, cy);
 
-  const speed = 0.01*mindim; // some percent of mindim
-  if (state.inputs.buttons.includes(keybinds.up)) {
-    state.dy+=speed;
-  }
-  if (state.inputs.buttons.includes(keybinds.down)) {
-    state.dy-=speed;
-  }
-  if (state.inputs.buttons.includes(keybinds.left)) {
-    state.dx+=speed;
-  }
-  if (state.inputs.buttons.includes(keybinds.right)) {
-    state.dx-=speed;
-  }
+  // init displacement vector
+  if (state.dx == undefined || state.dy == undefined) { state.dx = 0; state.dy = 0; }
+  const speed = 0.01 * mindim; // some percent of mindim
+
+  const vector = {};
+
+  vector.x=(state.inputs.buttons.includes(keybinds.right) - state.inputs.buttons.includes(keybinds.left));
+  vector.y=(state.inputs.buttons.includes(keybinds.down) - state.inputs.buttons.includes(keybinds.up));
+
+  //console.log(vector);
+
+  const dist=Math.hypot(vector.x,vector.y);
+  const angle=Math.atan2(vector.y,vector.x);
+
+  // console.log(dist,angle);
+
+  state.dx -= speed * (dist==0?0:1) * Math.cos(angle);
+  state.dy -= speed * (dist==0?0:1) * Math.sin(angle);
+
+  // console.log(speed * (dist==0?0:1), angle);
+
+  // if (state.inputs.buttons.includes(keybinds.up)) {
+  //   state.dy += speed;
+  // }
+  // if (state.inputs.buttons.includes(keybinds.down)) {
+  //   state.dy -= speed;
+  // }
+  // if (state.inputs.buttons.includes(keybinds.left)) {
+  //   state.dx += speed;
+  // }
+  // if (state.inputs.buttons.includes(keybinds.right)) {
+  //   state.dx -= speed;
+  // }
 
   // draw background
   ctx.fillStyle = "dimgray";
-  ctx.fillRect(-cx,-cy,state.canvas.width,state.canvas.height);
+  ctx.fillRect(-cx, -cy, state.canvas.width, state.canvas.height);
 
   // draw center dot
   const pr = mindim * .05;
   ctx.beginPath();
   ctx.fillStyle = "lightgray";
-  ctx.arc(0,0,pr,0,Math.PI*2);
+  ctx.arc(0, 0, pr, 0, Math.PI * 2);
   ctx.fill();
 
   // draw three circles
   ctx.beginPath();
   ctx.strokeStyle = "lawngreen";
-  let x = .1*mindim+state.dx;
-  let y = -.1*mindim+state.dy;
-  let r = .01*mindim;
-  ctx.moveTo(x+r,y);
-  ctx.arc(x,y,r,0,Math.PI*2);
+  let x = .1 * mindim + state.dx;
+  let y = -.1 * mindim + state.dy;
+  let r = .01 * mindim;
+  ctx.moveTo(x + r, y);
+  ctx.arc(x, y, r, 0, Math.PI * 2);
   // x-=.5*mindim;
   // y+=.44*mindim;
   // r+=.01*mindim;
@@ -77,7 +98,7 @@ function mainLoop(now) {
   if (state.isQuit) return console.log("quit");
 
   state.time = now;
-  requestAnimationFrame(now=>mainLoop(now)); // keep state private
+  requestAnimationFrame(now => mainLoop(now)); // keep state private
 }
 
 /* ENTRY POINT */
@@ -102,19 +123,10 @@ function main() {
 
   // before we switch back to the standard state initializer...
   //const state = World.create(canvas,ctx); // initialize!
-  const state = {canvas:canvas,ctx:ctx,frame:0,dx:0,dy:0}; // minimum requirement
+  const state = { canvas: canvas, ctx: ctx }; // minimum requirement
   document.state = state;
   document.state.inputs = inputs;
 
-  // experimenting with storing vars in the document
-  /*const inputsPara = document.createElement("p");
-  inputsPara.id="inputs";
-  inputsPara.inputs=inputs;
-  const statePara = document.createElement("p");
-  statePara.id="state";
-  statePara.state=state;
-  */
-
   // do we need to pass state around or can we add it to the document?
-  requestAnimationFrame(now=>mainLoop(now)); // keep state private
+  requestAnimationFrame(now => mainLoop(now)); // keep state private
 }
