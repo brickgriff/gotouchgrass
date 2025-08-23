@@ -67,11 +67,8 @@ function mainLoop(now) {
     x=(plant.x + state.dx) * mindim;
     y=(plant.y + state.dy) * mindim;
     r=plant.r * mindim;
-
-    const displacement = Math.hypot(x, y);
-    //const angle = Math.atan2(vy, vx);
   
-    if (displacement > .1*mindim) {
+    if (Math.hypot(x, y) > .1*mindim) {
       continue;
     }
 
@@ -81,8 +78,11 @@ function mainLoop(now) {
   x = (.1 + state.dx) * mindim;
   y = (-.1 + state.dy) * mindim;
   r = .01 * mindim;
-  ctx.moveTo(x + r, y);
-  ctx.arc(x, y, r, 0, Math.PI * 2);
+
+  if (Math.hypot(x, y) < mindim/2) {
+    ctx.moveTo(x + r, y);
+    ctx.arc(x, y, r, 0, Math.PI * 2);  
+  }
   // x-=.5*mindim;
   // y+=.44*mindim;
   // r+=.01*mindim;
