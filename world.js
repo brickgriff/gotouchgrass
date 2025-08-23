@@ -80,6 +80,7 @@ var updateGamepad = (state) => {
   // check mouse pos
   // if near the gamepad extents
   // check which button it is near
+  // if w/i center button
   // or
   // check vector angle
   // check which button should be active
