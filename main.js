@@ -12,7 +12,6 @@ function mainLoop(now) {
 
   // console.log(`gameLoop(now=${now}, frame=${state.frame++}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
-
   /* most of this code should go in world.js and should only run on a resize event */
   // minimum-dimension
   const mindim = Math.min(self.innerWidth, self.innerHeight);
@@ -36,33 +35,43 @@ function mainLoop(now) {
   state.dx -= speed * (displacement == 0 ? 0 : 1) * Math.cos(angle);
   state.dy -= speed * (displacement == 0 ? 0 : 1) * Math.sin(angle);
 
+  if (state.plants == undefined) {
+    const plants = [];
+    var num = 1000;
+    while (num--) {
+      let x1 = (Math.random()-0.5);
+      let y1 = (Math.random()-0.5);
+      let r1 = Math.random()*0.025;
+      plants.push({x:x1,y:y1,r:r1});  
+    }
+    state.plants = plants;
+  }
 
   /* this code should go in display.js */
   // draw background
   ctx.fillStyle = "dimgray";
   ctx.fillRect(-cx, -cy, state.canvas.width, state.canvas.height);
 
-  // draw center dot
-  const pr = .05 * mindim;
-  ctx.beginPath();
-  ctx.fillStyle = "lightgray";
-  ctx.arc(0, 0, pr, 0, Math.PI * 2);
-  ctx.fill();
 
   // draw plant circles
   ctx.beginPath();
   ctx.strokeStyle = "lawngreen";
-  var n = 100;
-  while (n--) {
-    let x1 = (Math.random()-0.5)*mindim;
-    let y1 = (Math.random()-0.5)*mindim;
-    let r1 = Math.random()*0.025*mindim;
-    ctx.moveTo(x1+r1,y1);
-    ctx.arc(x1,y1,r1,0,Math.PI*2);
+
+  let x = 0;
+  let y = 0;
+  let r = 0;
+
+  for (plant of state.plants) {
+
+    x=(plant.x + state.dx) * mindim;
+    y=(plant.y + state.dy) * mindim;
+    r=plant.r * mindim;
+    ctx.moveTo(x+r,y);
+    ctx.arc(x,y,r,0,Math.PI*2);
   }
-  let x = (.1 + state.dx) * mindim;
-  let y = (-.1 + state.dy) * mindim;
-  let r = .01 * mindim;
+  x = (.1 + state.dx) * mindim;
+  y = (-.1 + state.dy) * mindim;
+  r = .01 * mindim;
   ctx.moveTo(x + r, y);
   ctx.arc(x, y, r, 0, Math.PI * 2);
   // x-=.5*mindim;
@@ -77,6 +86,13 @@ function mainLoop(now) {
   // ctx.arc(x,y,r,0,Math.PI*2);
   ctx.stroke();
 
+  // draw center dot
+  const pr = .05 * mindim;
+  ctx.beginPath();
+  ctx.fillStyle = "lightgray";
+  ctx.arc(0, 0, pr, 0, Math.PI * 2);
+  ctx.fill();
+  
   ctx.beginPath();
   ctx.strokeStyle = "black";
   ctx.moveTo(0 + 0.5 * mindim, 0);
