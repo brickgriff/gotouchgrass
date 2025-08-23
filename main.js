@@ -37,11 +37,11 @@ function mainLoop(now) {
 
   if (state.plants == undefined) {
     const plants = [];
-    var num = 1000;
+    var num = 10000;
     while (num--) {
-      let x1 = (Math.random()-0.5);
-      let y1 = (Math.random()-0.5);
-      let r1 = Math.random()*0.025;
+      let x1 = (Math.random()*3-1.5);
+      let y1 = (Math.random()*3-1.5);
+      let r1 = (Math.random()*.6+.4)*0.025;
       plants.push({x:x1,y:y1,r:r1});  
     }
     state.plants = plants;
@@ -56,6 +56,7 @@ function mainLoop(now) {
   // draw plant circles
   ctx.beginPath();
   ctx.strokeStyle = "lawngreen";
+  ctx.fillStyle = "lawngreen";
 
   let x = 0;
   let y = 0;
@@ -66,6 +67,14 @@ function mainLoop(now) {
     x=(plant.x + state.dx) * mindim;
     y=(plant.y + state.dy) * mindim;
     r=plant.r * mindim;
+
+    const displacement = Math.hypot(x, y);
+    //const angle = Math.atan2(vy, vx);
+  
+    if (displacement > .1*mindim) {
+      continue;
+    }
+
     ctx.moveTo(x+r,y);
     ctx.arc(x,y,r,0,Math.PI*2);
   }
@@ -85,6 +94,7 @@ function mainLoop(now) {
   // ctx.moveTo(x+r,y);
   // ctx.arc(x,y,r,0,Math.PI*2);
   ctx.stroke();
+  ctx.fill();
 
   // draw center dot
   const pr = .05 * mindim;
