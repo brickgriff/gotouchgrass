@@ -185,9 +185,8 @@ const World = (function (/*api*/) {
         state.dy+=speed*Math.sin(theta);
     */
     // prepare for next frame
-    state.frame++;
-    state.time += dt;
 
+    
   };
   // return the public api
   return api;

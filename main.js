@@ -19,6 +19,7 @@ function mainLoop(now) {
   if (state.isQuit) return console.log("quit");
 
   state.time = now; // update time for tracking
+  state.frame++;
   requestAnimationFrame(now => mainLoop(now));
 }
 
