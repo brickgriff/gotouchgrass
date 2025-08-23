@@ -11,7 +11,7 @@ const inputs = {
     dragMin: 10,
     dragMax: 50,
     // these should be in document.state.events
-    isDragged: false, isClicked: false,
+    // isDragged: false, isClicked: false,
   },
 };
 
