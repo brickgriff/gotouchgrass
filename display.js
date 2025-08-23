@@ -422,7 +422,7 @@ const Display = (function(/*api*/) {
   }
 */
   // public api is a function
-  api.draw = function (state, ctx) {
+  api.draw = function () {
     //console.log(`draw`);
 /*
     state.canopyColor=getCtxColor(ctx,COLORS.DIMGRAY);
@@ -469,6 +469,74 @@ const Display = (function(/*api*/) {
       debug(state,ctx);
     }
     */
+  /* this code should go in display.js */
+  const state = document.state;
+  const ctx = state.ctx;
+  const cx = state.canvas.width / 2;
+  const cy = state.canvas.height / 2;
+  const mindim = Math.min(self.innerWidth, self.innerHeight);
+
+  // draw background
+  ctx.fillStyle = "dimgray";
+  ctx.fillRect(-cx, -cy, state.canvas.width, state.canvas.height);
+
+  // draw plant circles
+  ctx.beginPath();
+  ctx.strokeStyle = "lawngreen";
+  ctx.fillStyle = "lawngreen";
+
+  let x = 0;
+  let y = 0;
+  let r = 0;
+
+  for (plant of state.plants) {
+
+    x = (plant.x + state.dx) * mindim;
+    y = (plant.y + state.dy) * mindim;
+    r = plant.r * mindim;
+
+    if (Math.hypot(x, y) > .1 * mindim) {
+      continue;
+    }
+
+    ctx.moveTo(x + r, y);
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+  }
+
+  x = (.1 + state.dx) * mindim;
+  y = (-.1 + state.dy) * mindim;
+  r = .01 * mindim;
+
+  if (Math.hypot(x, y) < mindim / 2) {
+    ctx.moveTo(x + r, y);
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+  }
+  // x-=.5*mindim;
+  // y+=.44*mindim;
+  // r+=.01*mindim;
+  // ctx.moveTo(x+r,y);
+  // ctx.arc(x,y,r,0,Math.PI*2);
+  // r-=.008 * mindim;
+  // x-=6;
+  // y-=54;
+  // ctx.moveTo(x+r,y);
+  // ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.stroke();
+  ctx.fill();
+
+  // draw center dot
+  const pr = .05 * mindim;
+  ctx.beginPath();
+  ctx.fillStyle = "lightgray";
+  ctx.arc(0, 0, pr, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.strokeStyle = "black";
+  ctx.moveTo(0 + 0.5 * mindim, 0);
+  ctx.arc(0, 0, 0.5 * mindim, 0, Math.PI * 2);
+  ctx.stroke();
+  /* display */
 
   };
 

@@ -71,3 +71,9 @@
     - archive locally with jar (after pull from work)
     - upload to itch.io (then refresh)
   - [ ] can GitHub Actions/Deployments do this?
+
+  ## Next Goals
+  Basically I want to implement feedback (events and animations):
+  - there's currently an implied visibility horizon (~1m dia)
+  - there should be a halo around the currently "selected" plant
+  - there should be a gray outline that persists after the player moves far away (plant state)
