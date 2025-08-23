@@ -8,7 +8,7 @@ const Display = (function(/*api*/) {
   const ctx = state.ctx;
   const cx = state.canvas.width / 2;
   const cy = state.canvas.height / 2;
-  const mindim = Math.min(self.innerWidth, self.innerHeight);
+  const mindim = state.mindim;
 
   // draw background
   ctx.fillStyle = "dimgray";
@@ -23,7 +23,7 @@ const Display = (function(/*api*/) {
   let y = 0;
   let r = 0;
 
-  for (plant of state.plants) {
+  for (plant of state.nearby) {
 
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;

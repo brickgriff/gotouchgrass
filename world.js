@@ -38,6 +38,11 @@ const World = (function (/*api*/) {
     }
 
     updatePlayer(state);
+
+    // every 10th frame, or so
+    // update the list of nearby plants
+    // huh... it's doing fine with every frame
+    if (state.frame%10==0) updatePlants(state);
   };
 
 
@@ -51,12 +56,13 @@ var resize = (state) => {
   state.canvas.height = self.innerHeight;
   state.cx = state.canvas.width / 2;
   state.cy = state.canvas.height / 2;
+  state.mindim = Math.min(self.innerWidth, self.innerHeight);
   state.ctx.translate(state.cx, state.cy);
 }
 
 var createPlants = (state) => {
   const plants = [];
-  var num = 25000; // 25K plants!
+  var num = 50000; // 50K plants!
   while (num--) {
     let x = (Math.random() * 5 - 2.5);
     let y = (Math.random() * 5 - 2.5);
@@ -111,4 +117,17 @@ var updatePlayer = (state) => {
 
   state.dx -= hypot * state.speed * Math.cos(theta);
   state.dy -= hypot * state.speed * Math.sin(theta);
+}
+
+var updatePlants = (state) => {
+
+  const plants = state.plants;
+  const nearby = [];
+  for (plant of plants) {
+    const hypot = Math.hypot(plant.x, plant.y); // percent max speed
+    // const theta = Math.atan2(vector.y, vector.x); // angle
+    if (hypot > .1*state.mindim) continue;
+    nearby.push(plant);
+  }
+  state.nearby = nearby;
 }
