@@ -48,9 +48,7 @@ const Display = (function (/*api*/) {
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.stroke();
       ctx.fill();
-
     }
-
 
     // draw center dot
     const pr = .05 * mindim;
