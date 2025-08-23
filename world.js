@@ -42,7 +42,7 @@ const World = (function (/*api*/) {
     // every 10th frame, or so
     // update the list of nearby plants
     // huh... it's doing fine with every frame
-    if (state.frame%10==0) updatePlants(state);
+    if (state.frame % 10 == 0) updatePlants(state);
   };
 
 
@@ -126,7 +126,7 @@ var updatePlants = (state) => {
   for (plant of plants) {
     const hypot = Math.hypot(plant.x, plant.y); // percent max speed
     // const theta = Math.atan2(vector.y, vector.x); // angle
-    if (hypot > .1*state.mindim) continue;
+    if (hypot > .1) continue;
     nearby.push(plant);
   }
   state.nearby = nearby;

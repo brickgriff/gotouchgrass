@@ -25,7 +25,7 @@
 - [ ] animations
   - [x] normalize diagonal movement
   - [x] normalize entity placement
-  - [ ] walking speed in state
+  - [x] walking speed in state
   - [ ] zoom level in state
 - [ ] simulations
 - [ ] score
