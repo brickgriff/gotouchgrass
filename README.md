@@ -76,7 +76,7 @@
 Basically I want to implement feedback (events and animations):
 - [x] there's currently an implied visibility horizon (~1m dia)
 - [ ] there should be a halo around the currently "selected" plant
-- [ ] there should be a gray outline that persists after the player moves far away (plant state)
+- [x] there should be a gray outline that persists after the player moves far away (plant state)
 - [ ] develop state management/machine for simulations
 - [ ] setup framework for adding ecosystem parameters
 - [ ] rework debug menu (top or right)

@@ -52,7 +52,7 @@ var resize = (state) => {
   state.canvas.height = self.innerHeight;
   state.cx = state.canvas.width / 2;
   state.cy = state.canvas.height / 2;
-  state.mindim = Math.min(self.innerWidth, self.innerHeight);
+  state.mindim = Math.min(state.canvas.width, state.canvas.height);
   state.ctx.translate(state.cx, state.cy);
 }
 
@@ -67,10 +67,10 @@ var createPlants = (state) => {
     normalize(vector, 1);
     x = vector.x;
     y = vector.y;
-    // let c = (Math.random() < .2) ? "darkgreen" : "lawngreen";
+    let c = (Math.random() < .2) ? "darkgreen" : "lawngreen";
     let t = (Math.random() < .2) ? "clover" : "grass";
 
-    plants.push({ x: x, y: y, r: r, t: t });
+    plants.push({ x: x, y: y, r: r, t: t, c: c });
   }
   state.plants = plants;
 }
@@ -87,13 +87,30 @@ var updatePlants = (state) => {
   const plants = state.plants;
   const nearby = [];
   if (state.active == undefined) state.active = [];
+
   for (plant of plants) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // const theta = Math.atan2(vector.y, vector.x); // angle
+    //if (plant.frame) {
+      // TODO: try to get control of active list for deletions
+    // }
     if (hypot > .1) continue;
     nearby.push(plant);
-    const isMatch = state.active.some(p => p.x == plant.x && p.y == plant.y && p.r == plant.r && p.c == plant.c);
-    if (plant.t == "grass" && hypot < .025 && !isMatch) state.active.push(plant);
+
+    const isActive = state.active.some(
+      p => p.x == plant.x
+        && p.y == plant.y
+        && p.r == plant.r
+        && p.c == plant.c
+        && p.t == plant.t
+    );
+    if (plant.t == "grass" && hypot < .025 && !isActive) {
+      if (!plant.frame) plant.frame = state.frame;
+      state.active.push(plant);
+    }
   }
   state.nearby = nearby;
+
+  // TODO: if the player stands still for 30 frames
+  // all grass w/i the inner ring goes active
 }

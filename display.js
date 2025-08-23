@@ -60,6 +60,8 @@ var drawRing = (state) => {
   ctx.strokeStyle = "lightgray";
   ctx.moveTo(0 + 0.5 * mindim, 0);
   ctx.arc(0, 0, 0.5 * mindim, 0, Math.PI * 2);
+  ctx.moveTo(0 + 0.1 * mindim, 0);
+  ctx.arc(0, 0, 0.1 * mindim, 0, Math.PI * 2);
   ctx.stroke();
 }
 
@@ -69,7 +71,10 @@ var drawActive = (state) => {
   ctx.beginPath();
   ctx.fillStyle = "lightgray";
   for (plant of state.active) {
-
+    if (plant.frame <= state.frame - 360) {
+      plant.frame = null;
+      continue;
+    }
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;
     r = plant.r * mindim;
