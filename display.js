@@ -15,7 +15,6 @@ const Display = (function (/*api*/) {
     drawPlayer(state);
     drawRing(state);
     drawGamepad(state);
-    drawGamepadInputs(state);
   };
 
   // return the public API
@@ -78,53 +77,60 @@ var drawGamepad = (state) => {
   ctx.arc(x, y, r / 2, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = "black";
-  ctx.fillStyle = "white";
+  drawGamepadInputs(state);
 
   // make them glow regardless which event is handled
   // keyboard
-  if (findInput(keybinds.up)) {
+  if (findInput(keybinds.up) || isPressing(coords.upper, r / 2)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.upper.x + r / 2, coords.upper.y);
     ctx.arc(coords.upper.x, coords.upper.y, r / 2, 0, Math.PI * 2);
     ctx.fill();
+    pushInput(keybinds.up);
   }
-  if (findInput(keybinds.down)) {
+  if (findInput(keybinds.down) || isPressing(coords.lower, r / 2)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.lower.x + r / 2, coords.lower.y);
     ctx.arc(coords.lower.x, coords.lower.y, r / 2, 0, Math.PI * 2);
     ctx.fill();
+    pushInput(keybinds.down);
   }
-
-  if (findInput(keybinds.left)) {
+  if (findInput(keybinds.left) || isPressing(coords.cleft, r / 2)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.cleft.x + r / 2, coords.cleft.y);
     ctx.arc(coords.cleft.x, coords.cleft.y, r / 2, 0, Math.PI * 2);
     ctx.fill();
+    pushInput(keybinds.left);
   }
-  if (findInput(keybinds.right)) {
+  if (findInput(keybinds.right) || isPressing(coords.cright, r / 2)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.cright.x + r / 2, coords.cright.y);
     ctx.arc(coords.cright.x, coords.cright.y, r / 2, 0, Math.PI * 2);
     ctx.fill();
+    pushInput(keybinds.right);
   }
-
-  if (findInput(keybinds.primary)) {
+  if (findInput(keybinds.primary) || isPressing(coords.center, r / 2)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.center.x + r / 2, coords.center.y);
     ctx.arc(coords.center.x, coords.center.y, r / 2, 0, Math.PI * 2);
     ctx.fill();
+    pushInput(keybinds.primary);
   }
+
   // mouse
   // touch
   // const highlight = state.gamepad.highlight
   // make this area glow
+
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "black";
+  ctx.fillStyle = "white";
+
 }
 
 var drawGamepadInputs = (state) => {
@@ -195,7 +201,7 @@ var drawActive = (state) => {
   ctx.beginPath();
   ctx.fillStyle = "lightgray";
   for (plant of state.active) {
-    if (plant.frame <= state.frame - 6*360) {
+    if (plant.frame <= state.frame - 6 * 360) {
       plant.frame = null;
       continue;
     }

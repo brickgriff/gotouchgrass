@@ -1,34 +1,46 @@
 const inputs = {
   buttons: [],
   mouse: {
+    // mouse down
     x_: 0,
     y_: 0,
+    // mousemove
     _x: 0,
     _y: 0,
+    // to help normalize positions
     dragMin: 10,
     dragMax: 50,
+    // these should be in document.state.events
     isDragged: false, isClicked: false,
   },
 };
 
+function clearInputs() {
+  inputs.buttons = [];
+}
 function pushInput(input) {
   const list = inputs.buttons;
-  if (!list.includes(input)) list.push(input);
+  if (!findInput(input)) list.push(input);
 }
 function dropInput(input) {
   const list = inputs.buttons;
-  if (list.includes(input)) list.splice(list.indexOf(input), 1);
+  if (findInput(input)) list.splice(list.indexOf(input), 1);
 }
 function findInput(input) {
-  const list = inputs.buttons;
-  return (list.includes(input));
+  return (inputs.buttons.includes(input));
 }
 function getMouse() {
   return inputs.mouse;
 }
 
+function isPressing(vector, range) {
+  const mouse = getMouse();
+  const hypot = Math.hypot(mouse.x_ - vector.x, mouse.y_ - vector.y);
+  return hypot < range;
+}
+
 // this should return [-1,1] for vector x and y
-var getVector = () => {
+function getVector() {
   const mouse = getMouse(); //inputs.mouse;
   let dMax = mouse.dragMax;
 
@@ -48,7 +60,7 @@ var getVector = () => {
   return vector;
 }
 
-var getNewVector = (vector, length, angle) => {
+function getNewVector(vector, length, angle) {
   const _vector = {};
   _vector.x = vector.x + (length * Math.cos(angle));
   _vector.y = vector.y + (length * Math.sin(angle));
@@ -102,21 +114,29 @@ window.addEventListener("keyup", (e) => {
 window.addEventListener("mousedown", (e) => {
   pushInput(e.button);
 
-  if (e.button === keybinds.mouseL) {
-    inputs.mouse.x_ = inputs.mouse._x = e.offsetX - document.body.clientWidth / 2;
-    inputs.mouse.y_ = inputs.mouse._y = e.offsetY - document.body.clientHeight / 2;
+  const state = document.state;
 
-    inputs.mouse.isClicked = false;
-    inputs.mouse.isDragged = false;
+  if (e.button === keybinds.mouseL) {
+    inputs.mouse.x_ = inputs.mouse._x = e.offsetX - state.cx;
+    inputs.mouse.y_ = inputs.mouse._y = e.offsetY - state.cy;
+
+    state.events.isPressed = true;
+    state.events.isClicked = false;
+    state.events.isDragged = false;
   }
+
+  // console.log(state.events, state.inputs.mouse);
 });
 
 window.addEventListener("mouseup", (e) => {
-  inputs.mouse.isClicked = !inputs.mouse.isDragged;
+  const state = document.state;
+  state.events.isClicked = !state.events.isDragged;
+
   if (findInput(keybinds.mouseL)) {
     inputs.mouse._x = inputs.mouse.x_ = 0;
     inputs.mouse._y = inputs.mouse.y_ = 0;
-    inputs.mouse.isDragged = false;
+    state.events.isDragged = false;
+    state.events.isPressed = false;
   }
   dropInput(e.button);
 });
