@@ -15,6 +15,7 @@ const Display = (function (/*api*/) {
     drawPlayer(state);
     drawRing(state);
     drawGamepad(state);
+    drawGamepadInputs(state);
   };
 
   // return the public API
@@ -83,16 +84,6 @@ var drawGamepad = (state) => {
 
   // make them glow regardless which event is handled
   // keyboard
-  ctx.beginPath();
-  ctx.font = "25px serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("spacebar", coords.center.x, coords.center.y);
-  ctx.fillText("E", coords.upper.x, coords.upper.y);
-  ctx.fillText("S", coords.cleft.x, coords.cleft.y);
-  ctx.fillText("D", coords.lower.x, coords.lower.y);
-  ctx.fillText("F", coords.cright.x, coords.cright.y);
-
   if (findInput(keybinds.up)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
@@ -134,6 +125,21 @@ var drawGamepad = (state) => {
   // touch
   // const highlight = state.gamepad.highlight
   // make this area glow
+}
+
+var drawGamepadInputs = (state) => {
+  const ctx = state.ctx;
+  const coords = state.gamepad.coords;
+  ctx.beginPath();
+  ctx.fillStyle = "lightgray";
+  ctx.font = "25px serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("[ Space ]", coords.center.x, coords.center.y);
+  ctx.fillText("E", coords.upper.x, coords.upper.y);
+  ctx.fillText("S", coords.cleft.x, coords.cleft.y);
+  ctx.fillText("D", coords.lower.x, coords.lower.y);
+  ctx.fillText("F", coords.cright.x, coords.cright.y);
 }
 
 var drawBackground = (state) => {
@@ -189,7 +195,7 @@ var drawActive = (state) => {
   ctx.beginPath();
   ctx.fillStyle = "lightgray";
   for (plant of state.active) {
-    if (plant.frame <= state.frame - 360) {
+    if (plant.frame <= state.frame - 6*360) {
       plant.frame = null;
       continue;
     }
