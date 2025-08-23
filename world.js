@@ -82,6 +82,7 @@ var updatePlayer = (state) => {
   state.dy -= vector.y * state.speed;
 }
 
+// TODO break this up if possible
 var updatePlants = (state) => {
   if (state.frame % 3 !== 0) return;
   const plants = state.plants;
@@ -92,7 +93,7 @@ var updatePlants = (state) => {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // const theta = Math.atan2(vector.y, vector.x); // angle
     //if (plant.frame) {
-      // TODO: try to get control of active list for deletions
+    // TODO: try to get control of active list for deletions
     // }
     if (hypot > .1) continue;
     nearby.push(plant);
