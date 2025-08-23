@@ -4,51 +4,15 @@ const Display = (function (/*api*/) {
   // public api is a function
   api.draw = function () {
     //console.log(`draw`);
+
     const state = document.state;
     const ctx = state.ctx;
-    const cx = state.canvas.width / 2;
-    const cy = state.canvas.height / 2;
+    const cx = state.cx;
+    const cy = state.cy;
     const mindim = state.mindim;
 
-    // draw background
-    ctx.fillStyle = "dimgray";
-    ctx.fillRect(-cx, -cy, state.canvas.width, state.canvas.height);
-
-    // draw plant circles
-    ctx.beginPath();
-    ctx.strokeStyle = "lawngreen";
-    ctx.fillStyle = "lawngreen";
-
-    let x = 0;
-    let y = 0;
-    let r = 0;
-
-    x = (.1 + state.dx) * mindim;
-    y = (-.1 + state.dy) * mindim;
-    r = .01 * mindim;
-
-    if (Math.hypot(x, y) < mindim / 2) {
-      ctx.moveTo(x + r, y);
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-    }
-    ctx.stroke();
-    ctx.fill();
-
-
-    for (plant of state.nearby) {
-
-      x = (plant.x + state.dx) * mindim;
-      y = (plant.y + state.dy) * mindim;
-      r = plant.r * mindim;
-
-      ctx.beginPath();
-      ctx.strokeStyle = plant.c;
-      ctx.fillStyle = plant.c;
-      ctx.moveTo(x + r, y);
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.fill();
-    }
+    drawBackground(state);
+    drawPlants(state);
 
     // draw center dot
     const pr = .05 * mindim;
@@ -68,6 +32,54 @@ const Display = (function (/*api*/) {
   // return the public API
   return api;
 }());
+
+var drawBackground = (state) => {
+  // draw background
+  const ctx = state.ctx;
+  ctx.fillStyle = "dimgray";
+  ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+}
+
+var drawPlants = (state) => {
+  // draw plant circles
+  const ctx = state.ctx;
+  const mindim = state.mindim;
+
+  let x = 0;
+  let y = 0;
+  let r = 0;
+
+  x = (.1 + state.dx) * mindim;
+  y = (-.1 + state.dy) * mindim;
+  r = .01 * mindim;
+
+  if (Math.hypot(x, y) < mindim / 2) {
+    ctx.beginPath();
+    ctx.strokeStyle = "lawngreen";
+    ctx.fillStyle = "lawngreen";
+    ctx.moveTo(x + r, y);
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fill();
+  }
+
+
+  for (plant of state.nearby) {
+
+    x = (plant.x + state.dx) * mindim;
+    y = (plant.y + state.dy) * mindim;
+    r = plant.r * mindim;
+
+    ctx.beginPath();
+    ctx.strokeStyle = plant.c;
+    ctx.fillStyle = plant.c;
+    ctx.moveTo(x + r, y);
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fill();
+  }
+
+}
 
 const COLORS = {
   BLACK: "black", GREEN: "green", GRAY: "gray", LIGHTGRAY: "lightgray",
