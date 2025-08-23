@@ -77,6 +77,10 @@ var createPlants = (state) => {
 }
 
 var updateGamepad = (state) => {
+  console.log(state.events.isPressed);
+  if (!state.events.isPressed) {
+    clearInputs();
+  }
   // check mouse pos
   // if near the gamepad extents
   // check which button it is near

@@ -15,6 +15,9 @@ const inputs = {
   },
 };
 
+function clearInputs() {
+  inputs.buttons = [];
+}
 function pushInput(input) {
   const list = inputs.buttons;
   if (!findInput(input)) list.push(input);
@@ -28,6 +31,12 @@ function findInput(input) {
 }
 function getMouse() {
   return inputs.mouse;
+}
+
+function isPressing(vector, range) {
+  const mouse = getMouse();
+  const hypot = Math.hypot(mouse.x_ - vector.x, mouse.y_ - vector.y);
+  return hypot < range;
 }
 
 // this should return [-1,1] for vector x and y
@@ -116,7 +125,7 @@ window.addEventListener("mousedown", (e) => {
     state.events.isDragged = false;
   }
 
-  console.log(state.events,state.inputs.mouse);
+  // console.log(state.events, state.inputs.mouse);
 });
 
 window.addEventListener("mouseup", (e) => {
