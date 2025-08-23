@@ -77,7 +77,7 @@ var createPlants = (state) => {
 }
 
 var updateGamepad = (state) => {
-  console.log(state.events.isPressed);
+  // console.log(state.events.isPressed);
   if (!state.events.isPressed) {
     clearInputs();
   }
