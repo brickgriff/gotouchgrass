@@ -43,18 +43,38 @@ var drawGamepad = (state) => {
   ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.stroke();
 
+
+  // save the eight points on gamepad for mouse/touch events
+  // so that state knows where event listeners should be
+  // GOTO world.js
+  // 0 +/- 22.5 => right
+  // 45 +/- 22.5 => upperright
+  // 90 +/- 22.5 => up
+  // ...
+  // 315 +/- 22.5 => lowerright
+
+  // state.gamepad.coords = coords;
+  // state.gamepad.innerRadius = r/2;
+  // state.gamepad.outerRadius = r;
+  // draw 8 buttons
+
+  // draw center button
   ctx.beginPath();
   ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-  ctx.moveTo(x + r/2, y);
-  ctx.arc(x, y, r/2, 0, Math.PI * 2);
+  ctx.moveTo(x + r / 2, y);
+  ctx.arc(x, y, r / 2, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.lineWidth = 1;
   ctx.strokeStyle = "black";
   ctx.fillStyle = "white";
 
-  // save the eight points on gamepad for mouse/touch events
-
+  // make them glow regardless which event is handled
+  // keyboard
+  // mouse
+  // touch
+  // const highlight = state.gamepad.highlight
+  // make this area glow
 }
 
 var drawBackground = (state) => {
