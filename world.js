@@ -36,7 +36,8 @@ const World = (function (/*api*/) {
       resize(state);
       state.events.isResized = false;
     }
-
+    state.vector = getVector();
+    updateGamepad(state);
     updatePlayer(state);
     updatePlants(state);
   };
@@ -75,9 +76,24 @@ var createPlants = (state) => {
   state.plants = plants;
 }
 
-var updatePlayer = (state) => {
+var updateGamepad = (state) => {
+  // check mouse pos
+  // if near the gamepad extents
+  // check which button it is near
+  // if w/i center button
+  // or
+  // check vector angle
+  // check which button should be active
+  // 0 +/- 22.5 => right
+  // 45 +/- 22.5 => upperright
+  // 90 +/- 22.5 => up
+  // ...
+  // 315 +/- 22.5 => lowerright
+  // add it to the animation list
+}
 
-  const vector = getVector();
+var updatePlayer = (state) => {
+  const vector = state.vector;
   state.dx -= vector.x * state.speed;
   state.dy -= vector.y * state.speed;
 }

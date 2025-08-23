@@ -46,7 +46,14 @@ var getVector = () => {
   normalize(vector, dMax);
 
   return vector;
-};
+}
+
+var getNewVector = (vector, length, angle) => {
+  const _vector = {};
+  _vector.x = vector.x + (length * Math.cos(angle));
+  _vector.y = vector.y + (length * Math.sin(angle));
+  return _vector;
+}
 
 var normalize = (vector, max) => {
   // direct length is useful for detecting input

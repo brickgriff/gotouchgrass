@@ -43,18 +43,87 @@ var drawGamepad = (state) => {
   ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.stroke();
 
+
+  // save the eight points on gamepad for mouse/touch events
+  // so that state knows where event listeners should be
+  // GOTO world.js
+  const coords = {};
+  coords.center = {x:x,y:y};
+
+  // 0 +/- 22.5 => right
+  coords.cright = getNewVector(coords.center,r,(0));
+  // 45 +/- 22.5 => upperright
+  coords.uright = getNewVector(coords.center,r,-0.25*Math.PI);
+  // 90 +/- 22.5 => up
+  coords.upper = getNewVector(coords.center,r,-0.5*Math.PI);
+  // ...
+  coords.uleft = getNewVector(coords.center,r,-0.75*Math.PI);
+  coords.cleft = getNewVector(coords.center,r,1*Math.PI);
+  coords.lleft = getNewVector(coords.center,r,.75*Math.PI);
+  // 315 +/- 22.5 => lowerright
+  coords.lower = getNewVector(coords.center,r,0.5*Math.PI);
+  coords.lright = getNewVector(coords.center,r,0.25*Math.PI);
+
+  state.gamepad = {};
+  state.gamepad.coords = coords;
+  state.gamepad.innerRadius = r/2;
+  state.gamepad.outerRadius = r;
+  // draw 8 buttons
+
+  // draw center button
   ctx.beginPath();
   ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-  ctx.moveTo(x + r/2, y);
-  ctx.arc(x, y, r/2, 0, Math.PI * 2);
+  ctx.moveTo(x + r / 2, y);
+  ctx.arc(x, y, r / 2, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.lineWidth = 1;
   ctx.strokeStyle = "black";
   ctx.fillStyle = "white";
 
-  // save the eight points on gamepad for mouse/touch events
+  // make them glow regardless which event is handled
+  // keyboard
+  if (findInput(keybinds.up)) {
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
+    ctx.moveTo(coords.upper.x + r / 2, coords.upper.y);
+    ctx.arc(coords.upper.x, coords.upper.y, r / 2, 0, Math.PI * 2);
+    ctx.fill();  
+  }
+  if (findInput(keybinds.down)) {
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
+    ctx.moveTo(coords.lower.x + r / 2, coords.lower.y);
+    ctx.arc(coords.lower.x, coords.lower.y, r / 2, 0, Math.PI * 2);
+    ctx.fill();  
+  }
 
+  if (findInput(keybinds.left)) {
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
+    ctx.moveTo(coords.cleft.x + r / 2, coords.cleft.y);
+    ctx.arc(coords.cleft.x, coords.cleft.y, r / 2, 0, Math.PI * 2);
+    ctx.fill();  
+  }
+  if (findInput(keybinds.right)) {
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
+    ctx.moveTo(coords.cright.x + r / 2, coords.cright.y);
+    ctx.arc(coords.cright.x, coords.cright.y, r / 2, 0, Math.PI * 2);
+    ctx.fill();  
+  }
+
+  if (findInput(keybinds.primary)) {
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
+    ctx.moveTo(coords.center.x + r / 2, coords.center.y);
+    ctx.arc(coords.center.x, coords.center.y, r / 2, 0, Math.PI * 2);
+    ctx.fill();  
+  }
+  // mouse
+  // touch
+  // const highlight = state.gamepad.highlight
+  // make this area glow
 }
 
 var drawBackground = (state) => {
