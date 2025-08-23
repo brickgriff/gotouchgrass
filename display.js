@@ -28,20 +28,30 @@ var drawGamepad = (state) => {
   const r = .1 * Math.max(0, Math.min(2, ratio)) * mindim;
   const x = 0;
   const y = state.cy - (r + 50);
-  ctx.beginPath();
+
+  ctx.lineWidth = 50;
+
   ctx.strokeStyle = "lightgray";
 
   let red = parseInt(ctx.strokeStyle.substring(1, 3), 16);
   let green = parseInt(ctx.strokeStyle.substring(3, 5), 16);
   let blue = parseInt(ctx.strokeStyle.substring(5, 7), 16);
-  ctx.strokeStyle = `rgba(${red},${green},${blue},0.25)`;
 
-  ctx.lineWidth = 50;
+  ctx.beginPath();
+  ctx.strokeStyle = `rgba(${red},${green},${blue},0.25)`;
   ctx.moveTo(x + r, y);
   ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.stroke();
+
+  ctx.beginPath();
+  ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
+  ctx.moveTo(x + r/2, y);
+  ctx.arc(x, y, r/2, 0, Math.PI * 2);
+  ctx.fill();
+
   ctx.lineWidth = 1;
   ctx.strokeStyle = "black";
+  ctx.fillStyle = "white";
 
   // save the eight points on gamepad for mouse/touch events
 
