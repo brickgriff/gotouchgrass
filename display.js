@@ -15,7 +15,6 @@ const Display = (function (/*api*/) {
     drawPlayer(state);
     drawRing(state);
     drawGamepad(state);
-    drawGamepadInputs(state);
   };
 
   // return the public API
@@ -78,9 +77,7 @@ var drawGamepad = (state) => {
   ctx.arc(x, y, r / 2, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = "black";
-  ctx.fillStyle = "white";
+  drawGamepadInputs(state);
 
   // make them glow regardless which event is handled
   // keyboard
@@ -125,6 +122,12 @@ var drawGamepad = (state) => {
   // touch
   // const highlight = state.gamepad.highlight
   // make this area glow
+
+
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "black";
+  ctx.fillStyle = "white";
+
 }
 
 var drawGamepadInputs = (state) => {
