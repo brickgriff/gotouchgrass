@@ -6,17 +6,46 @@ const Display = (function (/*api*/) {
     //console.log(`draw`);
     const state = document.state;
 
+    // these functions do not need the entire state
+    // for most, ctx, mindim, and various screen params should work
     drawBackground(state);
     drawBorder(state);
     drawActive(state);
     drawNearby(state);
     drawPlayer(state);
     drawRing(state);
+    drawGamepad(state);
   };
 
   // return the public API
   return api;
 }());
+
+var drawGamepad = (state) => {
+  const ctx = state.ctx;
+  const ratio = state.canvas.height / state.canvas.width;
+  const mindim = state.mindim;
+  const r = .1 * Math.max(0, Math.min(2, ratio)) * mindim;
+  const x = 0;
+  const y = state.cy - (r + 50);
+  ctx.beginPath();
+  ctx.strokeStyle = "lightgray";
+
+  let red = parseInt(ctx.strokeStyle.substring(1, 3), 16);
+  let green = parseInt(ctx.strokeStyle.substring(3, 5), 16);
+  let blue = parseInt(ctx.strokeStyle.substring(5, 7), 16);
+  ctx.strokeStyle = `rgba(${red},${green},${blue},0.25)`;
+
+  ctx.lineWidth = 50;
+  ctx.moveTo(x + r, y);
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "black";
+
+  // save the eight points on gamepad for mouse/touch events
+
+}
 
 var drawBackground = (state) => {
   // draw background
@@ -86,6 +115,7 @@ var drawActive = (state) => {
 
 }
 
+// TODO: break this up if possible
 var drawNearby = (state) => {
   // draw plant circles
   const ctx = state.ctx;
@@ -125,29 +155,3 @@ var drawNearby = (state) => {
   }
 
 }
-
-const COLORS = {
-  BLACK: "black", GREEN: "green", GRAY: "gray", LIGHTGRAY: "lightgray",
-  DARKGRAY: "darkgray", BLUE: "blue", GOLD: "gold", LIGHTBLUE: "lightblue", RED: "red",
-  SPRINGGREEN: "springgreen", LAWNGREEN: "lawngreen", WHITE: "white", YELLOW: "yellow",
-  CYAN: "cyan", MAGENTA: "magenta", DIMGRAY: "dimgray", DARKBLUE: "darkblue",
-  DARKSLATEGRAY: "darkslategray", SOIL: "#7d644b", DEFAULT: "#cccccc"
-};
-
-const inputMap = [
-  { x: 100, y: 100, r: 10, k: keybinds.up },
-  { x: 75, y: 125, r: 10, k: keybinds.left },
-  { x: 100, y: 125, r: 10, k: keybinds.down },
-  { x: 125, y: 125, r: 10, k: keybinds.right },
-  { x: 75, y: 100, r: 10, k: keybinds.loosen },
-  { x: 125, y: 100, r: 10, k: keybinds.tighten },
-
-  { x: 175, y: 100, r: 10, k: keybinds.secondary },
-  { x: 150, y: 100, r: 10, k: keybinds.primary },
-  { x: 200, y: 100, r: 10, k: keybinds.tertiary },
-  { x: 150, y: 125, r: 10, k: keybinds.mouseL },
-  { x: 175, y: 125, r: 10, k: keybinds.mouseM },
-  { x: 200, y: 125, r: 10, k: keybinds.mouseR },
-
-];
-
