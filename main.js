@@ -1,13 +1,5 @@
 /*
   @Author: BrickGriff@GitHub.Com
-
-  high level todos
-  - state management, 
-  - ecosystem simulation, 
-  - debug menu, dev console,
-  - worker services, and 
-  - off-screen canvas for 
-    sprites and collision detection (you'll see)
 */
 
 function mainLoop(now) {
