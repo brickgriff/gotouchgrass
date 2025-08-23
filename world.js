@@ -15,6 +15,7 @@ const World = (function (/*api*/) {
       speed: 0.003,
       frame: 0,
       time: 0,
+      seed: 42,
       events: [],
       defaults: { // so you can always revert
         speed: 0.003,
@@ -58,18 +59,19 @@ var resize = (state) => {
 }
 
 var createPlants = (state) => {
+  const random = Random.seed(state.seed);
   const plants = [];
   var num = 10000//50000; // 50K plants!
   while (num--) {
-    let x = (Math.random() * 2 - 1);
-    let y = (Math.random() * 2 - 1);
-    let r = (Math.random() * .6 + .4) * 0.025;
+    let x = (random() * 2 - 1);
+    let y = (random() * 2 - 1);
+    let r = (random() * .6 + .4) * 0.025;
     let vector = { x: x, y: y };
     normalize(vector, 1);
     x = vector.x;
     y = vector.y;
-    let c = (Math.random() < .2) ? "darkgreen" : "lawngreen";
-    let t = (Math.random() < .2) ? "clover" : "grass";
+    let c = (random() < .2) ? "darkgreen" : "lawngreen";
+    let t = (random() < .2) ? "clover" : "grass";
 
     plants.push({ x: x, y: y, r: r, t: t, c: c });
   }
