@@ -87,21 +87,30 @@ var updatePlants = (state) => {
   const plants = state.plants;
   const nearby = [];
   if (state.active == undefined) state.active = [];
+
   for (plant of plants) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // const theta = Math.atan2(vector.y, vector.x); // angle
+    //if (plant.frame) {
+      // TODO: try to get control of active list for deletions
+    // }
     if (hypot > .1) continue;
     nearby.push(plant);
+
     const isActive = state.active.some(
       p => p.x == plant.x
         && p.y == plant.y
         && p.r == plant.r
         && p.c == plant.c
+        && p.t == plant.t
     );
-    if (plant.t == "grass" && hypot < .025 && !isActive) state.active.push(plant);
+    if (plant.t == "grass" && hypot < .025 && !isActive) {
+      if (!plant.frame) plant.frame = state.frame;
+      state.active.push(plant);
+    }
   }
   state.nearby = nearby;
 
-  // if the player stands still for 30 frames
+  // TODO: if the player stands still for 30 frames
   // all grass w/i the inner ring goes active
 }
