@@ -96,4 +96,7 @@ var updatePlants = (state) => {
     if (plant.t == "grass" && hypot < .025 && !isMatch) state.active.push(plant);
   }
   state.nearby = nearby;
+
+  // if the player stands still for 30 frames
+  // all grass w/i the inner ring goes active
 }
