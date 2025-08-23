@@ -10,7 +10,7 @@ function mainLoop(now) {
   const elapsed = (now - (state.time || now)); // deltaTime in millis
   const dt = elapsed > 1000 ? 1000 : elapsed; // cap deltaTime @ 1000ms
 
-  // console.log(`gameLoop(now=${now}, frame=${state.frame++}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
+  // console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
   // they both share player position and velocity
   World.update(dt); // update entities

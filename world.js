@@ -1,38 +1,27 @@
 const World = (function (/*api*/) {
   var api = {};
 
-
-  // A Site is a collection of Points
-  // point size (5mX5m)
-  let pointWidth = 5, pointHeight = 5;
-
-  // A Point is a collection of Cells
-  // cell size (1mX1m; ~100pxX100px)
-  let cellWidth = 100, cellHeight = 100;
-
   api.create = function (canvas, ctx) {
     var state = {
       canvas: canvas,
       ctx: ctx,
+      // cx,cy : the centerpoint of the available play space 
       cx: 0,
       cy: 0,
+      // dx,dy : how _much_ the player moved this frame 
+      // NOTE: how _much_ , not how _fast_
       dx: 0,
       dy: 0,
+      speed: 0.003,
       frame: 0,
       time: 0,
       events: [],
+      defaults: { // so you can always revert
+        speed: 0.003,
+      },
     };
 
-    const plants = [];
-    var num = 50000;
-    while (num--) {
-      let x1 = (Math.random() * 5 - 2.5);
-      let y1 = (Math.random() * 5 - 2.5);
-      let r1 = (Math.random() * .6 + .4) * 0.025;
-      plants.push({ x: x1, y: y1, r: r1 });
-    }
-    state.plants = plants;
-
+    createPlants(state);
     resize(state);
 
     return state;
@@ -40,8 +29,9 @@ const World = (function (/*api*/) {
 
   // this should return [-1,1] for vector x and y
   var getVector = () => {
-    const mouse = getMouse();//inputs.mouse;
-    const dMax = mouse.dragMax;
+    const mouse = getMouse(); //inputs.mouse;
+    let dMax = mouse.dragMax;
+
     const vector = {};
 
     if (findInput(keybinds.mouseL)) {
@@ -50,18 +40,23 @@ const World = (function (/*api*/) {
     } else { // keyboard movement have "pointy" diagonals
       vector.x = (findInput(keybinds.right) - findInput(keybinds.left));
       vector.y = (findInput(keybinds.down) - findInput(keybinds.up));
+      dMax = 1;
     }
 
-    // direct length is useful for detecting input
-    const length = Math.hypot(vector.x, vector.y);
-    const angle = Math.atan2(vector.y, vector.x);
-
-    // but we need to normalize it with the angle
-    vector.x = (length == 0 ? 0 : 1) * Math.cos(angle);
-    vector.y = (length == 0 ? 0 : 1) * Math.sin(angle);
+    normalize(vector,dMax);
 
     return vector;
   };
+
+  var normalize = (vector,max) => {
+    // direct length is useful for detecting input
+    const length = Math.hypot(vector.x, vector.y); // can be as much as 1.4!
+    const angle = Math.atan2(vector.y, vector.x); // can be a weird number (~0)
+
+    // we need to normalize diagonals with the angle
+    vector.x = Math.min(length/max,1) * Math.cos(angle);
+    vector.y = Math.min(length/max,1) * Math.sin(angle);
+  }
 
   var resize = (state) => {
     state.canvas.width = self.innerWidth;
@@ -69,6 +64,31 @@ const World = (function (/*api*/) {
     state.cx = state.canvas.width / 2;
     state.cy = state.canvas.height / 2;
     state.ctx.translate(state.cx, state.cy);
+  }
+
+  var createPlants = (state) => {
+    const plants = [];
+    var num = 50000; // 50K plants!
+    while (num--) {
+      let x1 = (Math.random() * 5 - 2.5);
+      let y1 = (Math.random() * 5 - 2.5);
+      let r1 = (Math.random() * .6 + .4) * 0.025;
+      plants.push({ x: x1, y: y1, r: r1 });
+    }
+    state.plants = plants;
+  }
+
+  var updatePlayer = (state) => {
+
+    const vector = getVector();
+    const hypot = Math.hypot(vector.x, vector.y); // percent max speed
+    const theta = Math.atan2(vector.y, vector.x); // angle
+
+    // save the current "unit-space"
+    //const mindim = Math.min(self.innerWidth, self.innerHdeight);
+
+    state.dx -= hypot * state.speed * Math.cos(theta);
+    state.dy -= hypot * state.speed * Math.sin(theta);
   }
 
   // update the state
@@ -80,14 +100,9 @@ const World = (function (/*api*/) {
       resize(state);
       state.events.isResized = false;
     }
-    const vector = getVector();
-    const hypot = Math.hypot(vector.x,vector.y);
-    const theta = Math.atan2(vector.y,vector.x);
 
-    const mindim = Math.min(self.innerWidth, self.innerHdeight);
-
-    state.dx-=hypot*.003*Math.cos(theta);
-    state.dy-=hypot*.003*Math.sin(theta);
+    updatePlayer(state);
+    // now that it's in state, we can change it with events
     /*
         if (findInput(keybinds.debug)) {
           state.isDebug = (state.isDebug^=true)!==0;
