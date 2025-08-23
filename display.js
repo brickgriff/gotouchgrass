@@ -48,25 +48,25 @@ var drawGamepad = (state) => {
   // so that state knows where event listeners should be
   // GOTO world.js
   const coords = {};
-  coords.center = {x:x,y:y};
+  coords.center = { x: x, y: y };
 
   // 0 +/- 22.5 => right
-  coords.cright = getNewVector(coords.center,r,(0));
+  coords.cright = getNewVector(coords.center, r, (0));
   // 45 +/- 22.5 => upperright
-  coords.uright = getNewVector(coords.center,r,-0.25*Math.PI);
+  coords.uright = getNewVector(coords.center, r, -0.25 * Math.PI);
   // 90 +/- 22.5 => up
-  coords.upper = getNewVector(coords.center,r,-0.5*Math.PI);
+  coords.upper = getNewVector(coords.center, r, -0.5 * Math.PI);
   // ...
-  coords.uleft = getNewVector(coords.center,r,-0.75*Math.PI);
-  coords.cleft = getNewVector(coords.center,r,1*Math.PI);
-  coords.lleft = getNewVector(coords.center,r,.75*Math.PI);
+  coords.uleft = getNewVector(coords.center, r, -0.75 * Math.PI);
+  coords.cleft = getNewVector(coords.center, r, 1 * Math.PI);
+  coords.lleft = getNewVector(coords.center, r, .75 * Math.PI);
   // 315 +/- 22.5 => lowerright
-  coords.lower = getNewVector(coords.center,r,0.5*Math.PI);
-  coords.lright = getNewVector(coords.center,r,0.25*Math.PI);
+  coords.lower = getNewVector(coords.center, r, 0.5 * Math.PI);
+  coords.lright = getNewVector(coords.center, r, 0.25 * Math.PI);
 
   state.gamepad = {};
   state.gamepad.coords = coords;
-  state.gamepad.innerRadius = r/2;
+  state.gamepad.innerRadius = r / 2;
   state.gamepad.outerRadius = r;
   // draw 8 buttons
 
@@ -83,19 +83,29 @@ var drawGamepad = (state) => {
 
   // make them glow regardless which event is handled
   // keyboard
+  ctx.beginPath();
+  ctx.font = "25px serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("spacebar", coords.center.x, coords.center.y);
+  ctx.fillText("E", coords.upper.x, coords.upper.y);
+  ctx.fillText("S", coords.cleft.x, coords.cleft.y);
+  ctx.fillText("D", coords.lower.x, coords.lower.y);
+  ctx.fillText("F", coords.cright.x, coords.cright.y);
+
   if (findInput(keybinds.up)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.upper.x + r / 2, coords.upper.y);
     ctx.arc(coords.upper.x, coords.upper.y, r / 2, 0, Math.PI * 2);
-    ctx.fill();  
+    ctx.fill();
   }
   if (findInput(keybinds.down)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.lower.x + r / 2, coords.lower.y);
     ctx.arc(coords.lower.x, coords.lower.y, r / 2, 0, Math.PI * 2);
-    ctx.fill();  
+    ctx.fill();
   }
 
   if (findInput(keybinds.left)) {
@@ -103,14 +113,14 @@ var drawGamepad = (state) => {
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.cleft.x + r / 2, coords.cleft.y);
     ctx.arc(coords.cleft.x, coords.cleft.y, r / 2, 0, Math.PI * 2);
-    ctx.fill();  
+    ctx.fill();
   }
   if (findInput(keybinds.right)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.cright.x + r / 2, coords.cright.y);
     ctx.arc(coords.cright.x, coords.cright.y, r / 2, 0, Math.PI * 2);
-    ctx.fill();  
+    ctx.fill();
   }
 
   if (findInput(keybinds.primary)) {
@@ -118,7 +128,7 @@ var drawGamepad = (state) => {
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.center.x + r / 2, coords.center.y);
     ctx.arc(coords.center.x, coords.center.y, r / 2, 0, Math.PI * 2);
-    ctx.fill();  
+    ctx.fill();
   }
   // mouse
   // touch
