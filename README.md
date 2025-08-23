@@ -30,7 +30,12 @@
 - [ ] simulations
 - [ ] score
 - [ ] save data system
-- [ ] >>> seeded pseudo-random number generator (SPRNG) <<<
+- [ ] numbers
+  - [x] seeded pseudo-random number generator (SPRNG)
+  - [ ] procedural generation
+  - [ ] noise
+  - [ ] signed distance functions
+  - [ ] wave form collapse
 
 ### Entities <!-- Earth/Matter -->
 - [ ] player
@@ -72,6 +77,7 @@
     - upload to itch.io (then refresh)
   - [ ] can GitHub Actions/Deployments do this?
   - [ ] why are simulated inputs so buggy (gamepad)
+    - [ ] now that mousemove works, keyboard is buggy!
 
 ## Next Goals
 Basically I want to implement feedback (events and animations):
