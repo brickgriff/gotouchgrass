@@ -30,7 +30,7 @@
 - [ ] simulations
 - [ ] score
 - [ ] save data system
-- [ ] SPRNG (seeded pseudo-random number generator)
+- [ ] >>> seeded pseudo-random number generator (SPRNG) <<<
 
 ### Entities <!-- Earth/Matter -->
 - [ ] player
@@ -71,6 +71,7 @@
     - archive locally with jar (after pull from work)
     - upload to itch.io (then refresh)
   - [ ] can GitHub Actions/Deployments do this?
+  - [ ] why are simulated inputs so buggy (gamepad)
 
 ## Next Goals
 Basically I want to implement feedback (events and animations):

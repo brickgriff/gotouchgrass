@@ -141,7 +141,7 @@ var drawGamepadInputs = (state) => {
   ctx.font = "25px serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("[ Space ]", coords.center.x, coords.center.y);
+  ctx.fillText("Space", coords.center.x, coords.center.y);
   ctx.fillText("E", coords.upper.x, coords.upper.y);
   ctx.fillText("S", coords.cleft.x, coords.cleft.y);
   ctx.fillText("D", coords.lower.x, coords.lower.y);

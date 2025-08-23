@@ -30,7 +30,7 @@ function main() {
   document.body.appendChild(canvas); // add to body
 
   // const state = { canvas: canvas, ctx: ctx }; // minimum requirement
-  const state = World.create(canvas,ctx); // initialize!
+  const state = World.create(canvas, ctx); // initialize!
   state.inputs = inputs; // from events.js
   document.state = state;
 
