@@ -58,72 +58,42 @@ var resize = (state) => {
 
 var createPlants = (state) => {
   const plants = [];
-  var num = 50000; // 50K plants!
+  var num = 10000//50000; // 50K plants!
   while (num--) {
-    let x = (Math.random() * 5 - 2.5);
-    let y = (Math.random() * 5 - 2.5);
+    let x = (Math.random() * 2 - 1);
+    let y = (Math.random() * 2 - 1);
     let r = (Math.random() * .6 + .4) * 0.025;
-    let c = (Math.random() < .2) ? "darkgreen" : "lawngreen";
+    let vector = { x: x, y: y };
+    normalize(vector, 1);
+    x = vector.x;
+    y = vector.y;
+    // let c = (Math.random() < .2) ? "darkgreen" : "lawngreen";
+    let t = (Math.random() < .2) ? "clover" : "grass";
 
-    plants.push({ x: x, y: y, r: r, c: c });
+    plants.push({ x: x, y: y, r: r, t: t });
   }
   state.plants = plants;
 }
 
-// this should return [-1,1] for vector x and y
-var getVector = () => {
-  const mouse = getMouse(); //inputs.mouse;
-  let dMax = mouse.dragMax;
-
-  const vector = {};
-
-  if (findInput(keybinds.mouseL)) {
-    vector.x = mouse._x - mouse.x_;
-    vector.y = mouse._y - mouse.y_;
-  } else { // keyboard movement have "pointy" diagonals
-    vector.x = (findInput(keybinds.right) - findInput(keybinds.left));
-    vector.y = (findInput(keybinds.down) - findInput(keybinds.up));
-    dMax = 1;
-  }
-
-  normalize(vector, dMax);
-
-  return vector;
-};
-
-var normalize = (vector, max) => {
-  // direct length is useful for detecting input
-  const length = Math.hypot(vector.x, vector.y); // can be as much as 1.4!
-  const angle = Math.atan2(vector.y, vector.x); // can be a weird number (~0)
-
-  // we need to normalize diagonals with the angle
-  vector.x = Math.min(length / max, 1) * Math.cos(angle);
-  vector.y = Math.min(length / max, 1) * Math.sin(angle);
-}
-
-
 var updatePlayer = (state) => {
 
   const vector = getVector();
-  const hypot = Math.hypot(vector.x, vector.y); // percent max speed
-  const theta = Math.atan2(vector.y, vector.x); // angle
-
-  // save the current "unit-space"
-  //const mindim = Math.min(self.innerWidth, self.innerHdeight);
-
-  state.dx -= hypot * state.speed * Math.cos(theta);
-  state.dy -= hypot * state.speed * Math.sin(theta);
+  state.dx -= vector.x * state.speed;
+  state.dy -= vector.y * state.speed;
 }
 
 var updatePlants = (state) => {
-  if (state.frame % 8 !== 0) return;
+  if (state.frame % 3 !== 0) return;
   const plants = state.plants;
   const nearby = [];
+  if (state.active == undefined) state.active = [];
   for (plant of plants) {
-    const hypot = Math.hypot(plant.x+state.dx, plant.y+state.dy); // percent max speed
+    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // const theta = Math.atan2(vector.y, vector.x); // angle
     if (hypot > .1) continue;
     nearby.push(plant);
+    const isMatch = state.active.some(p => p.x == plant.x && p.y == plant.y && p.r == plant.r && p.c == plant.c);
+    if (plant.t == "grass" && hypot < .025 && !isMatch) state.active.push(plant);
   }
   state.nearby = nearby;
 }

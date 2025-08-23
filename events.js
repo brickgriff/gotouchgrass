@@ -9,10 +9,6 @@ const inputs = {
     dragMax: 50,
     isDragged: false, isClicked: false,
   },
-  viewport: {
-    isResized: false,
-  },
-  isResized: false,
 };
 
 function pushInput(input) {
@@ -30,6 +26,38 @@ function findInput(input) {
 function getMouse() {
   return inputs.mouse;
 }
+
+// this should return [-1,1] for vector x and y
+var getVector = () => {
+  const mouse = getMouse(); //inputs.mouse;
+  let dMax = mouse.dragMax;
+
+  const vector = {};
+
+  if (findInput(keybinds.mouseL)) {
+    vector.x = mouse._x - mouse.x_;
+    vector.y = mouse._y - mouse.y_;
+  } else { // keyboard movement have "pointy" diagonals
+    vector.x = (findInput(keybinds.right) - findInput(keybinds.left));
+    vector.y = (findInput(keybinds.down) - findInput(keybinds.up));
+    dMax = 1;
+  }
+
+  normalize(vector, dMax);
+
+  return vector;
+};
+
+var normalize = (vector, max) => {
+  // direct length is useful for detecting input
+  const length = Math.hypot(vector.x, vector.y); // can be as much as 1.4!
+  const angle = Math.atan2(vector.y, vector.x); // can be a weird number (~0)
+
+  // we need to normalize diagonals with the angle
+  vector.x = Math.min(length / max, 1) * Math.cos(angle);
+  vector.y = Math.min(length / max, 1) * Math.sin(angle);
+}
+
 
 // CHECK BROWSER FEATURES //
 // TODO: practice with offscreen canvas

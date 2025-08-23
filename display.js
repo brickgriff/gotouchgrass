@@ -4,29 +4,14 @@ const Display = (function (/*api*/) {
   // public api is a function
   api.draw = function () {
     //console.log(`draw`);
-
     const state = document.state;
-    const ctx = state.ctx;
-    const cx = state.cx;
-    const cy = state.cy;
-    const mindim = state.mindim;
 
     drawBackground(state);
-    drawPlants(state);
-
-    // draw center dot
-    const pr = .05 * mindim;
-    ctx.beginPath();
-    ctx.fillStyle = "lightgray";
-    ctx.arc(0, 0, pr, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.strokeStyle = "black";
-    ctx.moveTo(0 + 0.5 * mindim, 0);
-    ctx.arc(0, 0, 0.5 * mindim, 0, Math.PI * 2);
-    ctx.stroke();
-
+    drawBorder(state);
+    drawActive(state);
+    drawNearby(state);
+    drawPlayer(state);
+    drawRing(state);
   };
 
   // return the public API
@@ -40,7 +25,63 @@ var drawBackground = (state) => {
   ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
 }
 
-var drawPlants = (state) => {
+var drawBorder = (state) => {
+  const ctx = state.ctx;
+  const mindim = state.mindim;
+  ctx.beginPath();
+  ctx.strokeStyle = "darkslategray";
+  ctx.lineWidth = 10;
+  const r = mindim;
+  const x = state.dx * mindim;
+  const y = state.dy * mindim;
+  ctx.moveTo(r + x, y);
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.lineWidth = 1;
+
+}
+
+var drawPlayer = (state) => {
+  // draw center dot
+  const ctx = state.ctx;
+  const mindim = state.mindim;
+  const pr = .05 * mindim;
+  ctx.beginPath();
+  ctx.fillStyle = "lightgray";
+  ctx.arc(0, 0, pr, 0, Math.PI * 2);
+  ctx.fill();
+
+}
+
+var drawRing = (state) => {
+  const ctx = state.ctx;
+  const mindim = state.mindim;
+  ctx.beginPath();
+  ctx.strokeStyle = "lightgray";
+  ctx.moveTo(0 + 0.5 * mindim, 0);
+  ctx.arc(0, 0, 0.5 * mindim, 0, Math.PI * 2);
+  ctx.stroke();
+}
+
+var drawActive = (state) => {
+  const ctx = state.ctx;
+  const mindim = state.mindim;
+  ctx.beginPath();
+  ctx.fillStyle = "lightgray";
+  for (plant of state.active) {
+
+    x = (plant.x + state.dx) * mindim;
+    y = (plant.y + state.dy) * mindim;
+    r = plant.r * mindim;
+    if (Math.hypot(x, y) > mindim / 2) continue;
+    ctx.moveTo(x + r, y);
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+  }
+  ctx.fill();
+
+}
+
+var drawNearby = (state) => {
   // draw plant circles
   const ctx = state.ctx;
   const mindim = state.mindim;
@@ -63,16 +104,15 @@ var drawPlants = (state) => {
     ctx.fill();
   }
 
-
   for (plant of state.nearby) {
 
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;
     r = plant.r * mindim;
-
+    let c = plant.t == "grass" ? "lawngreen" : "darkgreen";
     ctx.beginPath();
-    ctx.strokeStyle = plant.c;
-    ctx.fillStyle = plant.c;
+    ctx.strokeStyle = c;
+    ctx.fillStyle = c;
     ctx.moveTo(x + r, y);
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.stroke();
