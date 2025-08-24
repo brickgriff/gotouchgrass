@@ -25,9 +25,9 @@ var drawGamepad = (state) => {
   const ctx = state.ctx;
   const ratio = state.canvas.height / state.canvas.width;
   const mindim = state.mindim;
-  const r = .07 * Math.max(0, Math.min(2, ratio)) * mindim;
+  const r = .06 * Math.max(0, Math.min(2, ratio)) * mindim;
   const x = 0;
-  const y = state.cy - r;
+  const y = state.cy - r - 25;
 
   ctx.lineWidth = 25;
 
