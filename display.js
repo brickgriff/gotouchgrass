@@ -6,7 +6,7 @@ const Display = (function (/*api*/) {
     //console.log(`draw`);
     const state = document.state;
 
-    // these functions do not need the entire state
+    // FIXME: these functions do not need the entire state
     // for most, ctx, mindim, and various screen params should work
     drawBackground(state);
     drawBorder(state);
@@ -15,6 +15,12 @@ const Display = (function (/*api*/) {
     drawPlayer(state);
     drawRing(state);
     drawGamepad(state);
+
+    if (state.events.touchCount % 2 == 0) {
+      ctx.beginPath();
+      ctx.fillStyle = "blue";
+      ctx.fillRect(-state.cx, -state.cy, 250, 250);
+    }
   };
 
   // return the public API
@@ -25,6 +31,7 @@ var drawGamepad = (state) => {
   const ctx = state.ctx;
   const ratio = state.canvas.height / state.canvas.width;
   const mindim = state.mindim;
+  // FIXME: gamepad dimensions
   const r = .06 * Math.max(0, Math.min(2, ratio)) * mindim;
   const x = 0;
   const y = state.cy - r - 25;
@@ -39,7 +46,7 @@ var drawGamepad = (state) => {
 
   ctx.beginPath();
   ctx.strokeStyle = `rgba(${red},${green},${blue},0.25)`;
-  drawArc(ctx,x,y,r);
+  drawArc(ctx, x, y, r);
   ctx.stroke();
 
 

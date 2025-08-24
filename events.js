@@ -8,10 +8,9 @@ const inputs = {
     _x: 0,
     _y: 0,
     // to help normalize positions
-    dragMin: 10,
-    dragMax: 50,
-    // these should be in document.state.events
-    // isDragged: false, isClicked: false,
+    // TODO: should these be in terms of mindim units?
+    dragMin: 10, // px
+    dragMax: 50, // px
   },
 };
 
@@ -67,7 +66,7 @@ function getNewVector(vector, length, angle) {
   return _vector;
 }
 
-var normalize = (vector, max) => {
+function normalize(vector, max) {
   // direct length is useful for detecting input
   const hypot = Math.hypot(vector.x, vector.y); // can be as much as 1.4!
   const theta = Math.atan2(vector.y, vector.x); // can be a weird number (~0)
@@ -143,9 +142,10 @@ window.addEventListener("mouseup", (e) => {
 });
 
 window.addEventListener("mousemove", (e) => {
+  const state = document.state;
   if (findInput(keybinds.mouseL)) {
-    inputs.mouse._x = e.offsetX - document.body.clientWidth / 2;
-    inputs.mouse._y = e.offsetY - document.body.clientHeight / 2;
+    inputs.mouse._x = e.offsetX - state.cx;
+    inputs.mouse._y = e.offsetY - state.cy;
 
     const dist = Math.hypot(inputs.mouse._x - inputs.mouse.x_, inputs.mouse._y - inputs.mouse.y_);
     inputs.mouse.isDragged = (dist >= inputs.mouse.dragMin);
@@ -174,7 +174,10 @@ function ongoingTouchIndexById(idToFind) {
 
 
 window.addEventListener("touchstart", (e) => {
-  e.preventDefault()
+  e.preventDefault();
+  document.state.events.isTouched = true;
+  if (!document.state.events.touchCount) document.state.events.touchCount = 0;
+  document.state.events.touchCount++;
   for (let i = 0; i < e.changedTouches.length; i++) {
     pushKey(state.keys, ongoingTouches.length);
     ongoingTouches.push(copyTouch(e.touches[i]));
