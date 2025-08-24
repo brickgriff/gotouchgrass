@@ -15,6 +15,12 @@ const Display = (function (/*api*/) {
     drawPlayer(state);
     drawRing(state);
     drawGamepad(state);
+
+    if (state.events.touchCount % 2 == 0) {
+      ctx.beginPath();
+      ctx.fillStyle = "blue";
+      ctx.fillRect(-state.cx, -state.cy, 250, 250);
+    }
   };
 
   // return the public API
