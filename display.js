@@ -201,7 +201,7 @@ var drawActive = (state) => {
   ctx.beginPath();
   ctx.fillStyle = "lightgray";
   for (plant of state.active) {
-    if (plant.frame <= state.frame - 6 * 360) {
+    if (plant.frame <= state.frame - (60 * 60)) {
       plant.frame = null;
       continue;
     }
@@ -216,43 +216,32 @@ var drawActive = (state) => {
 
 }
 
-// TODO: break this up if possible
 var drawNearby = (state) => {
-  // draw plant circles
   const ctx = state.ctx;
   const mindim = state.mindim;
 
-  let x = 0;
-  let y = 0;
-  let r = 0;
-
-  x = (.1 + state.dx) * mindim;
-  y = (-.1 + state.dy) * mindim;
-  r = .01 * mindim;
-
-  if (Math.hypot(x, y) < mindim / 2) {
-    ctx.beginPath();
-    ctx.strokeStyle = "lawngreen";
-    ctx.fillStyle = "lawngreen";
-    ctx.moveTo(x + r, y);
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fill();
-  }
-
   for (plant of state.nearby) {
-
-    x = (plant.x + state.dx) * mindim;
-    y = (plant.y + state.dy) * mindim;
-    r = plant.r * mindim;
+    let x = (plant.x + state.dx) * mindim;
+    let y = (plant.y + state.dy) * mindim;
+    let r = plant.r * mindim;
     let c = plant.t == "grass" ? "lawngreen" : "darkgreen";
-    ctx.beginPath();
-    ctx.strokeStyle = c;
-    ctx.fillStyle = c;
-    ctx.moveTo(x + r, y);
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fill();
+    drawArc(ctx, x, y, r, { fill: c });
   }
 
+}
+
+var drawArc = (ctx, x, y, r, params) => {
+  let start = params.start || 0;
+  let end = params.end || Math.PI * 2;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arc(x, y, r, start, end);
+  if (params.stroke) {
+    ctx.strokeStyle = params.stroke;
+    ctx.stroke();
+  }
+  if (params.fill) {
+    ctx.fillStyle = params.fill;
+    ctx.fill();
+  }
 }
