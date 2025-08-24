@@ -22,17 +22,24 @@ const Display = (function (/*api*/) {
     ctx.restore();
     drawRing(state);
     drawGamepad(state);
+    drawNav(state);
 
-
-    if (state.touchCount % 2 == 0) {
-      ctx.fillStyle = "blue";
-      ctx.fillRect(-state.cx, -state.cy, 100, 100);
-    }
   };
 
   // return the public API
   return api;
 }());
+
+var drawNav = (state) => {
+  const ctx = state.ctx;
+  const mindim = state.mindim;
+  const mouse = getMouse();
+
+  ctx.beginPath();
+  ctx.strokeStyle = "lightgray";
+  drawArc(ctx, mouse.x_, mouse.y_, mindim * .1);
+  ctx.stroke();
+}
 
 var drawGamepad = (state) => {
   const ctx = state.ctx;
