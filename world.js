@@ -30,14 +30,24 @@ const World = (function (/*api*/) {
 
   // update the state
   api.update = function (dt) {
+    //console.log(`update(dt=${dt}, fps=${Math.floor(1/dt)})`);
     const state = document.state;
-    //console.log(`update(frame=${state.frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
 
     if (state.events.isResized) {
       resize(state);
       state.events.isResized = false;
     }
+
     state.vector = getVector();
+
+    // FIXME: control when the standing frame counter gets updated
+    if (!state.frameStanding && state.vector.x == 0 && state.vector.y == 0) {
+      state.frameStanding = state.frame;
+    } else if (state.vector.x != 0 || state.vector.y != 0) {
+      state.frameStanding = null;
+    }
+
+    console.log(state.frame - state.frameStanding > 60 * 3);
     updateGamepad(state);
     updatePlayer(state);
     updatePlants(state);
@@ -72,31 +82,12 @@ var createPlants = (state) => {
     normalize(vector, 1);
     x = vector.x;
     y = vector.y;
+    // FIXME: why not start with a hypot and theta?
     let c = (random() < .2) ? "darkgreen" : "lawngreen";
     let t = (random() < .2) ? "clover" : "grass";
     const plant = { x: x, y: y, r: r, t: t, c: c };
     plants.push(plant);
   }
-}
-
-var updateGamepad = (state) => {
-  // console.log(state.events.isPressed);
-  //if (!state.events.isPressed) {
-  //  clearInputs();
-  //}
-  // check mouse pos
-  // if near the gamepad extents
-  // check which button it is near
-  // if w/i center button
-  // or
-  // check vector angle
-  // check which button should be active
-  // 0 +/- 22.5 => right
-  // 45 +/- 22.5 => upperright
-  // 90 +/- 22.5 => up
-  // ...
-  // 315 +/- 22.5 => lowerright
-  // add it to the animation list
 }
 
 var updatePlayer = (state) => {
@@ -119,24 +110,52 @@ var updatePlants = (state) => {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // const theta = Math.atan2(vector.y, vector.x); // angle
     //if (plant.frame) {
-    // TODO: try to get control of active list for deletions
+    // FIXME: try to get control of active list for deletions
+    // FIXME: make most/all lists into sets
     // }
     if (hypot > .1) continue;
     nearby.push(plant);
 
-    const isActive = state.active.some(
-      p => p.x == plant.x
-        && p.y == plant.y
-        && p.r == plant.r
-        && p.c == plant.c
-        && p.t == plant.t
-    );
-    if (plant.t == "grass" && hypot < .025 && !isActive) {
+    // FIXME: maybe using a set will make this step simpler
+    const isActive = checkActive(plant, state.active);
+    const isStanding = false;//checkStanding(state.frameStanding, state.frame);
+    // TODO: if the player stands still for 30 frames
+    // all grass w/i the inner ring goes active
+    if (plant.t == "grass" && !isActive && ((hypot < .025) || isStanding)) {
       if (!plant.frame) plant.frame = state.frame;
       state.active.push(plant);
     }
   }
+}
 
-  // TODO: if the player stands still for 30 frames
-  // all grass w/i the inner ring goes active
+var checkActive = (plant, active) => {
+  return active.some(
+    p => p.x == plant.x
+      && p.y == plant.y
+      && p.r == plant.r
+      && p.c == plant.c
+      && p.t == plant.t
+  );
+}
+
+var checkStanding = (frame_, _frame) => { return _frame - frame_ > (3 * 60) }
+
+var updateGamepad = (state) => {
+  // console.log(state.events.isPressed);
+  //if (!state.events.isPressed) {
+  //  clearInputs();
+  //}
+  // check mouse pos
+  // if near the gamepad extents
+  // check which button it is near
+  // if w/i center button
+  // or
+  // check vector angle
+  // check which button should be active
+  // 0 +/- 22.5 => right
+  // 45 +/- 22.5 => upperright
+  // 90 +/- 22.5 => up
+  // ...
+  // 315 +/- 22.5 => lowerright
+  // add it to the animation list
 }
