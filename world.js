@@ -143,7 +143,7 @@ var checkStanding = (frame_, _frame) => { return _frame - frame_ > (3 * 60) }
 var updateGamepad = (state) => {
   // console.log(state.events.isPressed);
   //if (!state.events.isPressed) {
-  //  clearInputs(); 
+  //  clearInputs();
   //}
   // check mouse pos
   // if near the gamepad extents
