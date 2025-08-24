@@ -7,7 +7,7 @@ const Random = (function (/*api*/) {
       // translate that as a number
       seed = (seed == undefined || seed == null || seed == "") ? Date.now() : asNum(seed);
       // use that as an angle in a sin call
-      seed = ((Math.sin(seed) * 1000000007) % Number.MAX_SAFE_INTEGER) % 1;
+      seed = Math.sin(seed * 1000000007);
       return Math.abs(seed);
       // use the decimal part as a random number
       // then use that to generate a new seed
