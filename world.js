@@ -17,6 +17,7 @@ const World = (function (/*api*/) {
       time: 0,
       seed: 42,
       events: {},
+      touchCount: 0,
       defaults: { // so you can always revert
         speed: 0.003,
       },
