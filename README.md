@@ -27,6 +27,7 @@
   - [x] normalize entity placement
   - [x] walking speed in state
   - [ ] zoom level in state
+  - [ ] scale speed to framerate
 - [ ] simulations
 - [ ] score
 - [ ] save data system
