@@ -16,9 +16,11 @@ const Display = (function (/*api*/) {
     drawRing(state);
     drawGamepad(state);
 
+    const ctx = state.ctx;
+
     if (state.touchCount % 2 == 0) {
       ctx.fillStyle = "blue";
-      ctx.fillRect(-125, -125, 250, 250);
+      ctx.fillRect(-state.cx, -state.cy, 100, 100);
     }
   };
 
