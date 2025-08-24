@@ -33,6 +33,7 @@ function getMouse() {
 }
 
 function isPressing(vector, range) {
+  if (!document.state.events.isPressed) return;
   const mouse = getMouse();
   const hypot = Math.hypot(mouse.x_ - vector.x, mouse.y_ - vector.y);
   return hypot < range;

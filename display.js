@@ -5,18 +5,24 @@ const Display = (function (/*api*/) {
   api.draw = function () {
     //console.log(`draw`);
     const state = document.state;
+    const ctx = state.ctx;
+    const mindim = state.mindim;
 
     // FIXME: these functions do not need the entire state
     // for most, ctx, mindim, and various screen params should work
     drawBackground(state);
+    ctx.save();
+    ctx.beginPath();
+    drawArc(ctx, 0, 0, 0.5 * mindim);
+    ctx.clip();
     drawBorder(state);
     drawActive(state);
     drawNearby(state);
     drawPlayer(state);
+    ctx.restore();
     drawRing(state);
     drawGamepad(state);
 
-    const ctx = state.ctx;
 
     if (state.touchCount % 2 == 0) {
       ctx.fillStyle = "blue";
@@ -33,23 +39,25 @@ var drawGamepad = (state) => {
   const ratio = state.canvas.height / state.canvas.width;
   const mindim = state.mindim;
   // FIXME: gamepad dimensions
-  const r = .06 * Math.max(0, Math.min(2, ratio)) * mindim;
-  const x = 0;
-  const y = state.cy - r - 25;
-
   ctx.lineWidth = 25;
-
+  const x = 0;
+  const y = 0;
+  const r = (.15) * mindim + ctx.lineWidth / 2;
   ctx.strokeStyle = "lightgray";
 
   let red = parseInt(ctx.strokeStyle.substring(1, 3), 16);
   let green = parseInt(ctx.strokeStyle.substring(3, 5), 16);
   let blue = parseInt(ctx.strokeStyle.substring(5, 7), 16);
 
-  ctx.beginPath();
   ctx.strokeStyle = `rgba(${red},${green},${blue},0.25)`;
+  ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
+
+  ctx.beginPath();
+  drawArc(ctx, x, y, .1 * mindim);
+  ctx.fill();
+  ctx.beginPath();
   drawArc(ctx, x, y, r);
   ctx.stroke();
-
 
   // FIXME: set this up when the world is created
   // save the eight points on gamepad for mouse/touch events
@@ -57,7 +65,6 @@ var drawGamepad = (state) => {
   // GOTO world.js
   const coords = {};
   coords.center = { x: x, y: y };
-
   // 0 +/- 22.5 => right
   coords.cright = getNewVector(coords.center, r, (0));
   // 45 +/- 22.5 => upperright
@@ -73,52 +80,33 @@ var drawGamepad = (state) => {
   coords.lright = getNewVector(coords.center, r, 0.25 * Math.PI);
 
   state.coords = coords;
+
   // draw 8 buttons
 
   // draw center button
   ctx.beginPath();
-  ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-  drawArc(ctx, x, y, r * 0.6);
-  ctx.fill();
 
   // make them glow regardless which event is handled
   // keyboard
-  if (findInput(keybinds.up) || isPressing(coords.upper, r / 4)) {
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-    drawArc(ctx, coords.upper.x, coords.upper.y, r / 4);
-    ctx.fill();
-    //pushInput(keybinds.up);
+  ctx.beginPath();
+  let rGamepad = .025 * mindim;
+  if (findInput(keybinds.up) || isPressing(coords.upper, rGamepad)) {
+    drawArc(ctx, coords.upper.x, coords.upper.y, rGamepad);
   }
-  if (findInput(keybinds.down) || isPressing(coords.lower, r / 4)) {
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-    drawArc(ctx, coords.lower.x, coords.lower.y, r / 4);
-    ctx.fill();
-    // pushInput(keybinds.down);
+  if (findInput(keybinds.down) || isPressing(coords.lower, rGamepad)) {
+    drawArc(ctx, coords.lower.x, coords.lower.y, rGamepad);
   }
-  if (findInput(keybinds.left) || isPressing(coords.cleft, r / 4)) {
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-    drawArc(ctx, coords.cleft.x, coords.cleft.y, r / 4);
-    ctx.fill();
-    // pushInput(keybinds.left);
+  if (findInput(keybinds.left) || isPressing(coords.cleft, rGamepad)) {
+    drawArc(ctx, coords.cleft.x, coords.cleft.y, rGamepad);
   }
-  if (findInput(keybinds.right) || isPressing(coords.cright, r / 4)) {
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-    ctx.moveTo(coords.cright.x + r / 2, coords.cright.y);
-    drawArc(ctx, coords.cright.x, coords.cright.y, r / 4);
-    ctx.fill();
-    // pushInput(keybinds.right);
+  if (findInput(keybinds.right) || isPressing(coords.cright, rGamepad)) {
+    drawArc(ctx, coords.cright.x, coords.cright.y, rGamepad);
   }
-  if (findInput(keybinds.primary) || isPressing(coords.center, r * 0.6)) {
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-    drawArc(ctx, coords.center.x, coords.center.y, r * 0.6);
-    ctx.fill();
-    // pushInput(keybinds.primary);
+  rGamepad *= 4;
+  if (findInput(keybinds.primary) || isPressing(coords.center, rGamepad)) {
+    drawArc(ctx, coords.center.x, coords.center.y, rGamepad);
   }
+  ctx.fill();
 
   drawGamepadInputs(state);
 
@@ -150,6 +138,8 @@ var drawGamepadInputs = (state) => {
 var drawBackground = (state) => {
   // draw background
   const ctx = state.ctx;
+  ctx.clearRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+  ctx.beginPath();
   ctx.fillStyle = "dimgray";
   ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
 }
@@ -159,12 +149,20 @@ var drawBorder = (state) => {
   const mindim = state.mindim;
   ctx.beginPath();
   ctx.strokeStyle = "darkslategray";
+  ctx.fillStyle = "sienna";
   ctx.lineWidth = 10;
   const r = mindim;
   const x = state.dx * mindim;
   const y = state.dy * mindim;
   drawArc(ctx, x, y, r);
   ctx.stroke();
+  ctx.fill();
+  ctx.fillStyle = "darkgreen";
+  let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
+  let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
+  let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
+  ctx.fillStyle = `rgba(${red},${green},${blue},0.5)`;
+  ctx.fill();
   ctx.lineWidth = 1;
 
 }
@@ -184,10 +182,10 @@ var drawRing = (state) => {
   const mindim = state.mindim;
   ctx.beginPath();
   ctx.strokeStyle = "lightgray";
-  // fill unit circle ~5m
-  drawArc(ctx, 0, 0, 0.5 * mindim);
   // 20% radius ~1m
   drawArc(ctx, 0, 0, 0.1 * mindim);
+  // fill unit circle ~5m
+  drawArc(ctx, 0, 0, 0.5 * mindim);
   ctx.stroke();
 }
 
