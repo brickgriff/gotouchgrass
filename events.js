@@ -8,10 +8,9 @@ const inputs = {
     _x: 0,
     _y: 0,
     // to help normalize positions
-    dragMin: 10,
-    dragMax: 50,
-    // these should be in document.state.events
-    // isDragged: false, isClicked: false,
+    // TODO: should these be in terms of mindim units?
+    dragMin: 10, // px
+    dragMax: 50, // px
   },
 };
 
@@ -67,7 +66,7 @@ function getNewVector(vector, length, angle) {
   return _vector;
 }
 
-var normalize = (vector, max) => {
+function normalize (vector, max) {
   // direct length is useful for detecting input
   const hypot = Math.hypot(vector.x, vector.y); // can be as much as 1.4!
   const theta = Math.atan2(vector.y, vector.x); // can be a weird number (~0)

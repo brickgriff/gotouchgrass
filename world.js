@@ -47,7 +47,8 @@ const World = (function (/*api*/) {
       state.frameStanding = null;
     }
 
-    console.log(state.frame - state.frameStanding > 60 * 3);
+    //console.log(state.frame - state.frameStanding > 60 * 3);
+    
     updateGamepad(state);
     updatePlayer(state);
     updatePlants(state);
