@@ -209,8 +209,7 @@ var drawActive = (state) => {
     y = (plant.y + state.dy) * mindim;
     r = plant.r * mindim;
     if (Math.hypot(x, y) > mindim / 2) continue;
-    ctx.moveTo(x + r, y);
-    ctx.arc(x, y, r, 0, Math.PI * 2);
+    drawArc(ctx, x, y, r);
   }
   ctx.fill();
 
@@ -224,24 +223,18 @@ var drawNearby = (state) => {
     let x = (plant.x + state.dx) * mindim;
     let y = (plant.y + state.dy) * mindim;
     let r = plant.r * mindim;
-    let c = plant.t == "grass" ? "lawngreen" : "darkgreen";
-    drawArc(ctx, x, y, r, { fill: c });
+    let c = (plant.t == "grass") ? "lawngreen" : "darkgreen";
+    ctx.beginPath();
+    drawArc(ctx, x, y, r);
+    ctx.fillStyle = c;
+    ctx.fill();
   }
 
 }
 
-var drawArc = (ctx, x, y, r, params) => {
+var drawArc = (ctx, x, y, r, params={}) => {
   let start = params.start || 0;
   let end = params.end || Math.PI * 2;
-  ctx.beginPath();
   ctx.moveTo(x + r, y);
   ctx.arc(x, y, r, start, end);
-  if (params.stroke) {
-    ctx.strokeStyle = params.stroke;
-    ctx.stroke();
-  }
-  if (params.fill) {
-    ctx.fillStyle = params.fill;
-    ctx.fill();
-  }
 }
