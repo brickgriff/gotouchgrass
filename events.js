@@ -104,6 +104,7 @@ window.addEventListener("resize", (e) => {
 });
 
 window.addEventListener("keydown", (e) => {
+  // e.preventDefault() 
   pushInput(e.code);
 });
 
