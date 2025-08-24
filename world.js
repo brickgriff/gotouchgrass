@@ -16,7 +16,7 @@ const World = (function (/*api*/) {
       frame: 0,
       time: 0,
       seed: 42,
-      events: [],
+      events: {},
       defaults: { // so you can always revert
         speed: 0.003,
       },
@@ -48,7 +48,7 @@ const World = (function (/*api*/) {
     }
 
     //console.log(state.frame - state.frameStanding > 60 * 3);
-    
+
     updateGamepad(state);
     updatePlayer(state);
     updatePlants(state);
