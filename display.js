@@ -81,45 +81,45 @@ var drawGamepad = (state) => {
 
   // make them glow regardless which event is handled
   // keyboard
-  if (findInput(keybinds.up) || isPressing(coords.upper, r / 2)) {
+  if (findInput(keybinds.up)) {//} || isPressing(coords.upper, r / 2)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.upper.x + r / 2, coords.upper.y);
     ctx.arc(coords.upper.x, coords.upper.y, r / 2, 0, Math.PI * 2);
     ctx.fill();
-    pushInput(keybinds.up);
+    //pushInput(keybinds.up);
   }
-  if (findInput(keybinds.down) || isPressing(coords.lower, r / 2)) {
+  if (findInput(keybinds.down)) {//} || isPressing(coords.lower, r / 2)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.lower.x + r / 2, coords.lower.y);
     ctx.arc(coords.lower.x, coords.lower.y, r / 2, 0, Math.PI * 2);
     ctx.fill();
-    pushInput(keybinds.down);
+    // pushInput(keybinds.down);
   }
-  if (findInput(keybinds.left) || isPressing(coords.cleft, r / 2)) {
+  if (findInput(keybinds.left)) {//} || isPressing(coords.cleft, r / 2)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.cleft.x + r / 2, coords.cleft.y);
     ctx.arc(coords.cleft.x, coords.cleft.y, r / 2, 0, Math.PI * 2);
     ctx.fill();
-    pushInput(keybinds.left);
+    // pushInput(keybinds.left);
   }
-  if (findInput(keybinds.right) || isPressing(coords.cright, r / 2)) {
+  if (findInput(keybinds.right)) {//} || isPressing(coords.cright, r / 2)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.cright.x + r / 2, coords.cright.y);
     ctx.arc(coords.cright.x, coords.cright.y, r / 2, 0, Math.PI * 2);
     ctx.fill();
-    pushInput(keybinds.right);
+    // pushInput(keybinds.right);
   }
-  if (findInput(keybinds.primary) || isPressing(coords.center, r / 2)) {
+  if (findInput(keybinds.primary)) {//} || isPressing(coords.center, r / 2)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.center.x + r / 2, coords.center.y);
     ctx.arc(coords.center.x, coords.center.y, r / 2, 0, Math.PI * 2);
     ctx.fill();
-    pushInput(keybinds.primary);
+    // pushInput(keybinds.primary);
   }
 
   // mouse

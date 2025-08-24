@@ -15,7 +15,7 @@ const World = (function (/*api*/) {
       speed: 0.003,
       frame: 0,
       time: 0,
-      seed: 42,
+      seed: "grass",
       events: [],
       defaults: { // so you can always revert
         speed: 0.003,
@@ -81,9 +81,9 @@ var createPlants = (state) => {
 
 var updateGamepad = (state) => {
   // console.log(state.events.isPressed);
-  if (!state.events.isPressed) {
-    clearInputs();
-  }
+  //if (!state.events.isPressed) {
+  //  clearInputs();
+  //}
   // check mouse pos
   // if near the gamepad extents
   // check which button it is near
