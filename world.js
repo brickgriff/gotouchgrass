@@ -15,7 +15,7 @@ const World = (function (/*api*/) {
       speed: 0.003,
       frame: 0,
       time: 0,
-      seed: "grass",
+      seed: 42,
       events: [],
       defaults: { // so you can always revert
         speed: 0.003,
@@ -74,8 +74,8 @@ var createPlants = (state) => {
     y = vector.y;
     let c = (random() < .2) ? "darkgreen" : "lawngreen";
     let t = (random() < .2) ? "clover" : "grass";
-
-    plants.push({ x: x, y: y, r: r, t: t, c: c });
+    const plant = { x: x, y: y, r: r, t: t, c: c };
+    plants.push(plant);
   }
 }
 
@@ -139,8 +139,4 @@ var updatePlants = (state) => {
 
   // TODO: if the player stands still for 30 frames
   // all grass w/i the inner ring goes active
-}
-
-var updateNearby = (state) => {
-
 }
