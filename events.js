@@ -113,6 +113,7 @@ window.addEventListener("keyup", (e) => {
 });
 
 window.addEventListener("mousedown", (e) => {
+  e.preventDefault();
   pushInput(e.button);
 
   const state = document.state;
@@ -126,7 +127,6 @@ window.addEventListener("mousedown", (e) => {
     state.events.isDragged = false;
   }
 
-  // console.log(state.events, state.inputs.mouse);
 });
 
 window.addEventListener("mouseup", (e) => {
@@ -176,19 +176,18 @@ function ongoingTouchIndexById(idToFind) {
 
 window.addEventListener("touchstart", (e) => {
   e.preventDefault();
-  // document.state.events.isTouched = true;
-  document.state.touchCount++;
-  // for (let i = 0; i < e.changedTouches.length; i++) {
-  //   pushKey(state.keys, ongoingTouches.length);
-  //   ongoingTouches.push(copyTouch(e.touches[i]));
-  // }
+  const state = document.state;
 
-  // if (ongoingTouches.length > keybinds.mouseL) return;
+  if (e.changedTouches.length === keybinds.mouseL) {
+    const touch = e.changedTouches[0];
+    inputs.mouse.x_ = inputs.mouse._x = touch.screenX;
+    inputs.mouse.y_ = inputs.mouse._y = touch.screenY;
 
-  // inputs.mouse.x_ = inputs.mouse.x = e.screenX;
-  // inputs.mouse.y_ = inputs.mouse.y = e.screenY;
-  // inputs.mouse._x = inputs.mouse.x_;
-  // inputs.mouse._y = inputs.mouse.y_;
+    state.events.isPressed = true;
+    state.events.isClicked = false;
+    state.events.isDragged = false;
+  }
+
 });
 
 var handleTouchFinish = (e) => {

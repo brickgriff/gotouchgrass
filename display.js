@@ -24,11 +24,6 @@ const Display = (function (/*api*/) {
     drawGamepad(state);
     drawNav(state);
 
-
-    // if (state.touchCount % 2 == 0) {
-    //   ctx.fillStyle = "blue";
-    //   ctx.fillRect(-state.cx, -state.cy, 100, 100);
-    // }
   };
 
   // return the public API
