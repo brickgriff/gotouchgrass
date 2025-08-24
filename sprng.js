@@ -7,7 +7,7 @@ const Random = (function (/*api*/) {
       // translate that as a number
       seed = (seed == undefined || seed == null || seed == "") ? Date.now() : asNum(seed);
       // use that as an angle in a sin call
-      seed = Math.sin(seed * 1000000007) % 1;
+      seed = Math.sin(seed * 1000000007);
       return Math.abs(seed);
       // use the decimal part as a random number
       // then use that to generate a new seed
@@ -28,7 +28,8 @@ var asNum = (string) => {
   if (typeof string === "number") return string;
   let res = 0;
   for (let i = 0; i < string.length; i++) {
-    res += parseInt(string.charAt(i));
+    let ch = string.charCodeAt(i);
+    res = ((res << 5) - res + ch) % Number.MAX_SAFE_INTEGER;
   }
   return res;
 }

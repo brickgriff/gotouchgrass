@@ -61,6 +61,8 @@ var resize = (state) => {
 var createPlants = (state) => {
   const random = Random.seed(state.seed);
   const plants = [];
+  state.plants = plants;
+
   var num = 10000//50000; // 50K plants!
   while (num--) {
     let x = (random() * 2 - 1);
@@ -75,7 +77,6 @@ var createPlants = (state) => {
 
     plants.push({ x: x, y: y, r: r, t: t, c: c });
   }
-  state.plants = plants;
 }
 
 var updateGamepad = (state) => {
@@ -109,7 +110,10 @@ var updatePlants = (state) => {
   if (state.frame % 3 !== 0) return;
   const plants = state.plants;
   const nearby = [];
+  state.nearby = nearby;
+
   if (state.active == undefined) state.active = [];
+  if (!plants) return;
 
   for (plant of plants) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
@@ -132,8 +136,11 @@ var updatePlants = (state) => {
       state.active.push(plant);
     }
   }
-  state.nearby = nearby;
 
   // TODO: if the player stands still for 30 frames
   // all grass w/i the inner ring goes active
+}
+
+var updateNearby = (state) => {
+
 }
