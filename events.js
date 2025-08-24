@@ -175,38 +175,37 @@ function ongoingTouchIndexById(idToFind) {
 
 window.addEventListener("touchstart", (e) => {
   e.preventDefault();
-  document.state.events.isTouched = true;
-  if (!document.state.events.touchCount) document.state.events.touchCount = 0;
-  document.state.events.touchCount++;
-  for (let i = 0; i < e.changedTouches.length; i++) {
-    pushKey(state.keys, ongoingTouches.length);
-    ongoingTouches.push(copyTouch(e.touches[i]));
-  }
+  // document.state.events.isTouched = true;
+  document.state.touchCount++;
+  // for (let i = 0; i < e.changedTouches.length; i++) {
+  //   pushKey(state.keys, ongoingTouches.length);
+  //   ongoingTouches.push(copyTouch(e.touches[i]));
+  // }
 
-  if (ongoingTouches.length > keybinds.mouseL) return;
+  // if (ongoingTouches.length > keybinds.mouseL) return;
 
-  inputs.mouse.x_ = inputs.mouse.x = e.screenX;
-  inputs.mouse.y_ = inputs.mouse.y = e.screenY;
-  inputs.mouse._x = inputs.mouse.x_;
-  inputs.mouse._y = inputs.mouse.y_;
+  // inputs.mouse.x_ = inputs.mouse.x = e.screenX;
+  // inputs.mouse.y_ = inputs.mouse.y = e.screenY;
+  // inputs.mouse._x = inputs.mouse.x_;
+  // inputs.mouse._y = inputs.mouse.y_;
 });
 
 var handleTouchFinish = (e) => {
   e.preventDefault()
-  for (let i = 0; i < e.changedTouches.length; i++) {
-    let index = ongoingTouchIndexById(e.changedTouches.identifier);
-    //let touch=ongoingTouches[index];
-    if (index === keybinds.mouseL) {
-      inputs.mouse.x_ = inputs.mouse.x = state.player.x;
-      inputs.mouse.y_ = inputs.mouse.y = state.player.y;
-      //inputs.mouse._x=inputs.mouse.x_; 
-      //inputs.mouse._y=inputs.mouse.y_;
-      inputs.mouse.isDragged = false;
-    }
+  // for (let i = 0; i < e.changedTouches.length; i++) {
+  //   let index = ongoingTouchIndexById(e.changedTouches.identifier);
+  //   //let touch=ongoingTouches[index];
+  //   if (index === keybinds.mouseL) {
+  //     inputs.mouse.x_ = inputs.mouse.x = state.player.x;
+  //     inputs.mouse.y_ = inputs.mouse.y = state.player.y;
+  //     //inputs.mouse._x=inputs.mouse.x_; 
+  //     //inputs.mouse._y=inputs.mouse.y_;
+  //     inputs.mouse.isDragged = false;
+  //   }
 
-    dropKey(index, state.keys);
-    ongoingTouches.splice(index, 1);
-  }
+  //   dropKey(index, state.keys);
+  //   ongoingTouches.splice(index, 1);
+  // }
 };
 
 window.addEventListener("touchend", handleTouchFinish);
@@ -214,21 +213,21 @@ window.addEventListener("touchcancel", handleTouchFinish);
 
 window.addEventListener("touchmove", (e) => {
   e.preventDefault()
-  for (let i = 0; i < e.changedTouches.length; i++) {
-    let index = ongoingTouchIndexById(e.changedTouches.identifier);
-    //let touch=ongoingTouches[index];
-    if (index === keybinds.mouseL) {
-      inputs.mouse._x = e.offsetX;
-      inputs.mouse._y = e.offsetY;
+  // for (let i = 0; i < e.changedTouches.length; i++) {
+  //   let index = ongoingTouchIndexById(e.changedTouches.identifier);
+  //   //let touch=ongoingTouches[index];
+  //   if (index === keybinds.mouseL) {
+  //     inputs.mouse._x = e.offsetX;
+  //     inputs.mouse._y = e.offsetY;
 
-      let dist = Math.hypot(inputs.mouse._x - inputs.mouse.x_, inputs.mouse._y - inputs.mouse.y_);
-      inputs.mouse.isDragged = (dist >= inputs.mouse.dragMin);
-      //console.log(dist,inputs.mouse.isDragged);
-    }
+  //     let dist = Math.hypot(inputs.mouse._x - inputs.mouse.x_, inputs.mouse._y - inputs.mouse.y_);
+  //     inputs.mouse.isDragged = (dist >= inputs.mouse.dragMin);
+  //     //console.log(dist,inputs.mouse.isDragged);
+  //   }
 
-    dropKey(index, state.keys);
-    ongoingTouches.splice(index, 1);
-  }
+  //   dropKey(index, state.keys);
+  //   ongoingTouches.splice(index, 1);
+  // }
 
 });
 
