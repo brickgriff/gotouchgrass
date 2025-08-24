@@ -53,10 +53,8 @@ const World = (function (/*api*/) {
     updatePlants(state);
   };
 
-
   // return the public api
   return api;
-
 }());
 
 var resize = (state) => {

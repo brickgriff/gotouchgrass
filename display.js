@@ -25,11 +25,11 @@ var drawGamepad = (state) => {
   const ctx = state.ctx;
   const ratio = state.canvas.height / state.canvas.width;
   const mindim = state.mindim;
-  const r = .1 * Math.max(0, Math.min(2, ratio)) * mindim;
+  const r = .06 * Math.max(0, Math.min(2, ratio)) * mindim;
   const x = 0;
   const y = state.cy - (r + 50);
 
-  ctx.lineWidth = 50;
+  ctx.lineWidth = 25;
 
   ctx.strokeStyle = "lightgray";
 
@@ -39,11 +39,11 @@ var drawGamepad = (state) => {
 
   ctx.beginPath();
   ctx.strokeStyle = `rgba(${red},${green},${blue},0.25)`;
-  ctx.moveTo(x + r, y);
-  ctx.arc(x, y, r, 0, Math.PI * 2);
+  drawArc(ctx,x,y,r);
   ctx.stroke();
 
 
+  // FIXME: set this up when the world is created
   // save the eight points on gamepad for mouse/touch events
   // so that state knows where event listeners should be
   // GOTO world.js
@@ -64,63 +64,55 @@ var drawGamepad = (state) => {
   coords.lower = getNewVector(coords.center, r, 0.5 * Math.PI);
   coords.lright = getNewVector(coords.center, r, 0.25 * Math.PI);
 
-  state.gamepad = {};
-  state.gamepad.coords = coords;
-  state.gamepad.innerRadius = r / 2;
-  state.gamepad.outerRadius = r;
+  state.coords = coords;
   // draw 8 buttons
 
   // draw center button
   ctx.beginPath();
   ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-  ctx.moveTo(x + r / 2, y);
-  ctx.arc(x, y, r / 2, 0, Math.PI * 2);
+  drawArc(ctx, x, y, r * 0.6);
   ctx.fill();
-
-  drawGamepadInputs(state);
 
   // make them glow regardless which event is handled
   // keyboard
-  if (findInput(keybinds.up)) {//} || isPressing(coords.upper, r / 2)) {
+  if (findInput(keybinds.up) || isPressing(coords.upper, r / 4)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-    ctx.moveTo(coords.upper.x + r / 2, coords.upper.y);
-    ctx.arc(coords.upper.x, coords.upper.y, r / 2, 0, Math.PI * 2);
+    drawArc(ctx, coords.upper.x, coords.upper.y, r / 4);
     ctx.fill();
     //pushInput(keybinds.up);
   }
-  if (findInput(keybinds.down)) {//} || isPressing(coords.lower, r / 2)) {
+  if (findInput(keybinds.down) || isPressing(coords.lower, r / 4)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-    ctx.moveTo(coords.lower.x + r / 2, coords.lower.y);
-    ctx.arc(coords.lower.x, coords.lower.y, r / 2, 0, Math.PI * 2);
+    drawArc(ctx, coords.lower.x, coords.lower.y, r / 4);
     ctx.fill();
     // pushInput(keybinds.down);
   }
-  if (findInput(keybinds.left)) {//} || isPressing(coords.cleft, r / 2)) {
+  if (findInput(keybinds.left) || isPressing(coords.cleft, r / 4)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-    ctx.moveTo(coords.cleft.x + r / 2, coords.cleft.y);
-    ctx.arc(coords.cleft.x, coords.cleft.y, r / 2, 0, Math.PI * 2);
+    drawArc(ctx, coords.cleft.x, coords.cleft.y, r / 4);
     ctx.fill();
     // pushInput(keybinds.left);
   }
-  if (findInput(keybinds.right)) {//} || isPressing(coords.cright, r / 2)) {
+  if (findInput(keybinds.right) || isPressing(coords.cright, r / 4)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
     ctx.moveTo(coords.cright.x + r / 2, coords.cright.y);
-    ctx.arc(coords.cright.x, coords.cright.y, r / 2, 0, Math.PI * 2);
+    drawArc(ctx, coords.cright.x, coords.cright.y, r / 4);
     ctx.fill();
     // pushInput(keybinds.right);
   }
-  if (findInput(keybinds.primary)) {//} || isPressing(coords.center, r / 2)) {
+  if (findInput(keybinds.primary) || isPressing(coords.center, r * 0.6)) {
     ctx.beginPath();
     ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
-    ctx.moveTo(coords.center.x + r / 2, coords.center.y);
-    ctx.arc(coords.center.x, coords.center.y, r / 2, 0, Math.PI * 2);
+    drawArc(ctx, coords.center.x, coords.center.y, r * 0.6);
     ctx.fill();
     // pushInput(keybinds.primary);
   }
+
+  drawGamepadInputs(state);
 
   // mouse
   // touch
@@ -130,12 +122,11 @@ var drawGamepad = (state) => {
   ctx.lineWidth = 1;
   ctx.strokeStyle = "black";
   ctx.fillStyle = "white";
-
 }
 
 var drawGamepadInputs = (state) => {
   const ctx = state.ctx;
-  const coords = state.gamepad.coords;
+  const coords = state.coords;
   ctx.beginPath();
   ctx.fillStyle = "lightgray";
   ctx.font = "25px serif";
@@ -164,23 +155,20 @@ var drawBorder = (state) => {
   const r = mindim;
   const x = state.dx * mindim;
   const y = state.dy * mindim;
-  ctx.moveTo(r + x, y);
-  ctx.arc(x, y, r, 0, Math.PI * 2);
+  drawArc(ctx, x, y, r);
   ctx.stroke();
   ctx.lineWidth = 1;
 
 }
 
 var drawPlayer = (state) => {
-  // draw center dot
   const ctx = state.ctx;
   const mindim = state.mindim;
-  const pr = .05 * mindim;
+  const r = .05 * mindim;
   ctx.beginPath();
   ctx.fillStyle = "lightgray";
-  ctx.arc(0, 0, pr, 0, Math.PI * 2);
+  drawArc(ctx, 0, 0, r);
   ctx.fill();
-
 }
 
 var drawRing = (state) => {
@@ -188,26 +176,31 @@ var drawRing = (state) => {
   const mindim = state.mindim;
   ctx.beginPath();
   ctx.strokeStyle = "lightgray";
-  ctx.moveTo(0 + 0.5 * mindim, 0);
-  ctx.arc(0, 0, 0.5 * mindim, 0, Math.PI * 2);
-  ctx.moveTo(0 + 0.1 * mindim, 0);
-  ctx.arc(0, 0, 0.1 * mindim, 0, Math.PI * 2);
+  // fill unit circle ~5m
+  drawArc(ctx, 0, 0, 0.5 * mindim);
+  // 20% radius ~1m
+  drawArc(ctx, 0, 0, 0.1 * mindim);
   ctx.stroke();
 }
+
 
 var drawActive = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
   ctx.beginPath();
+  // TODO: make color fade per plant... somehow performantly
   ctx.fillStyle = "lightgray";
   for (plant of state.active) {
     if (plant.frame <= state.frame - (60 * 60)) {
       plant.frame = null;
+      // FIXME: remove from active list/set
       continue;
     }
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;
     r = plant.r * mindim;
+    // TODO: hide distant active plants with clipping mask
+    // FIXME: store cutoff in state then retrieve from there
     if (Math.hypot(x, y) > mindim / 2) continue;
     drawArc(ctx, x, y, r);
   }
@@ -232,7 +225,7 @@ var drawNearby = (state) => {
 
 }
 
-var drawArc = (ctx, x, y, r, params={}) => {
+var drawArc = (ctx, x, y, r, params = {}) => {
   let start = params.start || 0;
   let end = params.end || Math.PI * 2;
   ctx.moveTo(x + r, y);
