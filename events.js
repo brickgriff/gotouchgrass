@@ -69,12 +69,12 @@ function getNewVector(vector, length, angle) {
 
 var normalize = (vector, max) => {
   // direct length is useful for detecting input
-  const length = Math.hypot(vector.x, vector.y); // can be as much as 1.4!
-  const angle = Math.atan2(vector.y, vector.x); // can be a weird number (~0)
+  const hypot = Math.hypot(vector.x, vector.y); // can be as much as 1.4!
+  const theta = Math.atan2(vector.y, vector.x); // can be a weird number (~0)
 
   // we need to normalize diagonals with the angle
-  vector.x = Math.min(length / max, 1) * Math.cos(angle);
-  vector.y = Math.min(length / max, 1) * Math.sin(angle);
+  vector.x = Math.min(hypot / max, 1) * Math.cos(theta);
+  vector.y = Math.min(hypot / max, 1) * Math.sin(theta);
 }
 
 

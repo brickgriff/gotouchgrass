@@ -30,13 +30,14 @@ const World = (function (/*api*/) {
 
   // update the state
   api.update = function (dt) {
+    //console.log(`update(dt=${dt}, fps=${Math.floor(1/dt)})`);
     const state = document.state;
-    //console.log(`update(frame=${state.frame}, dt=${dt}, fps=${Math.floor(1/dt)})`);
 
     if (state.events.isResized) {
       resize(state);
       state.events.isResized = false;
     }
+
     state.vector = getVector();
     updateGamepad(state);
     updatePlayer(state);
@@ -72,31 +73,12 @@ var createPlants = (state) => {
     normalize(vector, 1);
     x = vector.x;
     y = vector.y;
+    // FIXME: why not start with a hypot and theta?
     let c = (random() < .2) ? "darkgreen" : "lawngreen";
     let t = (random() < .2) ? "clover" : "grass";
     const plant = { x: x, y: y, r: r, t: t, c: c };
     plants.push(plant);
   }
-}
-
-var updateGamepad = (state) => {
-  // console.log(state.events.isPressed);
-  //if (!state.events.isPressed) {
-  //  clearInputs();
-  //}
-  // check mouse pos
-  // if near the gamepad extents
-  // check which button it is near
-  // if w/i center button
-  // or
-  // check vector angle
-  // check which button should be active
-  // 0 +/- 22.5 => right
-  // 45 +/- 22.5 => upperright
-  // 90 +/- 22.5 => up
-  // ...
-  // 315 +/- 22.5 => lowerright
-  // add it to the animation list
 }
 
 var updatePlayer = (state) => {
@@ -136,7 +118,26 @@ var updatePlants = (state) => {
       state.active.push(plant);
     }
   }
-
   // TODO: if the player stands still for 30 frames
   // all grass w/i the inner ring goes active
+}
+
+var updateGamepad = (state) => {
+  // console.log(state.events.isPressed);
+  //if (!state.events.isPressed) {
+  //  clearInputs();
+  //}
+  // check mouse pos
+  // if near the gamepad extents
+  // check which button it is near
+  // if w/i center button
+  // or
+  // check vector angle
+  // check which button should be active
+  // 0 +/- 22.5 => right
+  // 45 +/- 22.5 => upperright
+  // 90 +/- 22.5 => up
+  // ...
+  // 315 +/- 22.5 => lowerright
+  // add it to the animation list
 }
