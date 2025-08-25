@@ -14,7 +14,7 @@ const Display = (function (/*api*/) {
     drawBorder(state);
     ctx.save();
     ctx.beginPath();
-    ctx.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
+    ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
     drawArc(ctx, 0, 0, 0.5 * mindim, { acw: true });
     ctx.clip();
 

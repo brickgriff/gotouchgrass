@@ -6,13 +6,20 @@
     solarpunk, permaculture, crafting, educational, 
 
 -->
-## Food Forest Simulator
+### Food Forest Simulator
 
+## Overview
+
+## Install
+
+## Play
+
+## Issues
 
 ### Screen <!-- Air/Space -->
 - [ ] HTML Canvas
-  - [ ] colors
-  - [ ] shapes
+  - [x] colors
+  - [x] shapes
   - [ ] gradients
   - [ ] modes
 - [ ] draw background
@@ -39,7 +46,7 @@
   - [ ] wave form collapse
 
 ### Entities <!-- Earth/Matter -->
-- [ ] player
+- [x] player
 - [ ] foliage
 - [ ] terrain
 - [ ] pathways
@@ -50,13 +57,13 @@
 - [x] resize
 - [ ] pause
 - [ ] quit
-- [ ] keyboard
-- [ ] mouse
-  - [ ] mouseup
-  - [ ] mousedown
-  - [ ] mousemove
+- [x] keyboard
+- [x] mouse
+  - [x] mouseup
+  - [x] mousedown
+  - [x] mousemove
   - [ ] mousescroll
-- [ ] touch
+- [x] touch
 
 - [x] make sure the dynamic canvas plays nicely with the browser frame in itch.io
   - [x] looks like it keeps a square aspect ratio; it doesn't update when self/window/document changes
@@ -77,8 +84,8 @@
     - archive locally with jar (after pull from work)
     - upload to itch.io (then refresh)
   - [ ] can GitHub Actions/Deployments do this?
-  - [ ] why are simulated inputs so buggy (gamepad)
-    - [ ] now that mousemove works, keyboard is buggy!
+  - [x] why are simulated inputs so buggy (gamepad)
+    - [x] now that mousemove works, keyboard is buggy!
 
 ## Next Goals
 Basically I want to implement feedback (events and animations):
