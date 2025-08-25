@@ -145,7 +145,7 @@ var drawGamepadInputs = (state) => {
   ctx.fillStyle = "lightgray";
   ctx.strokeStyle = "dimgray";
   ctx.lineWidth = 1;
-  ctx.font = "25px serif";
+  ctx.font = "25px sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   outlineText(ctx, "Space", coords.center.x, coords.center.y);
