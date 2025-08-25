@@ -186,8 +186,8 @@ window.addEventListener("touchstart", (e) => {
 
   const mouseEvent = new MouseEvent("mousedown", {
     button: keybinds.mouseL,
-    clientX: touch.clientX+state.cx,
-    clientY: touch.clientY+state.cy
+    clientX: touch.clientX,
+    clientY: touch.clientY
   });
   window.dispatchEvent(mouseEvent);
 
