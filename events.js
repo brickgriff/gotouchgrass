@@ -117,6 +117,7 @@ window.addEventListener("mousedown", (e) => {
   pushInput(e.button);
 
   const state = document.state;
+  const ctx = state.ctx;
 
   if (e.button === keybinds.mouseL) {
     inputs.mouse.x_ = inputs.mouse._x = e.offsetX - state.cx;
@@ -176,7 +177,9 @@ function ongoingTouchIndexById(idToFind) {
 
 window.addEventListener("touchstart", (e) => {
   e.preventDefault();
+  pushInput(e.changedTouches.length);
   const state = document.state;
+  const ctx = state.ctx;
 
   if (e.changedTouches.length === keybinds.mouseL) {
     const touch = e.changedTouches[0];

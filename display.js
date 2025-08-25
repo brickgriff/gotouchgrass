@@ -24,6 +24,14 @@ const Display = (function (/*api*/) {
     drawGamepad(state);
     drawNav(state);
 
+    if (state.events.isPressed) {
+      ctx.beginPath();
+      ctx.fillStyle = "lightgray";
+      ctx.font = "25px serif";
+      ctx.textAlign = "start";
+      ctx.textBaseline = "top";
+      ctx.fillText("pressed", -state.cx, -state.cy);
+    }
   };
 
   // return the public API
@@ -34,7 +42,7 @@ var drawNav = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
   const mouse = getMouse();
-
+  if (!state.events.isPressed) return;
   ctx.beginPath();
   ctx.strokeStyle = "lightgray";
   drawArc(ctx, mouse.x_, mouse.y_, mindim * .1);
@@ -115,8 +123,6 @@ var drawGamepad = (state) => {
   }
   ctx.fill();
 
-  drawGamepadInputs(state);
-
   // mouse
   // touch
   // const highlight = state.gamepad.highlight
@@ -125,6 +131,8 @@ var drawGamepad = (state) => {
   ctx.lineWidth = 1;
   ctx.strokeStyle = "black";
   ctx.fillStyle = "white";
+  drawGamepadInputs(state);
+
 }
 
 var drawGamepadInputs = (state) => {
@@ -132,14 +140,21 @@ var drawGamepadInputs = (state) => {
   const coords = state.coords;
   ctx.beginPath();
   ctx.fillStyle = "lightgray";
+  ctx.strokeStyle = "dimgray";
+  ctx.lineWidth = 1;
   ctx.font = "25px serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("Space", coords.center.x, coords.center.y);
-  ctx.fillText("E", coords.upper.x, coords.upper.y);
-  ctx.fillText("S", coords.cleft.x, coords.cleft.y);
-  ctx.fillText("D", coords.lower.x, coords.lower.y);
-  ctx.fillText("F", coords.cright.x, coords.cright.y);
+  outlineText(ctx, "Space", coords.center.x, coords.center.y);
+  outlineText(ctx, "E", coords.upper.x, coords.upper.y);
+  outlineText(ctx, "S", coords.cleft.x, coords.cleft.y);
+  outlineText(ctx, "D", coords.lower.x, coords.lower.y);
+  outlineText(ctx, "F", coords.cright.x, coords.cright.y);
+}
+
+var outlineText = (ctx, text, x, y) => {
+  ctx.fillText(text, x, y);
+  ctx.strokeText(text, x, y);
 }
 
 var drawBackground = (state) => {
