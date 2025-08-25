@@ -11,15 +11,26 @@ const Display = (function (/*api*/) {
     // FIXME: these functions do not need the entire state
     // for most, ctx, mindim, and various screen params should work
     drawBackground(state);
+    drawBorder(state);
     ctx.save();
     ctx.beginPath();
-    drawArc(ctx, 0, 0, 0.5 * mindim);
+    ctx.rect(-state.cx,-state.cy,state.canvas.width,state.canvas.height);
+    drawArc(ctx, 0, 0, 0.5 * mindim, { acw: true });
     ctx.clip();
-    drawBorder(state);
+
+    ctx.beginPath();
+    ctx.fillStyle = "dimgray";
+    let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
+    let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
+    let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
+
+    ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
+    ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+
+    ctx.restore();
     drawActive(state);
     drawNearby(state);
     drawPlayer(state);
-    ctx.restore();
     drawRing(state);
     drawGamepad(state);
     drawNav(state);
@@ -249,5 +260,5 @@ var drawArc = (ctx, x, y, r, params = {}) => {
   let start = params.start || 0;
   let end = params.end || Math.PI * 2;
   ctx.moveTo(x + r, y);
-  ctx.arc(x, y, r, start, end);
+  ctx.arc(x, y, r, start, end, params.acw || false);
 }
