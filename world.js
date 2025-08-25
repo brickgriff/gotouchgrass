@@ -100,7 +100,7 @@ var updatePlayer = (state) => {
 
 // TODO break this up if possible
 var updatePlants = (state) => {
-  if (state.frame % 5 !== 0) return;
+  if (state.frame % 4 !== 0) return;
   const plants = state.plants;
   const nearby = [];
   state.nearby = nearby;
