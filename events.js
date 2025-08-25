@@ -186,8 +186,8 @@ window.addEventListener("touchstart", (e) => {
 
   const mouseEvent = new MouseEvent("mousedown", {
     button: keybinds.mouseL,
-    offsetX: touch.screenX,
-    offsetY: touch.screenY
+    offsetX: touch.clientX,
+    offsetY: touch.clientY
   });
   window.dispatchEvent(mouseEvent);
 
@@ -236,8 +236,8 @@ window.addEventListener("touchmove", (e) => {
 
   const mouseEvent = new MouseEvent("mousemove", {
     button: keybinds.mouseL,
-    offsetX: touch.screenX,
-    offsetY: touch.screenY
+    offsetX: touch.clientX,
+    offsetY: touch.clientY
   });
   window.dispatchEvent(mouseEvent);
   // for (let i = 0; i < e.changedTouches.length; i++) {
