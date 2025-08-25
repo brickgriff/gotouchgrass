@@ -68,7 +68,7 @@ var resize = (state) => {
   const othdim = state.mindim == state.canvas.width ?
     state.canvas.height :
     state.canvas.width;
-  if (state.mindim == state.canvas.width) state.cy = othdim * .25;
+  if (state.mindim == state.canvas.width) state.cy = othdim * .33;
   state.ctx.translate(state.cx, state.cy);
 }
 
