@@ -98,6 +98,7 @@ window.addEventListener("contextmenu", (e) => { e.preventDefault() });
 // trigger resize handler
 window.addEventListener("resize", (e) => {
   // inputs.isResized=true;
+  console.log("resize?");
   // console.log(document.getElementById("inputs").innerHtml);
   //document.getElementById("inputs").isResized=true;
   document.state.events.isResized = true;
@@ -118,6 +119,8 @@ window.addEventListener("mousedown", (e) => {
 
   const state = document.state;
   const ctx = state.ctx;
+
+  // console.log(window.dispatchEvent(new Event("resize")));
 
   if (e.button === keybinds.mouseL) {
     inputs.mouse.x_ = inputs.mouse._x = e.offsetX - state.cx;
@@ -186,7 +189,7 @@ window.addEventListener("touchstart", (e) => {
     offsetX: touch.screenX - state.cx,
     offsetY: touch.screenY - state.cy
   });
-  state.canvas.dispatchEvent(mouseEvent);
+  window.dispatchEvent(mouseEvent);
 
   // if (e.changedTouches.length === 1) {
   //   const touch = e.changedTouches[0];
@@ -206,7 +209,7 @@ var handleTouchFinish = (e) => {
 
   const mouseEvent = new MouseEvent("mouseup", {
   });
-  state.canvas.dispatchEvent(mouseEvent);
+  window.dispatchEvent(mouseEvent);
   // for (let i = 0; i < e.changedTouches.length; i++) {
   //   let index = ongoingTouchIndexById(e.changedTouches.identifier);
   //   //let touch=ongoingTouches[index];
@@ -236,7 +239,7 @@ window.addEventListener("touchmove", (e) => {
     offsetX: touch.screenX - state.cx,
     offsetY: touch.screenY - state.cy
   });
-  state.canvas.dispatchEvent(mouseEvent);
+  window.dispatchEvent(mouseEvent);
   // for (let i = 0; i < e.changedTouches.length; i++) {
   //   let index = ongoingTouchIndexById(e.changedTouches.identifier);
   //   //let touch=ongoingTouches[index];
