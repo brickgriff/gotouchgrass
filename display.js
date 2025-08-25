@@ -32,8 +32,6 @@ const Display = (function (/*api*/) {
 
     drawPlayer(state);
     drawRing(state);
-    // drawGamepad(state);
-    drawNav(state);
 
     let rectX = -.9 * state.cx;
     let rectY = mindim * .5 + .1 * state.cx;
@@ -46,6 +44,10 @@ const Display = (function (/*api*/) {
       ctx.fillStyle = "#444";
       ctx.fillRect(rectX, rectY, rectW, rectH);
     }
+
+    // drawGamepad(state);
+    drawNav(state);
+
   };
 
   // return the public API
@@ -256,7 +258,7 @@ var drawActive = (state) => {
     r = plant.r * mindim;
     // TODO: hide distant active plants with clipping mask
     // FIXME: store cutoff in state then retrieve from there
-    if (Math.hypot(x, y) > mindim * .51) continue;
+    if (Math.hypot(x, y) > mindim * .55) continue;
     drawArc(ctx, x, y, r);
   }
   ctx.fill();
