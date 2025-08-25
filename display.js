@@ -12,6 +12,8 @@ const Display = (function (/*api*/) {
     // for most, ctx, mindim, and various screen params should work
     drawBackground(state);
     drawBorder(state);
+    drawActive(state);
+    drawNearby(state);
     ctx.save();
     ctx.beginPath();
     ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
@@ -26,22 +28,24 @@ const Display = (function (/*api*/) {
 
     // ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
     ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
-    ctx.strokeStyle = "darkgray";
-    ctx.strokeRect(
-      -.9 * state.cx,
-      -state.cy + mindim + .1 * state.cx,
-      1.8 * state.cx,
-      mindim
-    );
-
     ctx.restore();
-    drawActive(state);
-    drawNearby(state);
+
     drawPlayer(state);
     drawRing(state);
     // drawGamepad(state);
     drawNav(state);
 
+    let rectX = -.9 * state.cx;
+    let rectY = mindim * .5 + .1 * state.cx;
+    let rectW = 1.8 * state.cx;
+    let rectH = state.canvas.height - (state.cy + rectY + .1 * state.cx);
+
+    if (rectW > 100 && rectH > 100) {
+      ctx.strokeStyle = "darkgray";
+      ctx.strokeRect(rectX, rectY, rectW, rectH);
+      ctx.fillStyle = "#444";
+      ctx.fillRect(rectX, rectY, rectW, rectH);
+    }
   };
 
   // return the public API
@@ -252,7 +256,7 @@ var drawActive = (state) => {
     r = plant.r * mindim;
     // TODO: hide distant active plants with clipping mask
     // FIXME: store cutoff in state then retrieve from there
-    if (Math.hypot(x, y) > mindim / 2) continue;
+    if (Math.hypot(x, y) > mindim * .55) continue;
     drawArc(ctx, x, y, r);
   }
   ctx.fill();
