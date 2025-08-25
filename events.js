@@ -9,8 +9,8 @@ const inputs = {
     _y: 0,
     // to help normalize positions
     // TODO: should these be in terms of mindim units?
-    dragMin: 10, // px
-    dragMax: 50, // px
+    dragMin: .01, // mindim
+    dragMax: .05, // mindim
   },
 };
 
@@ -42,7 +42,7 @@ function isPressing(vector, range) {
 // this should return [-1,1] for vector x and y
 function getVector() {
   const mouse = getMouse(); //inputs.mouse;
-  let dMax = mouse.dragMax;
+  let dMax = mouse.dragMax * document.state.mindim;
 
   const vector = {};
 
@@ -152,7 +152,7 @@ window.addEventListener("mousemove", (e) => {
     inputs.mouse._y = e.clientY - state.cy;
 
     const dist = Math.hypot(inputs.mouse._x - inputs.mouse.x_, inputs.mouse._y - inputs.mouse.y_);
-    inputs.mouse.isDragged = (dist >= inputs.mouse.dragMin);
+    inputs.mouse.isDragged = (dist >= inputs.mouse.dragMin * document.state.mindim);
   }
 });
 
