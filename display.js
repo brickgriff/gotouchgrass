@@ -32,8 +32,6 @@ const Display = (function (/*api*/) {
 
     drawPlayer(state);
     drawRing(state);
-    // drawGamepad(state);
-    drawNav(state);
 
     let rectX = -.9 * state.cx;
     let rectY = mindim * .5 + .1 * state.cx;
@@ -46,6 +44,10 @@ const Display = (function (/*api*/) {
       ctx.fillStyle = "#444";
       ctx.fillRect(rectX, rectY, rectW, rectH);
     }
+
+    // drawGamepad(state);
+    drawNav(state);
+
   };
 
   // return the public API
