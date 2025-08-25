@@ -183,8 +183,8 @@ window.addEventListener("touchstart", (e) => {
 
   if (e.changedTouches.length === 1) {
     const touch = e.changedTouches[0];
-    inputs.mouse.x_ = inputs.mouse._x = touch.screenX;
-    inputs.mouse.y_ = inputs.mouse._y = touch.screenY;
+    inputs.mouse.x_ = inputs.mouse._x = touch.screenX - state.cx;
+    inputs.mouse.y_ = inputs.mouse._y = touch.screenY - state.cy;
 
     state.events.isPressed = true;
     state.events.isClicked = false;
