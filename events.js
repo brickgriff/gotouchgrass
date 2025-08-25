@@ -177,11 +177,11 @@ function ongoingTouchIndexById(idToFind) {
 
 window.addEventListener("touchstart", (e) => {
   e.preventDefault();
-  pushInput(e.changedTouches.length);
+  pushInput(keybinds.mouseL);
   const state = document.state;
   const ctx = state.ctx;
 
-  if (e.changedTouches.length === keybinds.mouseL) {
+  if (e.changedTouches.length === 1) {
     const touch = e.changedTouches[0];
     inputs.mouse.x_ = inputs.mouse._x = touch.screenX;
     inputs.mouse.y_ = inputs.mouse._y = touch.screenY;
