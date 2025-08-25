@@ -256,7 +256,7 @@ var drawActive = (state) => {
     r = plant.r * mindim;
     // TODO: hide distant active plants with clipping mask
     // FIXME: store cutoff in state then retrieve from there
-    if (Math.hypot(x, y) > mindim * .55) continue;
+    if (Math.hypot(x, y) > mindim * .51) continue;
     drawArc(ctx, x, y, r);
   }
   ctx.fill();
