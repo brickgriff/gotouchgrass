@@ -26,6 +26,13 @@ const Display = (function (/*api*/) {
 
     // ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
     ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+    ctx.strokeStyle = "darkgray";
+    ctx.strokeRect(
+      -.9 * state.cx,
+      -state.cy + mindim + .1 * state.cx,
+      1.8 * state.cx,
+      mindim
+    );
 
     ctx.restore();
     drawActive(state);
