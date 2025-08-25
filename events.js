@@ -177,24 +177,35 @@ function ongoingTouchIndexById(idToFind) {
 
 window.addEventListener("touchstart", (e) => {
   e.preventDefault();
-  pushInput(keybinds.mouseL);
+  // pushInput(keybinds.mouseL);
   const state = document.state;
-  const ctx = state.ctx;
+  const touch = e.changedTouches[0];
 
-  if (e.changedTouches.length === 1) {
-    const touch = e.changedTouches[0];
-    inputs.mouse.x_ = inputs.mouse._x = touch.screenX - state.cx;
-    inputs.mouse.y_ = inputs.mouse._y = touch.screenY - state.cy;
+  const mouseEvent = new MouseEvent("mousedown", {
+    clientX: touch.screenX - state.cx,
+    clientY: touch.screenY - state.cy
+  });
+  state.canvas.dispatchEvent(mouseEvent);
 
-    state.events.isPressed = true;
-    state.events.isClicked = false;
-    state.events.isDragged = false;
-  }
+  // if (e.changedTouches.length === 1) {
+  //   const touch = e.changedTouches[0];
+  //   inputs.mouse.x_ = inputs.mouse._x = touch.screenX - state.cx;
+  //   inputs.mouse.y_ = inputs.mouse._y = touch.screenY - state.cy;
+
+  //   state.events.isPressed = true;
+  //   state.events.isClicked = false;
+  //   state.events.isDragged = false;
+  // }
 
 });
 
 var handleTouchFinish = (e) => {
   e.preventDefault()
+  const state = document.state;
+  
+  const mouseEvent = new MouseEvent("mouseup", {
+  });
+  state.canvas.dispatchEvent(mouseEvent);
   // for (let i = 0; i < e.changedTouches.length; i++) {
   //   let index = ongoingTouchIndexById(e.changedTouches.identifier);
   //   //let touch=ongoingTouches[index];
@@ -216,6 +227,14 @@ window.addEventListener("touchcancel", handleTouchFinish);
 
 window.addEventListener("touchmove", (e) => {
   e.preventDefault()
+  const state = document.state;
+  const touch = e.changedTouches[0];
+
+  const mouseEvent = new MouseEvent("mousemove", {
+    clientX: touch.screenX - state.cx,
+    clientY: touch.screenY - state.cy
+  });
+  state.canvas.dispatchEvent(mouseEvent);
   // for (let i = 0; i < e.changedTouches.length; i++) {
   //   let index = ongoingTouchIndexById(e.changedTouches.identifier);
   //   //let touch=ongoingTouches[index];
