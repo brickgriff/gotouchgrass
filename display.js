@@ -32,7 +32,7 @@ const Display = (function (/*api*/) {
     drawNearby(state);
     drawPlayer(state);
     drawRing(state);
-    drawGamepad(state);
+    // drawGamepad(state);
     drawNav(state);
 
   };
