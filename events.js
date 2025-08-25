@@ -182,6 +182,7 @@ window.addEventListener("touchstart", (e) => {
   const touch = e.changedTouches[0];
 
   const mouseEvent = new MouseEvent("mousedown", {
+    button: keybinds.mouseL,
     clientX: touch.screenX - state.cx,
     clientY: touch.screenY - state.cy
   });
@@ -202,7 +203,7 @@ window.addEventListener("touchstart", (e) => {
 var handleTouchFinish = (e) => {
   e.preventDefault()
   const state = document.state;
-  
+
   const mouseEvent = new MouseEvent("mouseup", {
   });
   state.canvas.dispatchEvent(mouseEvent);
@@ -231,6 +232,7 @@ window.addEventListener("touchmove", (e) => {
   const touch = e.changedTouches[0];
 
   const mouseEvent = new MouseEvent("mousemove", {
+    button: keybinds.mouseL,
     clientX: touch.screenX - state.cx,
     clientY: touch.screenY - state.cy
   });
