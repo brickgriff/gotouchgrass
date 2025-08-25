@@ -123,8 +123,8 @@ window.addEventListener("mousedown", (e) => {
   // console.log(window.dispatchEvent(new Event("resize")));
 
   if (e.button === keybinds.mouseL) {
-    inputs.mouse.x_ = inputs.mouse._x = e.offsetX - state.cx;
-    inputs.mouse.y_ = inputs.mouse._y = e.offsetY - state.cy;
+    inputs.mouse.x_ = inputs.mouse._x = e.clientX - state.cx;
+    inputs.mouse.y_ = inputs.mouse._y = e.clientY - state.cy;
 
     state.events.isPressed = true;
     state.events.isClicked = false;
@@ -149,8 +149,8 @@ window.addEventListener("mouseup", (e) => {
 window.addEventListener("mousemove", (e) => {
   const state = document.state;
   if (findInput(keybinds.mouseL)) {
-    inputs.mouse._x = e.offsetX - state.cx;
-    inputs.mouse._y = e.offsetY - state.cy;
+    inputs.mouse._x = e.clientX - state.cx;
+    inputs.mouse._y = e.clientY - state.cy;
 
     const dist = Math.hypot(inputs.mouse._x - inputs.mouse.x_, inputs.mouse._y - inputs.mouse.y_);
     inputs.mouse.isDragged = (dist >= inputs.mouse.dragMin);
@@ -186,8 +186,8 @@ window.addEventListener("touchstart", (e) => {
 
   const mouseEvent = new MouseEvent("mousedown", {
     button: keybinds.mouseL,
-    offsetX: touch.clientX,
-    offsetY: touch.clientY
+    clientX: touch.clientX+state.cx,
+    clientY: touch.clientY+state.cy
   });
   window.dispatchEvent(mouseEvent);
 
@@ -208,6 +208,7 @@ var handleTouchFinish = (e) => {
   const state = document.state;
 
   const mouseEvent = new MouseEvent("mouseup", {
+    button: keybinds.mouseL,
   });
   window.dispatchEvent(mouseEvent);
   // for (let i = 0; i < e.changedTouches.length; i++) {
@@ -236,8 +237,8 @@ window.addEventListener("touchmove", (e) => {
 
   const mouseEvent = new MouseEvent("mousemove", {
     button: keybinds.mouseL,
-    offsetX: touch.clientX,
-    offsetY: touch.clientY
+    clientX: touch.clientX,
+    clientY: touch.clientY
   });
   window.dispatchEvent(mouseEvent);
   // for (let i = 0; i < e.changedTouches.length; i++) {
