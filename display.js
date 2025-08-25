@@ -39,10 +39,26 @@ const Display = (function (/*api*/) {
     let rectH = state.canvas.height - (state.cy + rectY + .1 * state.cx);
 
     if (rectW > 100 && rectH > 100) {
-      ctx.strokeStyle = "darkgray";
-      ctx.strokeRect(rectX, rectY, rectW, rectH);
+      ctx.save();
+      // ctx.strokeStyle = "#444";
+      // ctx.strokeRect(rectX, rectY, rectW, rectH);
       ctx.fillStyle = "#444";
-      ctx.fillRect(rectX, rectY, rectW, rectH);
+      ctx.strokeStyle = "#444";
+      ctx.fillRect(rectX + 5, rectY + 5, rectW - 10, rectH - 10);
+      ctx.lineWidth = 10;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(rectX + 5, rectY + 5);
+      ctx.lineTo(rectX + rectW - 5, rectY + 5);
+      ctx.moveTo(rectX + rectW - 5, rectY + 5);
+      ctx.lineTo(rectX + rectW - 5, rectY + rectH - 5);
+      ctx.moveTo(rectX + rectW - 5, rectY + rectH - 5);
+      ctx.lineTo(rectX + 5, rectY + rectH - 5);
+      ctx.moveTo(rectX + 5, rectY + rectH - 5);
+      ctx.lineTo(rectX + 5, rectY + 5);
+
+      ctx.stroke();
+      ctx.restore();
     }
 
     // drawGamepad(state);
