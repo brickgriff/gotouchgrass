@@ -24,14 +24,6 @@ const Display = (function (/*api*/) {
     drawGamepad(state);
     drawNav(state);
 
-    if (state.events.isPressed) {
-      ctx.beginPath();
-      ctx.fillStyle = "lightgray";
-      ctx.font = "25px serif";
-      ctx.textAlign = "start";
-      ctx.textBaseline = "top";
-      ctx.fillText("pressed", -state.cx, -state.cy);
-    }
   };
 
   // return the public API
