@@ -156,9 +156,6 @@ window.addEventListener("mousemove", (e) => {
   }
 });
 
-
-// FIXME: touch events
-
 const ongoingTouches = [];
 
 function copyTouch({ identifier, pageX, pageY }) {
@@ -179,7 +176,6 @@ function ongoingTouchIndexById(idToFind) {
 
 window.addEventListener("touchstart", (e) => {
   e.preventDefault();
-  // pushInput(keybinds.mouseL);
   const state = document.state;
   const touch = e.changedTouches[0];
 
@@ -189,17 +185,6 @@ window.addEventListener("touchstart", (e) => {
     clientY: touch.clientY
   });
   window.dispatchEvent(mouseEvent);
-
-  // if (e.changedTouches.length === 1) {
-  //   const touch = e.changedTouches[0];
-  //   inputs.mouse.x_ = inputs.mouse._x = touch.screenX - state.cx;
-  //   inputs.mouse.y_ = inputs.mouse._y = touch.screenY - state.cy;
-
-  //   state.events.isPressed = true;
-  //   state.events.isClicked = false;
-  //   state.events.isDragged = false;
-  // }
-
 });
 
 var handleTouchFinish = (e) => {
@@ -210,20 +195,6 @@ var handleTouchFinish = (e) => {
     button: keybinds.mouseL,
   });
   window.dispatchEvent(mouseEvent);
-  // for (let i = 0; i < e.changedTouches.length; i++) {
-  //   let index = ongoingTouchIndexById(e.changedTouches.identifier);
-  //   //let touch=ongoingTouches[index];
-  //   if (index === keybinds.mouseL) {
-  //     inputs.mouse.x_ = inputs.mouse.x = state.player.x;
-  //     inputs.mouse.y_ = inputs.mouse.y = state.player.y;
-  //     //inputs.mouse._x=inputs.mouse.x_; 
-  //     //inputs.mouse._y=inputs.mouse.y_;
-  //     inputs.mouse.isDragged = false;
-  //   }
-
-  //   dropKey(index, state.keys);
-  //   ongoingTouches.splice(index, 1);
-  // }
 };
 
 window.addEventListener("touchend", handleTouchFinish);
@@ -240,22 +211,6 @@ window.addEventListener("touchmove", (e) => {
     clientY: touch.clientY
   });
   window.dispatchEvent(mouseEvent);
-  // for (let i = 0; i < e.changedTouches.length; i++) {
-  //   let index = ongoingTouchIndexById(e.changedTouches.identifier);
-  //   //let touch=ongoingTouches[index];
-  //   if (index === keybinds.mouseL) {
-  //     inputs.mouse._x = e.offsetX;
-  //     inputs.mouse._y = e.offsetY;
-
-  //     let dist = Math.hypot(inputs.mouse._x - inputs.mouse.x_, inputs.mouse._y - inputs.mouse.y_);
-  //     inputs.mouse.isDragged = (dist >= inputs.mouse.dragMin);
-  //     //console.log(dist,inputs.mouse.isDragged);
-  //   }
-
-  //   dropKey(index, state.keys);
-  //   ongoingTouches.splice(index, 1);
-  // }
-
 });
 
 // FIXME: how to switch bw WASD and ESDF
