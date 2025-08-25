@@ -20,11 +20,11 @@ const Display = (function (/*api*/) {
 
     ctx.beginPath();
     ctx.fillStyle = "dimgray";
-    let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
-    let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
-    let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
+    // let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
+    // let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
+    // let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
 
-    ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
+    // ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
     ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
 
     ctx.restore();
@@ -63,12 +63,12 @@ var drawGamepad = (state) => {
   const r = (.15) * mindim + ctx.lineWidth / 2;
   ctx.strokeStyle = "lightgray";
 
-  let red = parseInt(ctx.strokeStyle.substring(1, 3), 16);
-  let green = parseInt(ctx.strokeStyle.substring(3, 5), 16);
-  let blue = parseInt(ctx.strokeStyle.substring(5, 7), 16);
+  // let red = parseInt(ctx.strokeStyle.substring(1, 3), 16);
+  // let green = parseInt(ctx.strokeStyle.substring(3, 5), 16);
+  // let blue = parseInt(ctx.strokeStyle.substring(5, 7), 16);
 
-  ctx.strokeStyle = `rgba(${red},${green},${blue},0.25)`;
-  ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
+  // ctx.strokeStyle = `rgba(${red},${green},${blue},0.25)`;
+  // ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
 
   ctx.beginPath();
   drawArc(ctx, x, y, .1 * mindim);
@@ -172,9 +172,10 @@ var drawBackground = (state) => {
 var drawBorder = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
+  ctx.save();
   ctx.beginPath();
   ctx.strokeStyle = "darkslategray";
-  ctx.fillStyle = "sienna";
+  ctx.fillStyle = "darkgreen";
   ctx.lineWidth = 10;
   const r = mindim;
   const x = state.dx * mindim;
@@ -182,13 +183,25 @@ var drawBorder = (state) => {
   drawArc(ctx, x, y, r);
   ctx.stroke();
   ctx.fill();
-  ctx.fillStyle = "darkgreen";
-  let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
-  let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
-  let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
-  ctx.fillStyle = `rgba(${red},${green},${blue},0.5)`;
-  ctx.fill();
-  ctx.lineWidth = 1;
+  ctx.clip();
+
+  ctx.beginPath();
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "darkolivegreen";
+
+  for (let i = -20; i < 20; i++) {
+    ctx.lineTo(-mindim + x - (i * mindim / 10), -mindim + y);
+    ctx.lineTo(x - (i * mindim / 10), mindim + y);
+  }
+
+  ctx.stroke();
+
+  // let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
+  // let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
+  // let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
+  // ctx.fillStyle = `rgba(${red},${green},${blue},0.5)`;
+
+  ctx.restore();
 
 }
 
