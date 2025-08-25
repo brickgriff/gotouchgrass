@@ -98,7 +98,6 @@ window.addEventListener("contextmenu", (e) => { e.preventDefault() });
 // trigger resize handler
 window.addEventListener("resize", (e) => {
   // inputs.isResized=true;
-  console.log("resize?");
   // console.log(document.getElementById("inputs").innerHtml);
   //document.getElementById("inputs").isResized=true;
   document.state.events.isResized = true;
@@ -114,7 +113,7 @@ window.addEventListener("keyup", (e) => {
 });
 
 window.addEventListener("mousedown", (e) => {
-  e.preventDefault();
+  // e.preventDefault();
   pushInput(e.button);
 
   const state = document.state;
