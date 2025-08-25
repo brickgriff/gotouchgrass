@@ -220,7 +220,7 @@ var drawActive = (state) => {
   const mindim = state.mindim;
   ctx.beginPath();
   // TODO: make color fade per plant... somehow performantly
-  ctx.fillStyle = "lightgray";
+  ctx.fillStyle = "lawngreen";
   for (plant of state.active) {
     if (plant.frame <= state.frame - (60 * 60)) {
       plant.frame = null;
