@@ -16,6 +16,7 @@ const World = (function (/*api*/) {
       frame: 0,
       time: 0,
       seed: 42,
+      // active: [],
       events: {},
       touchCount: 0,
       defaults: { // so you can always revert
@@ -53,6 +54,10 @@ const World = (function (/*api*/) {
     updateGamepad(state);
     updatePlayer(state);
     updatePlants(state);
+    updateScore(state);
+
+    // console.log(state.active.length, state.leaves, state.flowers);
+
   };
 
   // return the public api
@@ -102,42 +107,36 @@ var updatePlayer = (state) => {
 var updatePlants = (state) => {
   if (state.frame % 4 !== 0) return;
   const plants = state.plants;
-  const nearby = [];
-  state.nearby = nearby;
-
-  if (state.active == undefined) state.active = [];
   if (!plants) return;
+
+  state.nearby = [];
+  state.active = [];
+  if (state.leaves == undefined) state.leaves = 0;
+  if (state.flowers == undefined) state.flowers = 0;
 
   for (plant of plants) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
-    // const theta = Math.atan2(vector.y, vector.x); // angle
-    //if (plant.frame) {
-    // FIXME: try to get control of active list for deletions
-    // FIXME: make most/all lists into sets
-    // }
-    if (hypot > .1) continue;
-    nearby.push(plant);
-
     // FIXME: maybe using a set will make this step simpler
-    const isActive = checkActive(plant, state.active);
-    const isStanding = false;//checkStanding(state.frameStanding, state.frame);
-    // TODO: if the player stands still for 30 frames
-    // all grass w/i the inner ring goes active
-    if (plant.t == "grass" && !isActive && ((hypot < .025) || isStanding)) {
-      if (!plant.frame) plant.frame = state.frame;
+    const isActive = checkActive(plant, state.frame - 60 * 60);
+    if (isActive) {
       state.active.push(plant);
     }
+    if (hypot > .1) continue;
+    state.nearby.push(plant);
+    if (hypot < .025 && !isActive) {
+      if (!plant.frame) {
+        state.leaves += Math.random() * 1;
+        state.flowers += Math.random() * .1;
+      }
+      plant.frame = state.frame;
+    }
+    // TODO: if the player stands still for 30 frames
+    // all grass w/i the inner ring goes active
   }
 }
 
-var checkActive = (plant, active) => {
-  return active.some(
-    p => p.x == plant.x
-      && p.y == plant.y
-      && p.r == plant.r
-      && p.c == plant.c
-      && p.t == plant.t
-  );
+var checkActive = (plant, limit) => {
+  return plant.frame > limit;
 }
 
 var checkStanding = (frame_, _frame) => { return _frame - frame_ > (3 * 60) }
@@ -160,4 +159,8 @@ var updateGamepad = (state) => {
   // ...
   // 315 +/- 22.5 => lowerright
   // add it to the animation list
+}
+
+var updateScore = (state) => {
+
 }

@@ -12,8 +12,8 @@ const Display = (function (/*api*/) {
     // for most, ctx, mindim, and various screen params should work
     drawBackground(state);
     drawBorder(state);
-    drawActive(state);
     drawNearby(state);
+    drawActive(state);
     ctx.save();
     ctx.beginPath();
     ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
@@ -32,6 +32,8 @@ const Display = (function (/*api*/) {
 
     drawPlayer(state);
     drawRing(state);
+
+    Observations.draw();
 
     let rectX = -.9 * state.cx;
     let rectY = mindim * .5 + .1 * state.cx;
@@ -205,7 +207,7 @@ var drawBorder = (state) => {
   ctx.beginPath();
   ctx.strokeStyle = "darkslategray";
   ctx.fillStyle = "darkgreen";
-  ctx.lineWidth = 10;
+  ctx.lineWidth = 25;
   const r = mindim;
   const x = state.dx * mindim;
   const y = state.dy * mindim;
@@ -215,7 +217,7 @@ var drawBorder = (state) => {
   ctx.clip();
 
   ctx.beginPath();
-  ctx.lineWidth = 10;
+  ctx.lineWidth = 5;
   ctx.strokeStyle = "darkolivegreen";
 
   for (let i = -20; i < 20; i++) {
@@ -262,13 +264,9 @@ var drawActive = (state) => {
   const mindim = state.mindim;
   ctx.beginPath();
   // TODO: make color fade per plant... somehow performantly
-  ctx.fillStyle = "lawngreen";
+  // ctx.fillStyle = "darkgreen";
+  ctx.strokeStyle = "lightgray";
   for (plant of state.active) {
-    if (plant.frame <= state.frame - (60 * 60)) {
-      plant.frame = null;
-      // FIXME: remove from active list/set
-      continue;
-    }
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;
     r = plant.r * mindim;
@@ -277,7 +275,8 @@ var drawActive = (state) => {
     if (Math.hypot(x, y) > mindim * .55) continue;
     drawArc(ctx, x, y, r);
   }
-  ctx.fill();
+  // ctx.fill();
+  ctx.stroke();
 
 }
 
@@ -289,11 +288,13 @@ var drawNearby = (state) => {
     let x = (plant.x + state.dx) * mindim;
     let y = (plant.y + state.dy) * mindim;
     let r = plant.r * mindim;
-    let c = (plant.t == "grass") ? "lawngreen" : "darkgreen";
+    let c = "darkgreen";//(plant.t == "grass") ? "lawngreen" : "darkgreen";
     ctx.beginPath();
     drawArc(ctx, x, y, r);
     ctx.fillStyle = c;
+    // ctx.strokeStyle = "lawngreen";
     ctx.fill();
+    // ctx.stroke();
   }
 
 }
@@ -301,6 +302,8 @@ var drawNearby = (state) => {
 var drawArc = (ctx, x, y, r, params = {}) => {
   let start = params.start || 0;
   let end = params.end || Math.PI * 2;
-  ctx.moveTo(x + r, y);
+
+  let theta = Math.atan2(Math.sin(start), Math.cos(start));
+  ctx.moveTo(x + r * Math.cos(theta), y + r * Math.sin(theta));
   ctx.arc(x, y, r, start, end, params.acw || false);
 }
