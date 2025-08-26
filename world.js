@@ -117,7 +117,7 @@ var updatePlants = (state) => {
   for (plant of plants) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // FIXME: maybe using a set will make this step simpler
-    const isActive = checkActive(plant, state.frame - 60 * 60);
+    const isActive = checkActive(plant, state.frame - 1 * 60);
     if (isActive) {
       state.active.push(plant);
     }
