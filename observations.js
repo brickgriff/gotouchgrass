@@ -10,17 +10,18 @@ const Observations = (function (/*api*/) {
     const offsetX = .85 * state.cx;
     const mindim = state.mindim;
     const radius = .06 * mindim;
+    const offsetY = Math.min(offsetX, state.cy - radius - .05 * mindim);
     ctx.lineWidth = 2;
 
     if (state.leaves >= 0) {
 
       ctx.beginPath();
       ctx.strokeStyle = "forestgreen";
-      drawArc(ctx, -offsetX + radius * .5, offsetX, radius - 3);
-      drawArc(ctx, -offsetX - radius * .2, offsetX - 1, radius, { start: -.25 * Math.PI, end: Math.PI * .25 });
-      drawArc(ctx, -offsetX + radius * 1.2, offsetX - 1, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
-      ctx.moveTo(-offsetX + radius * .5, offsetX - radius * .6);
-      ctx.lineTo(-offsetX + radius * .5, offsetX + radius * .8);
+      drawArc(ctx, -offsetX + radius * .5, offsetY, radius - 3);
+      drawArc(ctx, -offsetX - radius * .2, offsetY - 1, radius, { start: -.25 * Math.PI, end: Math.PI * .25 });
+      drawArc(ctx, -offsetX + radius * 1.2, offsetY - 1, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
+      ctx.moveTo(-offsetX + radius * .5, offsetY - radius * .6);
+      ctx.lineTo(-offsetX + radius * .5, offsetY + radius * .8);
       ctx.stroke();
     }
 
@@ -46,14 +47,14 @@ const Observations = (function (/*api*/) {
 
       ctx.beginPath();
       ctx.strokeStyle = "violet";
-      drawArc(ctx, offsetX - radius * .5, offsetX, radius - 3);
+      drawArc(ctx, offsetX - radius * .5, offsetY, radius - 3);
       const foffset = 1 / 12;
       for (let i = 0; i < 6; i++) {
         let fLogoAngle = foffset + i * 1 / 6;
 
-        let fLogoX = 8 * Math.cos(fLogoAngle * Math.PI * 2);
-        let fLogoY = 8 * Math.sin(fLogoAngle * Math.PI * 2);
-        drawArc(ctx, offsetX - radius * .5 + fLogoX, offsetX + fLogoY, radius * .3);
+        let fLogoX = .35 * radius * Math.cos(fLogoAngle * Math.PI * 2);
+        let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI * 2);
+        drawArc(ctx, offsetX - radius * .5 + fLogoX, offsetY + fLogoY, radius * .3);
 
       }
       ctx.stroke();
