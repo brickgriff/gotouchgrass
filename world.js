@@ -117,7 +117,7 @@ var updatePlants = (state) => {
   for (plant of plants) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // FIXME: maybe using a set will make this step simpler
-    const isActive = checkActive(plant, state.frame - 5 * 60);
+    const isActive = checkActive(plant, state.frame - 60 * 60);
     if (isActive) {
       state.active.push(plant);
     }
@@ -125,8 +125,8 @@ var updatePlants = (state) => {
     state.nearby.push(plant);
     if (hypot < .025 && !isActive) {
       if (!plant.frame) {
-        state.leaves += (Math.random() < .8) ? 1 : 0;
-        state.flowers += (Math.random() < .07) ? 1 : 0;
+        state.leaves += Math.random() * 1;
+        state.flowers += Math.random() * .1;
       }
       plant.frame = state.frame;
     }
