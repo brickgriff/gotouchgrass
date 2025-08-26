@@ -80,22 +80,24 @@ const Observations = (function (/*api*/) {
 
     }
 
-    if (state.active.length > 0) {
 
-      ctx.beginPath();
-      ctx.lineWidth = 5;
-      const alevel = Math.log(state.active.length) / Math.log(10);
-      //const aremainder = state.active.length % (10 ** (alevel + 1));
-      const aangle = alevel / 10;
-      ctx.strokeStyle = "gold";
-      drawArc(ctx, 0, 0, state.mindim / 2, {
-        start: (offset + aangle) * Math.PI,
-        end: (offset - aangle) * Math.PI,
-        acw: aangle < 1
-      });
-      ctx.stroke();
+    ctx.lineWidth = 5;
+    const alevel = Math.log(state.active.length) / Math.log(10);
+    //const aremainder = state.active.length % (10 ** (alevel + 1));
+    const aangle = alevel / 10;
+    ctx.strokeStyle = "lightgray";
+    ctx.beginPath();
+    drawArc(ctx, 0, 0, state.mindim / 2);
+    ctx.stroke();
 
-    }
+    ctx.strokeStyle = "gold";
+    ctx.beginPath();
+    drawArc(ctx, 0, 0, state.mindim / 2, {
+      start: (offset + aangle) * Math.PI,
+      end: (offset - aangle) * Math.PI,
+      acw: aangle < 1
+    });
+    ctx.stroke();
 
     ctx.lineWidth = 1;
   }
