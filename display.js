@@ -33,6 +33,8 @@ const Display = (function (/*api*/) {
     drawPlayer(state);
     drawRing(state);
 
+    Observations.draw();
+
     let rectX = -.9 * state.cx;
     let rectY = mindim * .5 + .1 * state.cx;
     let rectW = 1.8 * state.cx;
@@ -300,6 +302,8 @@ var drawNearby = (state) => {
 var drawArc = (ctx, x, y, r, params = {}) => {
   let start = params.start || 0;
   let end = params.end || Math.PI * 2;
-  ctx.moveTo(x + r, y);
+
+  let theta = Math.atan2(Math.sin(start), Math.cos(start));
+  ctx.moveTo(x + r * Math.cos(theta), y + r * Math.sin(theta));
   ctx.arc(x, y, r, start, end, params.acw || false);
 }

@@ -56,7 +56,7 @@ const World = (function (/*api*/) {
     updatePlants(state);
     updateScore(state);
 
-    // console.log(state.active.length, state.leaves, state.flowers);
+    console.log(state.active.length, state.leaves, state.flowers);
 
   };
 
@@ -117,15 +117,17 @@ var updatePlants = (state) => {
   for (plant of plants) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // FIXME: maybe using a set will make this step simpler
-    const isActive = checkActive(plant, state.frame - 60 * 60);
+    const isActive = checkActive(plant, state.frame - 5 * 60);
     if (isActive) {
       state.active.push(plant);
     }
     if (hypot > .1) continue;
     state.nearby.push(plant);
     if (hypot < .025 && !isActive) {
-      state.leaves += (Math.random() < .8) ? 1 : 0;
-      state.flowers += (Math.random() < .07) ? 1 : 0;
+      if (!plant.frame) {
+        state.leaves += (Math.random() < .8) ? 1 : 0;
+        state.flowers += (Math.random() < .07) ? 1 : 0;
+      }
       plant.frame = state.frame;
     }
     // TODO: if the player stands still for 30 frames
