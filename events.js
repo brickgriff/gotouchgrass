@@ -185,7 +185,7 @@ window.addEventListener("touchstart", (e) => {
     clientY: touch.clientY
   });
   window.dispatchEvent(mouseEvent);
-});
+}, { passive: false });
 
 var handleTouchFinish = (e) => {
   e.preventDefault()
@@ -211,7 +211,7 @@ window.addEventListener("touchmove", (e) => {
     clientY: touch.clientY
   });
   window.dispatchEvent(mouseEvent);
-});
+}, { passive: false });
 
 // FIXME: how to switch bw WASD and ESDF
 let isUsingWASD = false;

@@ -28,7 +28,7 @@ const Display = (function (/*api*/) {
     // ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
     ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
     Observations.draw();
-    
+
     ctx.restore();
 
     drawPlayer(state);
@@ -220,8 +220,8 @@ var drawBorder = (state) => {
   ctx.strokeStyle = "darkolivegreen";
 
   for (let i = -20; i < 20; i++) {
-    ctx.lineTo(-mindim + x - (i * mindim / 10), -mindim + y);
-    ctx.lineTo(x - (i * mindim / 10), mindim + y);
+    ctx.lineTo(-mindim + x - (2 * i * mindim / 10), -mindim + y);
+    ctx.lineTo(x - (2 * i * mindim / 10), mindim + y);
   }
 
   ctx.stroke();
