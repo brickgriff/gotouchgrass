@@ -21,11 +21,11 @@ const Display = (function (/*api*/) {
     ctx.clip();
 
     ctx.beginPath();
-    ctx.fillStyle = "dimgray";
-    // let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
-    // let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
-    // let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
-    // ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
+    ctx.fillStyle = "lightgray";
+    let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
+    let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
+    let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
+    ctx.fillStyle = `rgba(${red},${green},${blue},0.5)`;
     ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
     Observations.draw();
 
@@ -248,12 +248,16 @@ var drawPlayer = (state) => {
 var drawRing = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
-  ctx.beginPath();
   ctx.strokeStyle = "lightgray";
+  // ctx.lineWidth = 3;
+  // ctx.beginPath();
+  // // fill unit circle ~5m
+  // drawArc(ctx, 0, 0, 0.5 * mindim);
+  // ctx.stroke();
+  // ctx.lineWidth = 1;
+  ctx.beginPath();
   // 20% radius ~1m
   drawArc(ctx, 0, 0, 0.1 * mindim);
-  // fill unit circle ~5m
-  drawArc(ctx, 0, 0, 0.5 * mindim);
   ctx.stroke();
 }
 
