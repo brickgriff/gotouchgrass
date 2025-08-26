@@ -32,13 +32,13 @@ const Observations = (function (/*api*/) {
       const lremainder = leaves % (10 ** (llevel + 1)); // 10 % 100 = 0
       const langle = lremainder / (10 ** (llevel + 1) - 1); // 0 / 90 = 0%
       ctx.strokeStyle = "lightgray";
-      drawArc(ctx, -offsetX + radius * .5, offsetX, radius - 3, {
+      drawArc(ctx, -offsetX + radius * .5, offsetY, radius - 3, {
         start: (offset + langle) * Math.PI,
         end: (offset - langle) * Math.PI,
         acw: langle < 1
       });
       for (let i = 0; i < llevel; i++) {
-        drawArc(ctx, -offsetX + radius * .5, offsetX, i * (ctx.lineWidth + 1) + radius);
+        drawArc(ctx, -offsetX + radius * .5, offsetY, i * (ctx.lineWidth + 1) + radius);
       }
       ctx.stroke();
     }
@@ -68,13 +68,13 @@ const Observations = (function (/*api*/) {
       const fremainder = flowers % (10 ** (flevel + 1));
       const fangle = fremainder / (10 ** (flevel + 1) - 1);
       ctx.strokeStyle = "lightgray";
-      drawArc(ctx, offsetX - radius * .5, offsetX, radius - 3, {
+      drawArc(ctx, offsetX - radius * .5, offsetY, radius - 3, {
         start: (offset + fangle) * Math.PI,
         end: (offset - fangle) * Math.PI,
         acw: fangle < 1
       });
       for (let i = 0; i < flevel; i++) {
-        drawArc(ctx, offsetX - radius * .5, offsetX, i * (ctx.lineWidth + 1) + radius);
+        drawArc(ctx, offsetX - radius * .5, offsetY, i * (ctx.lineWidth + 1) + radius);
       }
       ctx.stroke();
 

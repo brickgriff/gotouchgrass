@@ -263,18 +263,16 @@ var drawActive = (state) => {
   const mindim = state.mindim;
   ctx.beginPath();
   // TODO: make color fade per plant... somehow performantly
-  // ctx.fillStyle = "darkgreen";
-  ctx.strokeStyle = "lightgray";
+  ctx.fillStyle = "darkgreen";
+  ctx.strokeStyle = "darkolivegreen";
   for (plant of state.active) {
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;
     r = plant.r * mindim;
-    // TODO: hide distant active plants with clipping mask
-    // FIXME: store cutoff in state then retrieve from there
     if (Math.hypot(x, y) > mindim * .55) continue;
     drawArc(ctx, x, y, r);
   }
-  // ctx.fill();
+  ctx.fill();
   ctx.stroke();
 
 }
