@@ -83,7 +83,7 @@ const Observations = (function (/*api*/) {
       const alevel = Math.log(state.active.length) / Math.log(10);
       //const aremainder = state.active.length % (10 ** (alevel + 1));
       const aangle = alevel / 10;
-      ctx.strokeStyle = "lightgray";
+      ctx.strokeStyle = "gold";
       drawArc(ctx, 0, 0, state.mindim / 2, {
         start: (offset + aangle) * Math.PI,
         end: (offset - aangle) * Math.PI,
