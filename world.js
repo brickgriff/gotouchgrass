@@ -56,7 +56,7 @@ const World = (function (/*api*/) {
     updatePlants(state);
     updateScore(state);
 
-    console.log(state.active.length, state.leaves, state.flowers);
+    // console.log(state.active.length, state.leaves, state.flowers);
 
   };
 
