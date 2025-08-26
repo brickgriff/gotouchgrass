@@ -25,15 +25,14 @@ const Display = (function (/*api*/) {
     // let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
     // let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
     // let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
-
     // ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
     ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+    Observations.draw();
+    
     ctx.restore();
 
     drawPlayer(state);
     drawRing(state);
-
-    Observations.draw();
 
     let rectX = -.9 * state.cx;
     let rectY = mindim * .5 + .1 * state.cx;
