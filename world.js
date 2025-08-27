@@ -134,7 +134,7 @@ var updatePlants = (state) => {
     }
   }
 
-  if (state.frame % (15) != 0) return;
+  if (state.frame % (30) != 0) return;
   state.nearby = [];
 
   for (plant of plants) {
