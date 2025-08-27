@@ -84,6 +84,7 @@ var drawNav = (state) => {
   // ctx.beginPath();
   // drawArc(ctx, mouse.x_, mouse.y_, mindim * .1);
   // ctx.clip();
+  if (!state.events.isDragged) return;
   ctx.beginPath();
   const hypot = Math.min(mindim * .1, Math.hypot(mouse._x - mouse.x_, mouse._y - mouse.y_));
   const angle = Math.atan2(mouse._y - mouse.y_, mouse._x - mouse.x_);
