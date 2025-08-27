@@ -1,13 +1,30 @@
 const Display = (function (/*api*/) {
   var api = {};
 
-  function copyToOnScreen(state) {
+  function drawTerrain(state) {
     const x = -state.offscreen.width / 2 + state.dx * state.mindim;
     const y = -state.offscreen.height / 2 + state.dy * state.mindim;
     state.ctx.drawImage(state.offscreen, x, y);
   }
 
-  var drawTerrain = (state) => {
+  function drawMiniMap(state) {
+    const ctx = state.ctx;
+    const k = state.mindim * .2;
+    const miniX = -k / 2;
+    const miniY = -state.cy + k / 4;
+    ctx.beginPath();
+    ctx.lineWidth = .01 * state.mindim;
+    ctx.fillStyle = "saddlebrown";
+    ctx.strokeStyle = "darkslategray";
+    drawArc(ctx,miniX+k/2,miniY+k/2,.1*state.mindim);
+    ctx.fill();
+    ctx.stroke();
+    const miniW = k;
+    const miniH = k;
+    state.ctx.drawImage(state.offscreen, miniX, miniY, miniW, miniH);
+  }
+
+  var saveTerrain = (state) => {
     drawFoliage(state);
   }
 
@@ -26,11 +43,11 @@ const Display = (function (/*api*/) {
 
     if (!state.terrain) {
       // console.log("once");
-      drawTerrain(state);
+      saveTerrain(state);
       state.terrain = true;
     }
 
-    copyToOnScreen(state);
+    drawTerrain(state);
 
     // drawNearby(state);
     drawActive(state);
@@ -85,7 +102,7 @@ const Display = (function (/*api*/) {
 
     // drawGamepad(state);
     drawNav(state);
-
+    // drawMiniMap(state);
   };
 
   // return the public API
