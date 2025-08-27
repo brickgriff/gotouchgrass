@@ -238,10 +238,6 @@ var drawBorder = (state) => {
   }
   ctx.stroke();
 
-  // let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
-  // let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
-  // let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
-  // ctx.fillStyle = `rgba(${red},${green},${blue},0.5)`;
   ctx.restore();
 }
 
