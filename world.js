@@ -143,7 +143,7 @@ var updatePlants = (state) => {
   state.active = [];
 
   for (plant of state.nearby) {
-    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
+    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     // FIXME: maybe using a set will make this step simpler
     const isActive = checkActive(plant, state.frame - 1 * 60);
 
@@ -184,7 +184,7 @@ var updateNearby = (state) => {
 }
 
 var checkActive = (plant, limit) => {
-  return plant.frame !== undefined && plant.frame > limit;
+  return plant.frame > 0 && plant.frame > limit;
 }
 
 var checkStanding = (frame_, _frame) => { return _frame - frame_ > (3 * 60) }
