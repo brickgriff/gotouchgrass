@@ -16,7 +16,7 @@ const Display = (function (/*api*/) {
     ctx.lineWidth = .01 * state.mindim;
     ctx.fillStyle = "saddlebrown";
     ctx.strokeStyle = "darkslategray";
-    drawArc(ctx,miniX+k/2,miniY+k/2,.1*state.mindim);
+    drawArc(ctx, miniX + k / 2, miniY + k / 2, .1 * state.mindim);
     ctx.fill();
     ctx.stroke();
     const miniW = k;
