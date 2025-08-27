@@ -216,19 +216,27 @@ var drawBackground = (state) => {
 var drawBorder = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
-  ctx.save();
+
   ctx.beginPath();
-  ctx.strokeStyle = "darkslategray";
-  ctx.fillStyle = "#151";
+  ctx.strokeStyle = "darkslategray"; // weed barrier
+  ctx.fillStyle = "sienna"; // soil
   ctx.lineWidth = 25;
   const r = mindim;
   const x = state.dx * mindim;
   const y = state.dy * mindim;
   drawArc(ctx, x, y, r);
-  ctx.stroke();
   ctx.fill();
+  ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath();
+  drawArc(ctx, x, y, r * .97);
   ctx.clip();
 
+  ctx.beginPath();
+  ctx.fillStyle = "#151";
+  drawArc(ctx, x, y, r * .97);
+  ctx.fill();
   ctx.beginPath();
   ctx.lineWidth = 5;
   ctx.strokeStyle = "darkolivegreen";
@@ -272,6 +280,7 @@ var drawActive = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
   ctx.beginPath();
+  ctx.lineWidth = 1;
   // TODO: make color fade per plant... somehow performantly
   ctx.fillStyle = "darkgreen";
   ctx.strokeStyle = "darkolivegreen";
