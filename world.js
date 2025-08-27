@@ -69,9 +69,10 @@ var resize = (state) => {
   state.canvas.height = self.innerHeight;
   state.cx = state.canvas.width / 2;
   state.cy = state.canvas.height / 2;
-  state.mindim = Math.min(state.canvas.width, state.canvas.height) - .1 * state.cx;
-  const othdim = Math.max(state.canvas.width, state.canvas.height);
-  if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);//Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
+  state.mindim = Math.min(state.canvas.width, state.canvas.height) * .95; // - .1 * state.cx;
+  // const othdim = Math.max(state.canvas.width, state.canvas.height);
+  // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
+  // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
   state.ctx.translate(state.cx, state.cy);
 }
 
@@ -80,16 +81,17 @@ var createPlants = (state) => {
   const plants = [];
   state.plants = plants;
 
-  var num = 10000//50000; // 50K plants!
+  var num = 5000//50000; // 50K plants!
+  const max = .98;
+  const min = .02;
   while (num--) {
-    let x = (random() * 2 - 1);
-    let y = (random() * 2 - 1);
+    let hypot = random() * (max - min) + min;
+    let theta = random() * Math.PI * 2;
+
+    let x = hypot * Math.cos(theta); // (random() * max * 2 - max);
+    let y = hypot * Math.sin(theta); // (random() * max * 2 - max);
     let r = (random() * .6 + .4) * 0.025;
-    let vector = { x: x, y: y };
-    normalize(vector, 1);
-    x = vector.x;
-    y = vector.y;
-    // FIXME: why not start with a hypot and theta?
+
     let c = (random() < .2) ? "darkgreen" : "lawngreen";
     let t = (random() < .2) ? "clover" : "grass";
     const plant = { x: x, y: y, r: r, t: t, c: c };
@@ -125,8 +127,8 @@ var updatePlants = (state) => {
     state.nearby.push(plant);
     if (hypot < .025 && !isActive) {
       if (!plant.frame) {
-        state.leaves += Math.random() * 1;
-        state.flowers += Math.random() * .1;
+        state.leaves += Math.random() * .1;
+        state.flowers += Math.random() * .01;
       }
       plant.frame = state.frame;
     }
