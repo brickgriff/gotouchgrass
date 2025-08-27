@@ -53,8 +53,9 @@ const World = (function (/*api*/) {
 
     updateGamepad(state);
     updatePlayer(state);
-    //updatePlants(state);
-    updateScore(state);
+    updatePlants(state);
+    updateNearby(state);
+    // updateScore(state);
 
     // console.log(state.active.length, state.leaves, state.flowers);
 
@@ -135,13 +136,8 @@ var updatePlayer = (state) => {
   state.dy -= vector.y * state.speed;
 }
 
-// TODO break this up if possible
-// FIXME invert active and nearby
 var updatePlants = (state) => {
-  const plants = state.plants;
-  if (!plants) return;
-
-  if (state.frame % 5 !== 0) return;
+  if (state.frame % 3 !== 0) return;
 
   state.active = [];
 
@@ -153,7 +149,7 @@ var updatePlants = (state) => {
     if (isActive) {
       state.active.push(plant);
     } else if (hypot < .025) {
-      if (!plant.frame) {
+      if (plant.frame < 0) {
         state.leaves += Math.random() * 0.1;
         state.flowers += Math.random() * 0.01;
       }
@@ -164,18 +160,26 @@ var updatePlants = (state) => {
     }
   }
 
+}
+
+var updateNearby = (state) => {
+  if (state.frame % 60 !== 0) return;
+
+  const plants = state.plants;
+  if (!plants) return;
   state.nearby = [];
 
   for (plant of plants) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     const mindim = state.mindim;
-    const maxdim = state.canvas.width * .95 == state.mindim ? state.canvas.height * .95 : state.canvas.width * .95;
+    const maxdim = state.canvas.height > state.mindim ? state.canvas.height : state.canvas.width;
     if (hypot > maxdim / mindim) continue;
     state.nearby.push(plant);
 
     // TODO: if the player stands still for 30 frames
     // all grass w/i the inner ring goes active
   }
+
 }
 
 var checkActive = (plant, limit) => {
@@ -205,5 +209,5 @@ var updateGamepad = (state) => {
 }
 
 var updateScore = (state) => {
-
+  console.log(state.leaves, state.flowers);
 }

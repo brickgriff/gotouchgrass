@@ -2,17 +2,13 @@ const Display = (function (/*api*/) {
   var api = {};
 
   function copyToOnScreen(state) {
-    const x = -state.offscreen.width/2 + state.dx*state.mindim;
-    const y = -state.offscreen.height/2 + state.dy*state.mindim;
+    const x = -state.offscreen.width / 2 + state.dx * state.mindim;
+    const y = -state.offscreen.height / 2 + state.dy * state.mindim;
     state.ctx.drawImage(state.offscreen, x, y);
   }
 
   var drawTerrain = (state) => {
-
-    // drawNearby(state);
     drawFoliage(state);
-    // drawActive(state);
-
   }
 
 
@@ -29,19 +25,15 @@ const Display = (function (/*api*/) {
     drawBorder(state);
 
     if (!state.terrain) {
+      // console.log("once");
       drawTerrain(state);
       state.terrain = true;
     }
 
     copyToOnScreen(state);
 
-    // worker service
-    // draw green circle in offscreen canvas
-    // put whatever offscreen canvas on screen
-
-
     // drawNearby(state);
-    // drawActive(state);
+    drawActive(state);
     // -- glass panel --
     // ctx.save();
     // ctx.beginPath();
@@ -318,7 +310,6 @@ var drawActive = (state) => {
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;
     r = plant.r * mindim;
-    if (Math.hypot(x, y) > mindim * .5) continue;
     drawArc(ctx, x, y, r);
   }
   ctx.fill();
