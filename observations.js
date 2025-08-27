@@ -57,7 +57,7 @@ const Observations = (function (/*api*/) {
       ctx.stroke();
     }
 
-    const flowers = state.flower; // Math.floor(state.flowers);
+    const flowers = state.flowers; // Math.floor(state.flowers);
     ctx.strokeStyle = "violet";
     ctx.fillStyle = "lightgray";
 
