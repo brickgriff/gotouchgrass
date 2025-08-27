@@ -21,7 +21,7 @@ const Observations = (function (/*api*/) {
       ctx[style] = `rgba(${red},${green},${blue},0.5)`;
     };
 
-    const leaves = Math.floor(state.leaves);
+    const leaves = state.leaves; // Math.floor(state.leaves);
     ctx.strokeStyle = "forestgreen";
     ctx.fillStyle = "lightgray";
 
@@ -57,7 +57,7 @@ const Observations = (function (/*api*/) {
       ctx.stroke();
     }
 
-    const flowers = Math.floor(state.flowers);
+    const flowers = state.flower; // Math.floor(state.flowers);
     ctx.strokeStyle = "violet";
     ctx.fillStyle = "lightgray";
 
