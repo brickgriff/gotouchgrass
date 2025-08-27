@@ -9,7 +9,7 @@ const Observations = (function (/*api*/) {
     const offset = .5;
     const offsetX = .85 * state.cx;
     const mindim = state.mindim;
-    const radius = .06 * mindim;
+    const radius = .1 * mindim;
     const offsetY = Math.min(offsetX, state.cy - radius - .05 * mindim);
     ctx.lineWidth = 2;
 
