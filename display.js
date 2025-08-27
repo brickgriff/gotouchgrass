@@ -14,53 +14,52 @@ const Display = (function (/*api*/) {
     drawBorder(state);
     drawNearby(state);
     drawActive(state);
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
-    drawArc(ctx, 0, 0, 0.5 * mindim, { acw: true });
-    ctx.clip();
+    // ctx.save();
+    // ctx.beginPath();
+    // ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+    // drawArc(ctx, 0, 0, 0.5 * mindim, { acw: true });
+    // ctx.clip();
+    // ctx.beginPath();
+    // ctx.fillStyle = "lightgray";
+    // let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
+    // let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
+    // let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
+    // ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
+    // ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+    // ctx.restore();
 
-    ctx.beginPath();
-    ctx.fillStyle = "lightgray";
-    let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
-    let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
-    let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
-    ctx.fillStyle = `rgba(${red},${green},${blue},0.5)`;
-    ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
     Observations.draw();
-
-    ctx.restore();
 
     drawPlayer(state);
     drawRing(state);
 
-    let rectX = -.9 * state.cx;
-    let rectY = mindim * .5 + .1 * state.cx;
-    let rectW = 1.8 * state.cx;
-    let rectH = state.canvas.height - (state.cy + rectY + .1 * state.cx);
+    // let rectX = -.9 * state.cx;
+    // let rectY = mindim * .5 + .1 * state.cx;
+    // let rectW = 1.8 * state.cx;
+    // let rectH = state.canvas.height - (state.cy + rectY + .1 * state.cx);
 
-    if (rectW > 100 && rectH > 100) {
-      ctx.save();
-      // ctx.strokeStyle = "#444";
-      // ctx.strokeRect(rectX, rectY, rectW, rectH);
-      ctx.fillStyle = "#444";
-      ctx.strokeStyle = "#444";
-      ctx.fillRect(rectX + 5, rectY + 5, rectW - 10, rectH - 10);
-      ctx.lineWidth = 10;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(rectX + 5, rectY + 5);
-      ctx.lineTo(rectX + rectW - 5, rectY + 5);
-      ctx.moveTo(rectX + rectW - 5, rectY + 5);
-      ctx.lineTo(rectX + rectW - 5, rectY + rectH - 5);
-      ctx.moveTo(rectX + rectW - 5, rectY + rectH - 5);
-      ctx.lineTo(rectX + 5, rectY + rectH - 5);
-      ctx.moveTo(rectX + 5, rectY + rectH - 5);
-      ctx.lineTo(rectX + 5, rectY + 5);
+    // if (rectW > 100 && rectH > 100) {
+    //   ctx.save();
+    //   // ctx.strokeStyle = "#444";
+    //   // ctx.strokeRect(rectX, rectY, rectW, rectH);
+    //   ctx.fillStyle = "#444";
+    //   ctx.strokeStyle = "#444";
+    //   ctx.fillRect(rectX + 5, rectY + 5, rectW - 10, rectH - 10);
+    //   ctx.lineWidth = 10;
+    //   ctx.lineCap = "round";
+    //   ctx.beginPath();
+    //   ctx.moveTo(rectX + 5, rectY + 5);
+    //   ctx.lineTo(rectX + rectW - 5, rectY + 5);
+    //   ctx.moveTo(rectX + rectW - 5, rectY + 5);
+    //   ctx.lineTo(rectX + rectW - 5, rectY + rectH - 5);
+    //   ctx.moveTo(rectX + rectW - 5, rectY + rectH - 5);
+    //   ctx.lineTo(rectX + 5, rectY + rectH - 5);
+    //   ctx.moveTo(rectX + 5, rectY + rectH - 5);
+    //   ctx.lineTo(rectX + 5, rectY + 5);
 
-      ctx.stroke();
-      ctx.restore();
-    }
+    //   ctx.stroke();
+    //   ctx.restore();
+    // }
 
     // drawGamepad(state);
     drawNav(state);
