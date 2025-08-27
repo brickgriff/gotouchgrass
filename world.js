@@ -53,7 +53,7 @@ const World = (function (/*api*/) {
 
     updateGamepad(state);
     updatePlayer(state);
-    updatePlants(state);
+    //updatePlants(state);
     updateScore(state);
 
     // console.log(state.active.length, state.leaves, state.flowers);
@@ -63,6 +63,25 @@ const World = (function (/*api*/) {
   // return the public api
   return api;
 }());
+
+var createOffscreenCanvas = (state) => {
+  state.terrain = false;
+  var offScreenCanvas = document.createElement('canvas');
+  offScreenCanvas.width = 2500;
+  offScreenCanvas.height = 2500;
+  var context = offScreenCanvas.getContext("2d");
+
+  context.translate(offScreenCanvas.width / 2, offScreenCanvas.height / 2);
+  context.strokeStyle = "gold";
+  var r = .1 * state.mindim;
+  context.lineWidth = .05 * state.mindim;
+
+  context.beginPath();
+  context.arc(0, 0, r, 0, Math.PI * 2);
+  context.stroke();
+
+  return offScreenCanvas; //return canvas element
+}
 
 var resize = (state) => {
   state.canvas.width = self.innerWidth;
@@ -74,6 +93,9 @@ var resize = (state) => {
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
   state.ctx.translate(state.cx, state.cy);
+
+  state.offscreen = createOffscreenCanvas(state);
+  // console.log("once");
 }
 
 var createPlants = (state) => {
@@ -119,7 +141,8 @@ var updatePlants = (state) => {
   const plants = state.plants;
   if (!plants) return;
 
-  if (state.frame % (3) != 0) return;
+  if (state.frame % 5 !== 0) return;
+
   state.active = [];
 
   for (plant of state.nearby) {
@@ -141,11 +164,10 @@ var updatePlants = (state) => {
     }
   }
 
-  if (state.frame % (30) != 0) return;
   state.nearby = [];
 
   for (plant of plants) {
-    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
+    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     const mindim = state.mindim;
     const maxdim = state.canvas.width * .95 == state.mindim ? state.canvas.height * .95 : state.canvas.width * .95;
     if (hypot > maxdim / mindim) continue;

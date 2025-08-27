@@ -1,6 +1,21 @@
 const Display = (function (/*api*/) {
   var api = {};
 
+  function copyToOnScreen(state) {
+    const x = -state.offscreen.width/2 + state.dx*state.mindim;
+    const y = -state.offscreen.height/2 + state.dy*state.mindim;
+    state.ctx.drawImage(state.offscreen, x, y);
+  }
+
+  var drawTerrain = (state) => {
+
+    // drawNearby(state);
+    drawFoliage(state);
+    // drawActive(state);
+
+  }
+
+
   // public api is a function
   api.draw = function () {
     //console.log(`draw`);
@@ -12,8 +27,22 @@ const Display = (function (/*api*/) {
     // for most, ctx, mindim, and various screen params should work
     drawBackground(state);
     drawBorder(state);
-    drawNearby(state);
-    drawActive(state);
+
+    if (!state.terrain) {
+      drawTerrain(state);
+      state.terrain = true;
+    }
+
+    copyToOnScreen(state);
+
+    // worker service
+    // draw green circle in offscreen canvas
+    // put whatever offscreen canvas on screen
+
+
+    // drawNearby(state);
+    // drawActive(state);
+    // -- glass panel --
     // ctx.save();
     // ctx.beginPath();
     // ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
@@ -33,6 +62,7 @@ const Display = (function (/*api*/) {
     drawPlayer(state);
     drawRing(state);
 
+    // -- trackpad --
     // let rectX = -.9 * state.cx;
     // let rectY = mindim * .5 + .1 * state.cx;
     // let rectW = 1.8 * state.cx;
@@ -293,6 +323,26 @@ var drawActive = (state) => {
   }
   ctx.fill();
   ctx.stroke();
+
+}
+
+var drawFoliage = (state) => {
+  const ctx = state.offscreen.getContext("2d");
+  const mindim = state.mindim;
+
+  ctx.beginPath();
+  for (plant of state.plants || []) {
+    let x = (plant.x) * mindim;
+    let y = (plant.y) * mindim;
+    let r = plant.r * mindim;
+    let c = "darkgreen";//(plant.t == "grass") ? "lawngreen" : "darkgreen";
+    ctx.fillStyle = c;
+
+    drawArc(ctx, x, y, r);
+    // ctx.strokeStyle = "lawngreen";
+    // ctx.stroke();
+  }
+  ctx.fill();
 
 }
 
