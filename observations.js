@@ -7,10 +7,11 @@ const Observations = (function (/*api*/) {
     // console.log("Observations.draw()");
     const ctx = state.ctx;
     const offset = .5;
-    const offsetX = .85 * state.cx;
     const mindim = state.mindim;
+    const margin = .05 * mindim;
     const radius = .1 * mindim;
-    const offsetY = Math.min(offsetX, state.cy - radius - .05 * mindim);
+    const offsetX = state.cx - radius - margin;
+    const offsetY = state.cy - radius - margin;
     ctx.lineWidth = 2;
 
     const makeTransparent = (ctx, style) => {
