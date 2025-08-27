@@ -220,7 +220,7 @@ var drawBorder = (state) => {
   ctx.beginPath();
   ctx.strokeStyle = "darkslategray"; // weed barrier
   ctx.fillStyle = "sienna"; // soil
-  ctx.lineWidth = 25;
+  ctx.lineWidth = .05 * mindim;
   const r = mindim;
   const x = state.dx * mindim;
   const y = state.dy * mindim;
@@ -235,7 +235,7 @@ var drawBorder = (state) => {
 
   ctx.beginPath();
   ctx.fillStyle = "#151";
-  drawArc(ctx, x, y, r * .97);
+  drawArc(ctx, x, y, r);
   ctx.fill();
   ctx.beginPath();
   ctx.lineWidth = 5;
