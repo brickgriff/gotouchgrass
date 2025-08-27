@@ -81,9 +81,9 @@ var createPlants = (state) => {
   const plants = [];
   state.plants = plants;
 
-  var num = 5000//50000; // 50K plants!
+  var num = 1000//50000; // 50K plants!
   const max = .98;
-  const min = .02;
+  const min = .01;
   while (num--) {
     let hypot = random() * (max - min) + min;
     let theta = random() * Math.PI * 2;
@@ -127,8 +127,8 @@ var updatePlants = (state) => {
     state.nearby.push(plant);
     if (hypot < .025 && !isActive) {
       if (!plant.frame) {
-        state.leaves += Math.random() * .1;
-        state.flowers += Math.random() * .01;
+        state.leaves += Math.random() * 1;
+        state.flowers += Math.random() * 0.1;
       }
       plant.frame = state.frame;
     }
