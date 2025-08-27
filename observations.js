@@ -26,8 +26,8 @@ const Observations = (function (/*api*/) {
     ctx.fillStyle = "lightgray";
 
     if (leaves <= 1) {
-      makeTransparent(ctx,"strokeStyle");
-      makeTransparent(ctx,"fillStyle");
+      makeTransparent(ctx, "strokeStyle");
+      makeTransparent(ctx, "fillStyle");
     }
 
     ctx.beginPath();
@@ -44,7 +44,7 @@ const Observations = (function (/*api*/) {
       ctx.beginPath();
       const llevel = Math.floor(Math.log(leaves) / Math.log(10)); // 1
       const lremainder = leaves % (10 ** (llevel + 1)); // 10 % 100 = 0
-      const langle = lremainder / (10 ** (llevel + 1) - 1); // 0 / 90 = 0%
+      const langle = lremainder * 10 / (10 ** (llevel + 2) - 1); // 0 / 90 = 0%
       ctx.strokeStyle = "lightgray";
       drawArc(ctx, -offsetX + radius * .5, offsetY, radius - 3, {
         start: (offset + langle) * Math.PI,
@@ -62,8 +62,8 @@ const Observations = (function (/*api*/) {
     ctx.fillStyle = "lightgray";
 
     if (flowers <= 1) {
-      makeTransparent(ctx,"strokeStyle");
-      makeTransparent(ctx,"fillStyle");
+      makeTransparent(ctx, "strokeStyle");
+      makeTransparent(ctx, "fillStyle");
     }
 
     ctx.beginPath();
@@ -85,7 +85,7 @@ const Observations = (function (/*api*/) {
       ctx.beginPath();
       const flevel = Math.floor(Math.log(flowers) / Math.log(10));
       const fremainder = flowers % (10 ** (flevel + 1));
-      const fangle = fremainder / (10 ** (flevel + 1) - 1);
+      const fangle = fremainder * 10 / (10 ** (flevel + 2) - 1);
       ctx.strokeStyle = "lightgray";
       drawArc(ctx, offsetX - radius * .5, offsetY, radius - 3, {
         start: (offset + fangle) * Math.PI,

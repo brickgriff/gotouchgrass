@@ -82,7 +82,7 @@ var createPlants = (state) => {
   state.plants = plants;
 
   var num = 5000//50000; // 50K plants!
-  const max = .97;
+  const max = .96;
   const min = .03;
   while (num--) {
     let hypot = random() * (max - min) + min;
