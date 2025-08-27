@@ -16,9 +16,10 @@ const World = (function (/*api*/) {
       frame: 0,
       time: 0,
       seed: 42,
+      // active: [],
       events: {},
       touchCount: 0,
-      defaults: { // so you can always revert
+      default: { // so you can always revert
         speed: 0.003,
       },
     };
@@ -53,37 +54,76 @@ const World = (function (/*api*/) {
     updateGamepad(state);
     updatePlayer(state);
     updatePlants(state);
+    updateNearby(state);
+    // updateScore(state);
+
+    // console.log(state.active.length, state.leaves, state.flowers);
+
   };
 
   // return the public api
   return api;
 }());
 
+var createOffscreenCanvas = (state) => {
+  state.terrain = false;
+  var offScreenCanvas = document.createElement('canvas');
+  const mindim = state.mindim;
+  offScreenCanvas.width = 2 * mindim;
+  offScreenCanvas.height = 2 * mindim;
+  var context = offScreenCanvas.getContext("2d");
+
+  context.translate(offScreenCanvas.width / 2, offScreenCanvas.height / 2);
+  context.strokeStyle = "gold";
+  var r = .1 * state.mindim;
+  context.lineWidth = .05 * state.mindim;
+
+  context.beginPath();
+  context.arc(0, 0, r, 0, Math.PI * 2);
+  context.stroke();
+
+  return offScreenCanvas; //return canvas element
+}
+
 var resize = (state) => {
   state.canvas.width = self.innerWidth;
   state.canvas.height = self.innerHeight;
   state.cx = state.canvas.width / 2;
   state.cy = state.canvas.height / 2;
-  state.mindim = Math.min(state.canvas.width, state.canvas.height);
-  if (state.mindim == state.canvas.width) state.cy = state.mindim/2;
+  state.mindim = Math.min(state.canvas.width, state.canvas.height) * .95; // - .1 * state.cx;
+  // const othdim = Math.max(state.canvas.width, state.canvas.height);
+  // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
+  // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
   state.ctx.translate(state.cx, state.cy);
+
+  state.offscreen = createOffscreenCanvas(state);
+  // console.log("once");
 }
 
 var createPlants = (state) => {
   const random = Random.seed(state.seed);
   const plants = [];
   state.plants = plants;
+  state.nearby = [];
+  state.active = [];
+  state.leaves = 0;
+  state.flowers = 0;
+  state.nearbyUpdate = 90;
+  state.activeUpdate = 3;
+  state.default.activeUpdate = state.activeUpdate;
+  state.default.nearbyUpdate = state.nearbyUpdate;
 
-  var num = 10000//50000; // 50K plants!
+  var num = 5000//50000; // 50K plants!
+  const max = .96;
+  const min = .03;
   while (num--) {
-    let x = (random() * 2 - 1);
-    let y = (random() * 2 - 1);
+    let hypot = random() * (max - min) + min;
+    let theta = random() * Math.PI * 2;
+
+    let x = hypot * Math.cos(theta); // (random() * max * 2 - max);
+    let y = hypot * Math.sin(theta); // (random() * max * 2 - max);
     let r = (random() * .6 + .4) * 0.025;
-    let vector = { x: x, y: y };
-    normalize(vector, 1);
-    x = vector.x;
-    y = vector.y;
-    // FIXME: why not start with a hypot and theta?
+
     let c = (random() < .2) ? "darkgreen" : "lawngreen";
     let t = (random() < .2) ? "clover" : "grass";
     const plant = { x: x, y: y, r: r, t: t, c: c };
@@ -97,46 +137,54 @@ var updatePlayer = (state) => {
   state.dy -= vector.y * state.speed;
 }
 
-// TODO break this up if possible
 var updatePlants = (state) => {
   if (state.frame % 3 !== 0) return;
-  const plants = state.plants;
-  const nearby = [];
-  state.nearby = nearby;
 
-  if (state.active == undefined) state.active = [];
-  if (!plants) return;
+  state.active = [];
 
-  for (plant of plants) {
-    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
-    // const theta = Math.atan2(vector.y, vector.x); // angle
-    //if (plant.frame) {
-    // FIXME: try to get control of active list for deletions
-    // FIXME: make most/all lists into sets
-    // }
-    if (hypot > .1) continue;
-    nearby.push(plant);
-
+  for (plant of state.nearby) {
+    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     // FIXME: maybe using a set will make this step simpler
-    const isActive = checkActive(plant, state.active);
-    const isStanding = false;//checkStanding(state.frameStanding, state.frame);
-    // TODO: if the player stands still for 30 frames
-    // all grass w/i the inner ring goes active
-    if (plant.t == "grass" && !isActive && ((hypot < .025) || isStanding)) {
-      if (!plant.frame) plant.frame = state.frame;
+    const isActive = checkActive(plant, state.frame - 1 * 60);
+
+    if (isActive) {
       state.active.push(plant);
+    } else if (hypot < .025) {
+      if (plant.frame < 0) {
+        state.leaves += Math.random() * 0.1;
+        state.flowers += Math.random() * 0.01;
+      }
+      plant.frame = state.frame;
+      // state.active.push(plant);
+    } else {
+      plant.frame = -1000;
     }
   }
+
 }
 
-var checkActive = (plant, active) => {
-  return active.some(
-    p => p.x == plant.x
-      && p.y == plant.y
-      && p.r == plant.r
-      && p.c == plant.c
-      && p.t == plant.t
-  );
+var updateNearby = (state) => {
+  if (state.frame % 60 !== 0) return;
+
+  const plants = state.plants;
+  if (!plants) return;
+  state.nearby = [];
+
+  for (plant of plants) {
+    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
+    const mindim = state.mindim;
+    const maxdim = state.canvas.height > state.mindim ? state.canvas.height : state.canvas.width;
+    if (hypot > maxdim / mindim) continue;
+    state.nearby.push(plant);
+
+    // TODO: if the player stands still for 30 frames
+    // all grass w/i the inner ring goes active
+  }
+
+}
+
+var checkActive = (plant, limit) => {
+  return plant.frame > 0 && plant.frame > limit;
 }
 
 var checkStanding = (frame_, _frame) => { return _frame - frame_ > (3 * 60) }
@@ -159,4 +207,8 @@ var updateGamepad = (state) => {
   // ...
   // 315 +/- 22.5 => lowerright
   // add it to the animation list
+}
+
+var updateScore = (state) => {
+  console.log(state.leaves, state.flowers);
 }

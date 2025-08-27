@@ -1,6 +1,34 @@
 const Display = (function (/*api*/) {
   var api = {};
 
+  function drawTerrain(state) {
+    const x = -state.offscreen.width / 2 + state.dx * state.mindim;
+    const y = -state.offscreen.height / 2 + state.dy * state.mindim;
+    state.ctx.drawImage(state.offscreen, x, y);
+  }
+
+  function drawMiniMap(state) {
+    const ctx = state.ctx;
+    const k = state.mindim * .2;
+    const miniX = -k / 2;
+    const miniY = -state.cy + k / 4;
+    ctx.beginPath();
+    ctx.lineWidth = .01 * state.mindim;
+    ctx.fillStyle = "saddlebrown";
+    ctx.strokeStyle = "darkslategray";
+    drawArc(ctx, miniX + k / 2, miniY + k / 2, .1 * state.mindim);
+    ctx.fill();
+    ctx.stroke();
+    const miniW = k;
+    const miniH = k;
+    state.ctx.drawImage(state.offscreen, miniX, miniY, miniW, miniH);
+  }
+
+  var saveTerrain = (state) => {
+    drawFoliage(state);
+  }
+
+
   // public api is a function
   api.draw = function () {
     //console.log(`draw`);
@@ -11,27 +39,70 @@ const Display = (function (/*api*/) {
     // FIXME: these functions do not need the entire state
     // for most, ctx, mindim, and various screen params should work
     drawBackground(state);
-    ctx.save();
-    ctx.beginPath();
-    drawArc(ctx, 0, 0, 0.5 * mindim);
-    ctx.clip();
     drawBorder(state);
-    drawActive(state);
-    drawNearby(state);
-    drawPlayer(state);
-    ctx.restore();
-    drawRing(state);
-    drawGamepad(state);
-    drawNav(state);
 
-    if (state.events.isPressed) {
-      ctx.beginPath();
-      ctx.fillStyle = "lightgray";
-      ctx.font = "25px serif";
-      ctx.textAlign = "start";
-      ctx.textBaseline = "top";
-      ctx.fillText("pressed", -state.cx, -state.cy);
+    if (!state.terrain) {
+      // console.log("once");
+      saveTerrain(state);
+      state.terrain = true;
     }
+
+    drawTerrain(state);
+
+    // drawNearby(state);
+    drawActive(state);
+    // -- glass panel --
+    // ctx.save();
+    // ctx.beginPath();
+    // ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+    // drawArc(ctx, 0, 0, 0.5 * mindim, { acw: true });
+    // ctx.clip();
+    // ctx.beginPath();
+    // ctx.fillStyle = "lightgray";
+    // let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
+    // let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
+    // let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
+    // ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
+    // ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+    // ctx.restore();
+
+    Observations.draw();
+
+    drawPlayer(state);
+    drawRing(state);
+
+    // -- trackpad --
+    // let rectX = -.9 * state.cx;
+    // let rectY = mindim * .5 + .1 * state.cx;
+    // let rectW = 1.8 * state.cx;
+    // let rectH = state.canvas.height - (state.cy + rectY + .1 * state.cx);
+
+    // if (rectW > 100 && rectH > 100) {
+    //   ctx.save();
+    //   // ctx.strokeStyle = "#444";
+    //   // ctx.strokeRect(rectX, rectY, rectW, rectH);
+    //   ctx.fillStyle = "#444";
+    //   ctx.strokeStyle = "#444";
+    //   ctx.fillRect(rectX + 5, rectY + 5, rectW - 10, rectH - 10);
+    //   ctx.lineWidth = 10;
+    //   ctx.lineCap = "round";
+    //   ctx.beginPath();
+    //   ctx.moveTo(rectX + 5, rectY + 5);
+    //   ctx.lineTo(rectX + rectW - 5, rectY + 5);
+    //   ctx.moveTo(rectX + rectW - 5, rectY + 5);
+    //   ctx.lineTo(rectX + rectW - 5, rectY + rectH - 5);
+    //   ctx.moveTo(rectX + rectW - 5, rectY + rectH - 5);
+    //   ctx.lineTo(rectX + 5, rectY + rectH - 5);
+    //   ctx.moveTo(rectX + 5, rectY + rectH - 5);
+    //   ctx.lineTo(rectX + 5, rectY + 5);
+
+    //   ctx.stroke();
+    //   ctx.restore();
+    // }
+
+    // drawGamepad(state);
+    drawNav(state);
+    // drawMiniMap(state);
   };
 
   // return the public API
@@ -43,10 +114,25 @@ var drawNav = (state) => {
   const mindim = state.mindim;
   const mouse = getMouse();
   if (!state.events.isPressed) return;
-  ctx.beginPath();
   ctx.strokeStyle = "lightgray";
+  ctx.fillStyle = "lightgray";
+  ctx.beginPath();
   drawArc(ctx, mouse.x_, mouse.y_, mindim * .1);
   ctx.stroke();
+  // ctx.save();
+  // ctx.beginPath();
+  // drawArc(ctx, mouse.x_, mouse.y_, mindim * .1);
+  // ctx.clip();
+  if (!state.events.isDragged) return;
+  ctx.beginPath();
+  const hypot = Math.min(mindim * .1, Math.hypot(mouse._x - mouse.x_, mouse._y - mouse.y_));
+  const angle = Math.atan2(mouse._y - mouse.y_, mouse._x - mouse.x_);
+
+  const x = hypot * Math.cos(angle);
+  const y = hypot * Math.sin(angle);
+  drawArc(ctx, x + mouse.x_, y + mouse.y_, mindim * .05);
+  ctx.fill();
+  // ctx.restore();
 }
 
 var drawGamepad = (state) => {
@@ -60,12 +146,12 @@ var drawGamepad = (state) => {
   const r = (.15) * mindim + ctx.lineWidth / 2;
   ctx.strokeStyle = "lightgray";
 
-  let red = parseInt(ctx.strokeStyle.substring(1, 3), 16);
-  let green = parseInt(ctx.strokeStyle.substring(3, 5), 16);
-  let blue = parseInt(ctx.strokeStyle.substring(5, 7), 16);
+  // let red = parseInt(ctx.strokeStyle.substring(1, 3), 16);
+  // let green = parseInt(ctx.strokeStyle.substring(3, 5), 16);
+  // let blue = parseInt(ctx.strokeStyle.substring(5, 7), 16);
 
-  ctx.strokeStyle = `rgba(${red},${green},${blue},0.25)`;
-  ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
+  // ctx.strokeStyle = `rgba(${red},${green},${blue},0.25)`;
+  // ctx.fillStyle = `rgba(${red},${green},${blue},0.25)`;
 
   ctx.beginPath();
   drawArc(ctx, x, y, .1 * mindim);
@@ -142,7 +228,7 @@ var drawGamepadInputs = (state) => {
   ctx.fillStyle = "lightgray";
   ctx.strokeStyle = "dimgray";
   ctx.lineWidth = 1;
-  ctx.font = "25px serif";
+  ctx.font = "25px sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   outlineText(ctx, "Space", coords.center.x, coords.center.y);
@@ -169,24 +255,37 @@ var drawBackground = (state) => {
 var drawBorder = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
+
   ctx.beginPath();
-  ctx.strokeStyle = "darkslategray";
-  ctx.fillStyle = "sienna";
-  ctx.lineWidth = 10;
+  ctx.strokeStyle = "darkslategray"; // weed barrier
+  ctx.fillStyle = "saddlebrown"; // soil
+  ctx.lineWidth = .05 * mindim;
   const r = mindim;
   const x = state.dx * mindim;
   const y = state.dy * mindim;
   drawArc(ctx, x, y, r);
+  ctx.fill();
   ctx.stroke();
-  ctx.fill();
-  ctx.fillStyle = "darkgreen";
-  let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
-  let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
-  let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
-  ctx.fillStyle = `rgba(${red},${green},${blue},0.5)`;
-  ctx.fill();
-  ctx.lineWidth = 1;
 
+  ctx.save();
+  ctx.beginPath();
+  drawArc(ctx, x, y, r * .97);
+  ctx.clip();
+
+  // ctx.beginPath();
+  // ctx.fillStyle = "#151";
+  // drawArc(ctx, x, y, r);
+  // ctx.fill();
+  ctx.beginPath();
+  ctx.lineWidth = .05 * mindim;
+  ctx.strokeStyle = "darkgreen";
+  for (let i = -20; i < 20; i++) {
+    ctx.lineTo(-mindim + x - (2 * i * mindim / 10), -mindim + y);
+    ctx.lineTo(x - (2 * i * mindim / 10), mindim + y);
+  }
+  ctx.stroke();
+
+  ctx.restore();
 }
 
 var drawPlayer = (state) => {
@@ -202,12 +301,16 @@ var drawPlayer = (state) => {
 var drawRing = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
-  ctx.beginPath();
   ctx.strokeStyle = "lightgray";
+  // ctx.lineWidth = 3;
+  // ctx.beginPath();
+  // // fill unit circle ~5m
+  // drawArc(ctx, 0, 0, 0.5 * mindim);
+  // ctx.stroke();
+  // ctx.lineWidth = 1;
+  ctx.beginPath();
   // 20% radius ~1m
   drawArc(ctx, 0, 0, 0.1 * mindim);
-  // fill unit circle ~5m
-  drawArc(ctx, 0, 0, 0.5 * mindim);
   ctx.stroke();
 }
 
@@ -216,21 +319,36 @@ var drawActive = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
   ctx.beginPath();
+  ctx.lineWidth = 1;
   // TODO: make color fade per plant... somehow performantly
-  ctx.fillStyle = "lightgray";
+  ctx.fillStyle = "darkgreen";
+  ctx.strokeStyle = "darkolivegreen";
   for (plant of state.active) {
-    if (plant.frame <= state.frame - (60 * 60)) {
-      plant.frame = null;
-      // FIXME: remove from active list/set
-      continue;
-    }
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;
     r = plant.r * mindim;
-    // TODO: hide distant active plants with clipping mask
-    // FIXME: store cutoff in state then retrieve from there
-    if (Math.hypot(x, y) > mindim / 2) continue;
     drawArc(ctx, x, y, r);
+  }
+  ctx.fill();
+  ctx.stroke();
+
+}
+
+var drawFoliage = (state) => {
+  const ctx = state.offscreen.getContext("2d");
+  const mindim = state.mindim;
+
+  ctx.beginPath();
+  for (plant of state.plants || []) {
+    let x = (plant.x) * mindim;
+    let y = (plant.y) * mindim;
+    let r = plant.r * mindim;
+    let c = "darkgreen";//(plant.t == "grass") ? "lawngreen" : "darkgreen";
+    ctx.fillStyle = c;
+
+    drawArc(ctx, x, y, r);
+    // ctx.strokeStyle = "lawngreen";
+    // ctx.stroke();
   }
   ctx.fill();
 
@@ -244,11 +362,13 @@ var drawNearby = (state) => {
     let x = (plant.x + state.dx) * mindim;
     let y = (plant.y + state.dy) * mindim;
     let r = plant.r * mindim;
-    let c = (plant.t == "grass") ? "lawngreen" : "darkgreen";
+    let c = "darkgreen";//(plant.t == "grass") ? "lawngreen" : "darkgreen";
     ctx.beginPath();
     drawArc(ctx, x, y, r);
     ctx.fillStyle = c;
+    // ctx.strokeStyle = "lawngreen";
     ctx.fill();
+    // ctx.stroke();
   }
 
 }
@@ -256,6 +376,8 @@ var drawNearby = (state) => {
 var drawArc = (ctx, x, y, r, params = {}) => {
   let start = params.start || 0;
   let end = params.end || Math.PI * 2;
-  ctx.moveTo(x + r, y);
-  ctx.arc(x, y, r, start, end);
+
+  let theta = Math.atan2(Math.sin(start), Math.cos(start));
+  ctx.moveTo(x + r * Math.cos(theta), y + r * Math.sin(theta));
+  ctx.arc(x, y, r, start, end, params.acw || false);
 }
