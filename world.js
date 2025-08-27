@@ -80,6 +80,10 @@ var createPlants = (state) => {
   const random = Random.seed(state.seed);
   const plants = [];
   state.plants = plants;
+  state.nearby = [];
+  state.active = [];
+  state.leaves = 0;
+  state.flowers = 0;
 
   var num = 5000//50000; // 50K plants!
   const max = .96;
@@ -107,26 +111,20 @@ var updatePlayer = (state) => {
 
 // TODO break this up if possible
 var updatePlants = (state) => {
-  if (state.frame % 10 * 60 != 0) return;
   const plants = state.plants;
   if (!plants) return;
 
-  state.nearby = [];
+  if (state.frame % (3) != 0) return;
   state.active = [];
-  if (state.leaves == undefined) state.leaves = 0;
-  if (state.flowers == undefined) state.flowers = 0;
 
-  for (plant of plants) {
+  for (plant of state.nearby) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // FIXME: maybe using a set will make this step simpler
     const isActive = checkActive(plant, state.frame - 1 * 60);
     if (isActive) {
       state.active.push(plant);
     }
-    const mindim = state.mindim;
-    const maxdim = state.canvas.width * .95 == state.mindim ? state.canvas.height * .95 : state.canvas.width * .95;
-    if (hypot > maxdim / mindim) continue;
-    state.nearby.push(plant);
+
     if (hypot < .025 && !isActive) {
       if (!plant.frame) {
         state.leaves += Math.random() * 0.1;
@@ -134,6 +132,18 @@ var updatePlants = (state) => {
       }
       plant.frame = state.frame;
     }
+  }
+
+  if (state.frame % (15) != 0) return;
+  state.nearby = [];
+
+  for (plant of plants) {
+    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
+    const mindim = state.mindim;
+    const maxdim = state.canvas.width * .95 == state.mindim ? state.canvas.height * .95 : state.canvas.width * .95;
+    if (hypot > maxdim / mindim) continue;
+    state.nearby.push(plant);
+
     // TODO: if the player stands still for 30 frames
     // all grass w/i the inner ring goes active
   }
