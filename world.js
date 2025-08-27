@@ -19,7 +19,7 @@ const World = (function (/*api*/) {
       // active: [],
       events: {},
       touchCount: 0,
-      defaults: { // so you can always revert
+      default: { // so you can always revert
         speed: 0.003,
       },
     };
@@ -54,7 +54,8 @@ const World = (function (/*api*/) {
     updateGamepad(state);
     updatePlayer(state);
     updatePlants(state);
-    updateScore(state);
+    updateNearby(state);
+    // updateScore(state);
 
     // console.log(state.active.length, state.leaves, state.flowers);
 
@@ -63,6 +64,26 @@ const World = (function (/*api*/) {
   // return the public api
   return api;
 }());
+
+var createOffscreenCanvas = (state) => {
+  state.terrain = false;
+  var offScreenCanvas = document.createElement('canvas');
+  const mindim = state.mindim;
+  offScreenCanvas.width = 2 * mindim;
+  offScreenCanvas.height = 2 * mindim;
+  var context = offScreenCanvas.getContext("2d");
+
+  context.translate(offScreenCanvas.width / 2, offScreenCanvas.height / 2);
+  context.strokeStyle = "gold";
+  var r = .1 * state.mindim;
+  context.lineWidth = .05 * state.mindim;
+
+  context.beginPath();
+  context.arc(0, 0, r, 0, Math.PI * 2);
+  context.stroke();
+
+  return offScreenCanvas; //return canvas element
+}
 
 var resize = (state) => {
   state.canvas.width = self.innerWidth;
@@ -74,6 +95,9 @@ var resize = (state) => {
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
   state.ctx.translate(state.cx, state.cy);
+
+  state.offscreen = createOffscreenCanvas(state);
+  // console.log("once");
 }
 
 var createPlants = (state) => {
@@ -84,6 +108,10 @@ var createPlants = (state) => {
   state.active = [];
   state.leaves = 0;
   state.flowers = 0;
+  state.nearbyUpdate = 90;
+  state.activeUpdate = 3;
+  state.default.activeUpdate = state.activeUpdate;
+  state.default.nearbyUpdate = state.nearbyUpdate;
 
   var num = 5000//50000; // 50K plants!
   const max = .96;
@@ -109,48 +137,54 @@ var updatePlayer = (state) => {
   state.dy -= vector.y * state.speed;
 }
 
-// TODO break this up if possible
 var updatePlants = (state) => {
-  const plants = state.plants;
-  if (!plants) return;
+  if (state.frame % 3 !== 0) return;
 
-  if (state.frame % (3) != 0) return;
   state.active = [];
 
   for (plant of state.nearby) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // FIXME: maybe using a set will make this step simpler
     const isActive = checkActive(plant, state.frame - 1 * 60);
+
     if (isActive) {
       state.active.push(plant);
-    }
-
-    if (hypot < .025 && !isActive) {
-      if (!plant.frame) {
+    } else if (hypot < .025) {
+      if (plant.frame < 0) {
         state.leaves += Math.random() * 0.1;
         state.flowers += Math.random() * 0.01;
       }
       plant.frame = state.frame;
+      // state.active.push(plant);
+    } else {
+      plant.frame = -1000;
     }
   }
 
-  if (state.frame % (30) != 0) return;
+}
+
+var updateNearby = (state) => {
+  if (state.frame % 60 !== 0) return;
+
+  const plants = state.plants;
+  if (!plants) return;
   state.nearby = [];
 
   for (plant of plants) {
-    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
+    const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     const mindim = state.mindim;
-    const maxdim = state.canvas.width * .95 == state.mindim ? state.canvas.height * .95 : state.canvas.width * .95;
+    const maxdim = state.canvas.height > state.mindim ? state.canvas.height : state.canvas.width;
     if (hypot > maxdim / mindim) continue;
     state.nearby.push(plant);
 
     // TODO: if the player stands still for 30 frames
     // all grass w/i the inner ring goes active
   }
+
 }
 
 var checkActive = (plant, limit) => {
-  return plant.frame > limit;
+  return plant.frame !== undefined && plant.frame > limit;
 }
 
 var checkStanding = (frame_, _frame) => { return _frame - frame_ > (3 * 60) }
@@ -176,5 +210,5 @@ var updateGamepad = (state) => {
 }
 
 var updateScore = (state) => {
-
+  console.log(state.leaves, state.flowers);
 }

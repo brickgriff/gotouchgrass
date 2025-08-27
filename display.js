@@ -1,6 +1,34 @@
 const Display = (function (/*api*/) {
   var api = {};
 
+  function drawTerrain(state) {
+    const x = -state.offscreen.width / 2 + state.dx * state.mindim;
+    const y = -state.offscreen.height / 2 + state.dy * state.mindim;
+    state.ctx.drawImage(state.offscreen, x, y);
+  }
+
+  function drawMiniMap(state) {
+    const ctx = state.ctx;
+    const k = state.mindim * .2;
+    const miniX = -k / 2;
+    const miniY = -state.cy + k / 4;
+    ctx.beginPath();
+    ctx.lineWidth = .01 * state.mindim;
+    ctx.fillStyle = "saddlebrown";
+    ctx.strokeStyle = "darkslategray";
+    drawArc(ctx, miniX + k / 2, miniY + k / 2, .1 * state.mindim);
+    ctx.fill();
+    ctx.stroke();
+    const miniW = k;
+    const miniH = k;
+    state.ctx.drawImage(state.offscreen, miniX, miniY, miniW, miniH);
+  }
+
+  var saveTerrain = (state) => {
+    drawFoliage(state);
+  }
+
+
   // public api is a function
   api.draw = function () {
     //console.log(`draw`);
@@ -12,8 +40,18 @@ const Display = (function (/*api*/) {
     // for most, ctx, mindim, and various screen params should work
     drawBackground(state);
     drawBorder(state);
-    drawNearby(state);
+
+    if (!state.terrain) {
+      // console.log("once");
+      saveTerrain(state);
+      state.terrain = true;
+    }
+
+    drawTerrain(state);
+
+    // drawNearby(state);
     drawActive(state);
+    // -- glass panel --
     // ctx.save();
     // ctx.beginPath();
     // ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
@@ -33,6 +71,7 @@ const Display = (function (/*api*/) {
     drawPlayer(state);
     drawRing(state);
 
+    // -- trackpad --
     // let rectX = -.9 * state.cx;
     // let rectY = mindim * .5 + .1 * state.cx;
     // let rectW = 1.8 * state.cx;
@@ -63,7 +102,7 @@ const Display = (function (/*api*/) {
 
     // drawGamepad(state);
     drawNav(state);
-
+    // drawMiniMap(state);
   };
 
   // return the public API
@@ -288,11 +327,30 @@ var drawActive = (state) => {
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;
     r = plant.r * mindim;
-    if (Math.hypot(x, y) > mindim * .5) continue;
     drawArc(ctx, x, y, r);
   }
   ctx.fill();
   ctx.stroke();
+
+}
+
+var drawFoliage = (state) => {
+  const ctx = state.offscreen.getContext("2d");
+  const mindim = state.mindim;
+
+  ctx.beginPath();
+  for (plant of state.plants || []) {
+    let x = (plant.x) * mindim;
+    let y = (plant.y) * mindim;
+    let r = plant.r * mindim;
+    let c = "darkgreen";//(plant.t == "grass") ? "lawngreen" : "darkgreen";
+    ctx.fillStyle = c;
+
+    drawArc(ctx, x, y, r);
+    // ctx.strokeStyle = "lawngreen";
+    // ctx.stroke();
+  }
+  ctx.fill();
 
 }
 
