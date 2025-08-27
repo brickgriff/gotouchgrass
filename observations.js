@@ -11,7 +11,7 @@ const Observations = (function (/*api*/) {
     const margin = .05 * mindim;
     const radius = .1 * mindim;
     const offsetX = state.cx - radius - margin;
-    const offsetY = state.cy - radius - margin;
+    const offsetY = - state.cy + (radius + margin);
     ctx.lineWidth = 2;
 
     const makeTransparent = (ctx, style, alpha) => {
