@@ -150,14 +150,13 @@ var updatePlants = (state) => {
     if (isActive) {
       state.active.push(plant);
     } else if (hypot < .025) {
-      if (plant.frame < 0) {
+      if (plant.frame == undefined) {
         state.leaves += Math.random() * 0.1;
         state.flowers += Math.random() * 0.01;
       }
       plant.frame = state.frame;
-      // state.active.push(plant);
-    } else {
-      plant.frame = -1000;
+    } else if (plant.frame != undefined) {
+      plant.frame = -1;
     }
   }
 
@@ -184,7 +183,7 @@ var updateNearby = (state) => {
 }
 
 var checkActive = (plant, limit) => {
-  return plant.frame > 0 && plant.frame > limit;
+  return plant.frame != undefined && plant.frame > 0 && plant.frame > limit;
 }
 
 var checkStanding = (frame_, _frame) => { return _frame - frame_ > (3 * 60) }
