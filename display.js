@@ -218,7 +218,7 @@ var drawBorder = (state) => {
   ctx.save();
   ctx.beginPath();
   ctx.strokeStyle = "darkslategray";
-  ctx.fillStyle = "darkgreen";
+  ctx.fillStyle = "#151";
   ctx.lineWidth = 25;
   const r = mindim;
   const x = state.dx * mindim;
