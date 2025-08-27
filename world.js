@@ -123,7 +123,9 @@ var updatePlants = (state) => {
     if (isActive) {
       state.active.push(plant);
     }
-    if (hypot > .1) continue;
+    const mindim = state.mindim;
+    const maxdim = state.canvas.width * .95 == state.mindim ? state.canvas.height * .95 : state.canvas.width * .95;
+    if (hypot > maxdim / mindim) continue;
     state.nearby.push(plant);
     if (hypot < .025 && !isActive) {
       if (!plant.frame) {
