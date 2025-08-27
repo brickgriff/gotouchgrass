@@ -76,10 +76,24 @@ var drawNav = (state) => {
   const mindim = state.mindim;
   const mouse = getMouse();
   if (!state.events.isPressed) return;
-  ctx.beginPath();
   ctx.strokeStyle = "lightgray";
+  ctx.fillStyle = "lightgray";
+  ctx.beginPath();
   drawArc(ctx, mouse.x_, mouse.y_, mindim * .1);
   ctx.stroke();
+  // ctx.save();
+  // ctx.beginPath();
+  // drawArc(ctx, mouse.x_, mouse.y_, mindim * .1);
+  // ctx.clip();
+  ctx.beginPath();
+  const hypot = Math.min(mindim * .1, Math.hypot(mouse._x - mouse.x_, mouse._y - mouse.y_));
+  const angle = Math.atan2(mouse._y - mouse.y_, mouse._x - mouse.x_);
+
+  const x = hypot * Math.cos(angle);
+  const y = hypot * Math.sin(angle);
+  drawArc(ctx, x + mouse.x_, y + mouse.y_, mindim * .05);
+  ctx.fill();
+  // ctx.restore();
 }
 
 var drawGamepad = (state) => {
@@ -218,21 +232,17 @@ var drawBorder = (state) => {
   ctx.beginPath();
   ctx.lineWidth = 5;
   ctx.strokeStyle = "darkolivegreen";
-
   for (let i = -20; i < 20; i++) {
     ctx.lineTo(-mindim + x - (2 * i * mindim / 10), -mindim + y);
     ctx.lineTo(x - (2 * i * mindim / 10), mindim + y);
   }
-
   ctx.stroke();
 
   // let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
   // let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
   // let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
   // ctx.fillStyle = `rgba(${red},${green},${blue},0.5)`;
-
   ctx.restore();
-
 }
 
 var drawPlayer = (state) => {
@@ -273,7 +283,7 @@ var drawActive = (state) => {
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;
     r = plant.r * mindim;
-    if (Math.hypot(x, y) > mindim * .55) continue;
+    if (Math.hypot(x, y) > mindim * .5) continue;
     drawArc(ctx, x, y, r);
   }
   ctx.fill();

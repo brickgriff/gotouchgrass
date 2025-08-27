@@ -113,13 +113,10 @@ window.addEventListener("keyup", (e) => {
 });
 
 window.addEventListener("mousedown", (e) => {
-  // e.preventDefault();
+  e.preventDefault();
   pushInput(e.button);
-
   const state = document.state;
   const ctx = state.ctx;
-
-  // console.log(window.dispatchEvent(new Event("resize")));
 
   if (e.button === keybinds.mouseL) {
     inputs.mouse.x_ = inputs.mouse._x = e.clientX - state.cx;
@@ -152,7 +149,7 @@ window.addEventListener("mousemove", (e) => {
     inputs.mouse._y = e.clientY - state.cy;
 
     const dist = Math.hypot(inputs.mouse._x - inputs.mouse.x_, inputs.mouse._y - inputs.mouse.y_);
-    inputs.mouse.isDragged = (dist >= inputs.mouse.dragMin * document.state.mindim);
+    state.events.isDragged = (dist >= inputs.mouse.dragMin * state.mindim);
   }
 });
 
