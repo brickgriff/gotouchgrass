@@ -19,7 +19,7 @@ const World = (function (/*api*/) {
       // active: [],
       events: {},
       touchCount: 0,
-      defaults: { // so you can always revert
+      default: { // so you can always revert
         speed: 0.003,
       },
     };
@@ -84,6 +84,10 @@ var createPlants = (state) => {
   state.active = [];
   state.leaves = 0;
   state.flowers = 0;
+  state.nearbyUpdate = 90;
+  state.activeUpdate = 3;
+  state.default.activeUpdate = state.activeUpdate;
+  state.default.nearbyUpdate = state.nearbyUpdate;
 
   var num = 5000//50000; // 50K plants!
   const max = .96;
@@ -110,6 +114,7 @@ var updatePlayer = (state) => {
 }
 
 // TODO break this up if possible
+// FIXME invert active and nearby
 var updatePlants = (state) => {
   const plants = state.plants;
   if (!plants) return;
@@ -121,16 +126,18 @@ var updatePlants = (state) => {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy); // percent max speed
     // FIXME: maybe using a set will make this step simpler
     const isActive = checkActive(plant, state.frame - 1 * 60);
+
     if (isActive) {
       state.active.push(plant);
-    }
-
-    if (hypot < .025 && !isActive) {
+    } else if (hypot < .025) {
       if (!plant.frame) {
         state.leaves += Math.random() * 0.1;
         state.flowers += Math.random() * 0.01;
       }
       plant.frame = state.frame;
+      // state.active.push(plant);
+    } else {
+      plant.frame = -1000;
     }
   }
 
@@ -150,7 +157,7 @@ var updatePlants = (state) => {
 }
 
 var checkActive = (plant, limit) => {
-  return plant.frame > limit;
+  return plant.frame !== undefined && plant.frame > limit;
 }
 
 var checkStanding = (frame_, _frame) => { return _frame - frame_ > (3 * 60) }
