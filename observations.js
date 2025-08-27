@@ -14,11 +14,11 @@ const Observations = (function (/*api*/) {
     const offsetY = state.cy - radius - margin;
     ctx.lineWidth = 2;
 
-    const makeTransparent = (ctx, style, ratio) => {
+    const makeTransparent = (ctx, style, alpha) => {
       let red = parseInt(ctx[style].substring(1, 3), 16);
       let green = parseInt(ctx[style].substring(3, 5), 16);
       let blue = parseInt(ctx[style].substring(5, 7), 16);
-      let alpha = Math.min(1, (ratio) * .5 + .5);
+      // let alpha = Math.min(1, (ratio));
       ctx[style] = `rgba(${red},${green},${blue},${alpha})`;
     };
 
@@ -27,8 +27,8 @@ const Observations = (function (/*api*/) {
     ctx.fillStyle = "lightgray";
 
     if (leaves < 10) {
-      makeTransparent(ctx, "strokeStyle",leaves/10);
-      makeTransparent(ctx, "fillStyle",leaves/10);
+      makeTransparent(ctx, "strokeStyle", leaves / 10);
+      makeTransparent(ctx, "fillStyle", leaves / 10);
     }
 
     ctx.beginPath();
@@ -63,8 +63,8 @@ const Observations = (function (/*api*/) {
     ctx.fillStyle = "lightgray";
 
     if (flowers < 10) {
-      makeTransparent(ctx, "strokeStyle",flowers/10);
-      makeTransparent(ctx, "fillStyle",flowers/10);
+      makeTransparent(ctx, "strokeStyle", flowers / 10);
+      makeTransparent(ctx, "fillStyle", flowers / 10);
     }
 
     ctx.beginPath();
