@@ -149,7 +149,9 @@ window.addEventListener("mousemove", (e) => {
     inputs.mouse._y = e.clientY - state.cy;
 
     const dist = Math.hypot(inputs.mouse._x - inputs.mouse.x_, inputs.mouse._y - inputs.mouse.y_);
-    state.events.isDragged = (dist >= inputs.mouse.dragMin * state.mindim);
+    if ((dist >= inputs.mouse.dragMin * state.mindim)) {
+      state.events.isDragged = true;
+    }
   }
 });
 
