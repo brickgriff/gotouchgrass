@@ -33,9 +33,9 @@ const Observations = (function (/*api*/) {
 
     ctx.beginPath();
     drawArc(ctx, -offsetX + radius * .5, offsetY, radius - 3);
-    drawArc(ctx, -offsetX - radius * .21, offsetY - 1, radius, { start: -.25 * Math.PI, end: Math.PI * .25 });
-    drawArc(ctx, -offsetX + radius * 1.21, offsetY - 1, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
-    ctx.moveTo(-offsetX + radius * .5, offsetY - radius * .6);
+    drawArc(ctx, -offsetX - radius * .21, offsetY-.01*state.mindim, radius, { start: -.25 * Math.PI, end: Math.PI * .25 });
+    drawArc(ctx, -offsetX + radius * 1.21, offsetY-.01*state.mindim, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
+    ctx.moveTo(-offsetX + radius * .5, offsetY - radius * .8);
     ctx.lineTo(-offsetX + radius * .5, offsetY + radius * .8);
     ctx.fill();
     ctx.stroke();
