@@ -256,7 +256,7 @@ var drawBackground = (state) => {
   const ctx = state.ctx;
   ctx.clearRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
   ctx.beginPath();
-  ctx.fillStyle = "dimgray";
+  ctx.fillStyle = "darkslategray";
   ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
 }
 
