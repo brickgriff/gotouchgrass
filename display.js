@@ -1,35 +1,6 @@
 const Display = (function (/*api*/) {
   var api = {};
 
-  function drawTerrain(state) {
-    const x = -state.offscreen.width / 2 + state.dx * state.mindim;
-    const y = -state.offscreen.height / 2 + state.dy * state.mindim;
-    state.ctx.drawImage(state.offscreen, x, y);
-  }
-
-  // FIXME: put a minidot on the minimap
-  function drawMinimap(state) {
-    const ctx = state.ctx;
-    const k = state.mindim * .5;
-    const miniX = -k / 2;
-    const miniY = -state.cy + k / 4;
-    ctx.beginPath();
-    ctx.lineWidth = .01 * state.mindim;
-    ctx.fillStyle = colors.tertiary;
-    ctx.strokeStyle = colors.emergent;
-    drawArc(ctx, miniX + k / 2, miniY + k / 2, .1 * state.mindim);
-    ctx.fill();
-    ctx.stroke();
-    const miniW = k;
-    const miniH = k;
-    state.ctx.drawImage(state.offscreen, miniX, miniY, miniW, miniH);
-  }
-
-  var saveTerrain = (state) => {
-    drawFoliage(state);
-  }
-
-
   // public api is a function
   api.draw = function () {
     //console.log(`draw`);
@@ -109,7 +80,39 @@ const Display = (function (/*api*/) {
 
   // return the public API
   return api;
+
+  function drawTerrain(state) {
+    const x = -state.offscreen.width / 2 + state.dx * state.mindim;
+    const y = -state.offscreen.height / 2 + state.dy * state.mindim;
+    state.ctx.drawImage(state.offscreen, x, y);
+  }
+
+  // FIXME: put a minidot on the minimap
+  function drawMinimap(state) {
+    const ctx = state.ctx;
+    const k = state.mindim * .5;
+    const miniX = -k / 2;
+    const miniY = -state.cy + k / 4;
+    ctx.beginPath();
+    ctx.lineWidth = .01 * state.mindim;
+    ctx.fillStyle = colors.tertiary;
+    ctx.strokeStyle = colors.emergent;
+    drawArc(ctx, miniX + k / 2, miniY + k / 2, .1 * state.mindim);
+    ctx.fill();
+    ctx.stroke();
+    const miniW = k;
+    const miniH = k;
+    state.ctx.drawImage(state.offscreen, miniX, miniY, miniW, miniH);
+  }
+
+  function saveTerrain (state) {
+    drawFoliage(state);
+  }
+
+
 }());
+
+
 
 var drawNav = (state) => {
   const ctx = state.ctx;
@@ -325,22 +328,22 @@ var drawRing = (state) => {
 
   ctx.fillStyle = colors.primary;
   ctx.beginPath();
-  drawArc(ctx, -r*2.5, 0, r); // ~ 1
+  drawArc(ctx, -r * 2.5, 0, r); // ~ 1
   ctx.fill();
 
   ctx.fillStyle = colors.secondary;
   ctx.beginPath();
-  drawArc(ctx, r*2.5, 0, r); // ~ 1
+  drawArc(ctx, r * 2.5, 0, r); // ~ 1
   ctx.fill();
 
   ctx.fillStyle = colors.tertiary;
   ctx.beginPath();
-  drawArc(ctx, 0, -r*2.5, r); // ~ 1
+  drawArc(ctx, 0, -r * 2.5, r); // ~ 1
   ctx.fill();
 
   ctx.fillStyle = colors.emergent;
   ctx.beginPath();
-  drawArc(ctx, 0, r*2.5, r); // ~ 1
+  drawArc(ctx, 0, r * 2.5, r); // ~ 1
   ctx.fill();
 
 }

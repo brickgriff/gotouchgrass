@@ -1,131 +1,141 @@
 const Observations = (function (/*api*/) {
   var api = {};
 
+  const ICON_FUNCTION = {
+    "leaves": drawLeavesIcon,
+    "flowers": drawFlowersIcon,
+  };
+  const ICON_COLOR = {
+    "leaves": colors.primary,
+    "flowers": colors.secondary,
+  };
+
   api.draw = function () {
+    // console.log("Observations.draw()");
 
     const state = document.state;
-    // console.log("Observations.draw()");
     const ctx = state.ctx;
-
-    const offset = .5; // ??? 50% of Math.PI clock-wise
 
     const mindim = state.mindim;
     const radius = .1 * mindim; // ~ 1m
-    // const margin = .5 * radius; // ~ 50cm
-    
+
     const offsetX = state.cx - radius * 2;
     const offsetY = state.cy - radius * 2;
-    
+
     ctx.lineWidth = .05 * radius; // ~ 5cm
     ctx.lineCap = "round";
+    ctx.fillStyle = colors.emergent; // common
 
-    const makeTransparent = (ctx, style, alpha) => {
-      let red = parseInt(ctx[style].substring(1, 3), 16);
-      let green = parseInt(ctx[style].substring(3, 5), 16);
-      let blue = parseInt(ctx[style].substring(5, 7), 16);
-      // let alpha = Math.min(1, (ratio));
-      ctx[style] = `rgba(${red},${green},${blue},${alpha})`;
-    };
+    // // "Area of plant matter, in cm^2"
+    drawObservation(state, "leaves", offsetX, offsetY);
+    drawObservation(state, "flowers", -offsetX, offsetY);
+    // console.log(state.leaves, state.flowers);
 
-    const leaves = Math.floor(state.leaves);
-    ctx.strokeStyle = colors.primary;
-    ctx.fillStyle = colors.emergent;
+    ctx.lineWidth = 1;
+    ctx.lineCap = "butt";
+  }
 
-    if (leaves < 10) {
-      makeTransparent(ctx, "strokeStyle", leaves / 10);
-      makeTransparent(ctx, "fillStyle", leaves / 10);
+  return api;
+
+
+  function drawObservation(state, name, offsetX, offsetY) {
+    // if (!Math.floor(state[name])) state[name] = 0;
+    // state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
+
+    const ctx = state.ctx;
+    const mindim = state.mindim;
+    const radius = .1 * mindim; // ~ 1m
+
+    const value = Math.floor(state[name]);
+    ctx.strokeStyle = ICON_COLOR[name];
+
+    ctx.save();
+
+    if (value < 10) {
+      makeTransparent(ctx, "strokeStyle", value / 10);
+      makeTransparent(ctx, "fillStyle", value / 10);
     }
 
+    ICON_FUNCTION[name](ctx, -offsetX, -offsetY, radius);
+    ctx.restore();
+
+    if (value > 0) {
+      drawLevelRings(ctx, value, -offsetX, -offsetY, radius);
+    }
+  }
+
+  function drawLevelRings(ctx, value, offsetX, offsetY, radius, offsetA = .5) {
     ctx.beginPath();
-    drawArc(ctx, -offsetX, -offsetY, radius - 3);
-    drawArc(ctx, -offsetX - radius * .71, -offsetY - .1 * radius, radius, { start: -.25 * Math.PI, end: Math.PI * .25 });
-    drawArc(ctx, -offsetX + radius * .71, -offsetY - .1 * radius, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
-    ctx.moveTo(-offsetX, -offsetY - radius * .8);
-    ctx.lineTo(-offsetX, -offsetY + radius * .8);
-    ctx.fill();
+    // I want 10 to count as level 0, 100 as level 1, and so on
+    // but I also want 0 to count as level 0, not level -1!
+    const level = Math.max(0, Math.floor(Math.max(0, Math.log(value - 1)) / Math.log(10)));
+    const remainder = (value - (10 ** level)) % (10 ** (level + 1));
+    const angle = remainder / (9 * 10 ** (level));
+    // const angle = .01;
+    // console.log(value, level, remainder, angle+offsetA);
+
+    ctx.strokeStyle = colors.emergent;
+    drawArc(ctx, offsetX, offsetY, radius - .1 * radius, {
+      start: (offsetA + angle) * Math.PI,
+      end: (offsetA - angle) * Math.PI,
+      acw: true,
+    });
+    for (let i = 0; i < level; i++) {
+      drawArc(ctx, offsetX, offsetY, i * (ctx.lineWidth + 1) + radius);
+    }
     ctx.stroke();
 
-    if (leaves > 0) {
+  }
 
-      ctx.beginPath();
-      const llevel = Math.floor(Math.log(leaves) / Math.log(10)); // 1
-      const lremainder = leaves % (10 ** (llevel + 1)); // 10 % 100 = 0
-      const langle = lremainder * 10 / (10 ** (llevel + 2) - 1); // 0 / 90 = 0%
-      ctx.strokeStyle = colors.emergent;
-      drawArc(ctx, -offsetX, -offsetY, radius - 3, {
-        start: (offset + langle) * Math.PI,
-        end: (offset - langle) * Math.PI,
-        acw: langle < 1
-      });
-      for (let i = 0; i < llevel; i++) {
-        drawArc(ctx, -offsetX, -offsetY, i * (ctx.lineWidth + 1) + radius);
-      }
-      ctx.stroke();
-    }
-
-    const flowers = Math.floor(state.flowers);
-    ctx.strokeStyle = colors.secondary;
-    ctx.fillStyle = colors.emergent;
-
-    if (flowers < 10) {
-      makeTransparent(ctx, "strokeStyle", flowers / 10);
-      makeTransparent(ctx, "fillStyle", flowers / 10);
-    }
-
+  function drawLeavesIcon(ctx, offsetX, offsetY, radius) {
     ctx.beginPath();
-    drawArc(ctx, offsetX, -offsetY, radius - 3);
+    drawArc(ctx, offsetX, offsetY, radius - .1 * radius);
+    drawArc(ctx, offsetX - radius * .71, offsetY - .1 * radius, radius, { start: -.25 * Math.PI, end: Math.PI * .25 });
+    drawArc(ctx, offsetX + radius * .71, offsetY - .1 * radius, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
+    ctx.moveTo(offsetX, offsetY - radius * .8);
+    ctx.lineTo(offsetX, offsetY + radius * .8);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  function drawFlowersIcon(ctx, offsetX, offsetY, radius) {
+    ctx.beginPath();
+    drawArc(ctx, offsetX, offsetY, radius - .1 * radius);
     const foffset = 1 / 12;
     for (let i = 0; i < 6; i++) {
       let fLogoAngle = foffset + i * 1 / 6;
 
       let fLogoX = .35 * radius * Math.cos(fLogoAngle * Math.PI * 2);
       let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI * 2);
-      drawArc(ctx, offsetX + fLogoX, -offsetY + fLogoY, radius * .35);
+      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35);
     }
     ctx.fill();
     ctx.stroke();
-
-    if (flowers > 0) {
-
-      ctx.beginPath();
-      const flevel = Math.floor(Math.log(flowers) / Math.log(10));
-      const fremainder = flowers % (10 ** (flevel + 1));
-      const fangle = fremainder * 10 / (10 ** (flevel + 2) - 1);
-      ctx.strokeStyle = colors.emergent;
-      drawArc(ctx, offsetX, -offsetY, radius - 3, {
-        start: (offset + fangle) * Math.PI,
-        end: (offset - fangle) * Math.PI,
-        acw: fangle < 1
-      });
-      for (let i = 0; i < flevel; i++) {
-        drawArc(ctx, offsetX, -offsetY, i * (ctx.lineWidth + 1) + radius);
-      }
-      ctx.stroke();
-
-    }
-
-    // ctx.lineWidth = 5;
-    // const alevel = Math.log(state.active.length) / Math.log(10);
-    // //const aremainder = state.active.length % (10 ** (alevel + 1));
-    // const aangle = alevel / 10;
-    // ctx.strokeStyle = "lightgray";
-    // ctx.beginPath();
-    // drawArc(ctx, 0, 0, state.mindim / 2);
-    // ctx.stroke();
-
-    // ctx.strokeStyle = "gold";
-    // ctx.beginPath();
-    // drawArc(ctx, 0, 0, state.mindim / 2, {
-    //   start: (offset + aangle) * Math.PI,
-    //   end: (offset - aangle) * Math.PI,
-    //   acw: aangle < 1
-    // });
-    // ctx.stroke();
-
-    ctx.lineWidth = 1;
-    ctx.lineCap = "butt";
-
   }
 
-  return api;
+  function makeTransparent(ctx, style, alpha) {
+    let red = parseInt(ctx[style].substring(1, 3), 16);
+    let green = parseInt(ctx[style].substring(3, 5), 16);
+    let blue = parseInt(ctx[style].substring(5, 7), 16);
+    // let alpha = Math.min(1, (ratio));
+    ctx[style] = `rgba(${red},${green},${blue},${alpha})`;
+  }
+
+  // ctx.lineWidth = 5;
+  // const alevel = Math.log(state.active.length) / Math.log(10);
+  // //const aremainder = state.active.length % (10 ** (alevel + 1));
+  // const aangle = alevel / 10;
+  // ctx.strokeStyle = "lightgray";
+  // ctx.beginPath();
+  // drawArc(ctx, 0, 0, state.mindim / 2);
+  // ctx.stroke();
+
+  // ctx.strokeStyle = "gold";
+  // ctx.beginPath();
+  // drawArc(ctx, 0, 0, state.mindim / 2, {
+  //   start: (offset + aangle) * Math.PI,
+  //   end: (offset - aangle) * Math.PI,
+  //   acw: aangle < 1
+  // });
+  // ctx.stroke();
 }());
