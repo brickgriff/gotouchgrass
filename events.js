@@ -172,7 +172,7 @@ function ongoingTouchIndexById(idToFind) {
 
 
 window.addEventListener("touchstart", (e) => {
-  e.preventDefault();
+  // e.preventDefault();
   const state = document.state;
   const touch = e.changedTouches[0];
 
@@ -185,7 +185,7 @@ window.addEventListener("touchstart", (e) => {
 }, { passive: false });
 
 var handleTouchFinish = (e) => {
-  e.preventDefault()
+  // e.preventDefault()
   const state = document.state;
 
   const mouseEvent = new MouseEvent("mouseup", {
@@ -198,7 +198,7 @@ window.addEventListener("touchend", handleTouchFinish);
 window.addEventListener("touchcancel", handleTouchFinish);
 
 window.addEventListener("touchmove", (e) => {
-  e.preventDefault()
+  // e.preventDefault()
   const state = document.state;
   const touch = e.changedTouches[0];
 
