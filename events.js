@@ -104,7 +104,8 @@ window.addEventListener("resize", (e) => {
 });
 
 window.addEventListener("keydown", (e) => {
-  e.preventDefault()
+  // dev
+  // e.preventDefault()
   pushInput(e.code);
 });
 
@@ -113,7 +114,8 @@ window.addEventListener("keyup", (e) => {
 });
 
 window.addEventListener("mousedown", (e) => {
-  e.preventDefault();
+  // dev
+  // e.preventDefault();
   pushInput(e.button);
   const state = document.state;
   const ctx = state.ctx;

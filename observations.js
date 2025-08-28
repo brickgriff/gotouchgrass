@@ -23,8 +23,8 @@ const Observations = (function (/*api*/) {
     };
 
     const leaves = Math.floor(state.leaves);
-    ctx.strokeStyle = "forestgreen";
-    ctx.fillStyle = "lightgray";
+    ctx.strokeStyle = colors.primary;
+    ctx.fillStyle = colors.emergent;
 
     if (leaves < 10) {
       makeTransparent(ctx, "strokeStyle", leaves / 10);
@@ -46,7 +46,7 @@ const Observations = (function (/*api*/) {
       const llevel = Math.floor(Math.log(leaves) / Math.log(10)); // 1
       const lremainder = leaves % (10 ** (llevel + 1)); // 10 % 100 = 0
       const langle = lremainder * 10 / (10 ** (llevel + 2) - 1); // 0 / 90 = 0%
-      ctx.strokeStyle = "lightgray";
+      ctx.strokeStyle = colors.emergent;
       drawArc(ctx, -offsetX + radius * .5, offsetY, radius - 3, {
         start: (offset + langle) * Math.PI,
         end: (offset - langle) * Math.PI,
@@ -59,8 +59,8 @@ const Observations = (function (/*api*/) {
     }
 
     const flowers = Math.floor(state.flowers);
-    ctx.strokeStyle = "violet";
-    ctx.fillStyle = "lightgray";
+    ctx.strokeStyle = colors.secondary;
+    ctx.fillStyle = colors.emergent;
 
     if (flowers < 10) {
       makeTransparent(ctx, "strokeStyle", flowers / 10);
@@ -86,7 +86,7 @@ const Observations = (function (/*api*/) {
       const flevel = Math.floor(Math.log(flowers) / Math.log(10));
       const fremainder = flowers % (10 ** (flevel + 1));
       const fangle = fremainder * 10 / (10 ** (flevel + 2) - 1);
-      ctx.strokeStyle = "lightgray";
+      ctx.strokeStyle = colors.emergent;
       drawArc(ctx, offsetX - radius * .5, offsetY, radius - 3, {
         start: (offset + fangle) * Math.PI,
         end: (offset - fangle) * Math.PI,

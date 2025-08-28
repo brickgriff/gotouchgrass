@@ -10,13 +10,13 @@ const Display = (function (/*api*/) {
   // FIXME: put a minidot on the minimap
   function drawMinimap(state) {
     const ctx = state.ctx;
-    const k = state.mindim * .2;
+    const k = state.mindim * .5;
     const miniX = -k / 2;
     const miniY = -state.cy + k / 4;
     ctx.beginPath();
     ctx.lineWidth = .01 * state.mindim;
-    ctx.fillStyle = "saddlebrown";
-    ctx.strokeStyle = "darkslategray";
+    ctx.fillStyle = colors.tertiary;
+    ctx.strokeStyle = colors.emergent;
     drawArc(ctx, miniX + k / 2, miniY + k / 2, .1 * state.mindim);
     ctx.fill();
     ctx.stroke();
@@ -39,8 +39,9 @@ const Display = (function (/*api*/) {
 
     // FIXME: these functions do not need the entire state
     // for most, ctx, mindim, and various screen params should work
-    drawBackground(state);
-    drawBorder(state);
+    clear(state);
+    // drawBackground(state);
+    // drawBorder(state);
 
     if (!state.terrain) {
       // console.log("once");
@@ -48,10 +49,10 @@ const Display = (function (/*api*/) {
       state.terrain = true;
     }
 
-    drawTerrain(state);
+    // drawTerrain(state);
 
     // drawNearby(state);
-    drawActive(state);
+    // drawActive(state);
     // -- glass panel --
     // ctx.save();
     // ctx.beginPath();
@@ -69,7 +70,7 @@ const Display = (function (/*api*/) {
 
     Observations.draw();
 
-    drawPlayer(state);
+    // drawPlayer(state);
     drawRing(state);
 
     // -- trackpad --
@@ -115,15 +116,15 @@ var drawNav = (state) => {
   const mindim = state.mindim;
   const mouse = getMouse();
   if (!state.events.isPressed && !state.events.isKeyboard) return;
-  ctx.strokeStyle = "lightgray";
-  ctx.fillStyle = "lightgray";
+  ctx.strokeStyle = colors.emergent;
+  ctx.fillStyle = colors.emergent;
   ctx.beginPath();
   drawArc(ctx, 0, 0, mindim * .1);
   ctx.stroke();
 
   if (!state.events.isPressed) return;
-  ctx.strokeStyle = "lightgray";
-  ctx.fillStyle = "lightgray";
+  ctx.strokeStyle = colors.emergent;
+  ctx.fillStyle = colors.emergent;
   ctx.beginPath();
   drawArc(ctx, mouse.x_, mouse.y_, mindim * .1);
   ctx.stroke();
@@ -152,7 +153,7 @@ var drawGamepad = (state) => {
   const x = 0;
   const y = 0;
   const r = (.15) * mindim + ctx.lineWidth / 2;
-  ctx.strokeStyle = "lightgray";
+  ctx.strokeStyle = colors.emergent;
 
   // let red = parseInt(ctx.strokeStyle.substring(1, 3), 16);
   // let green = parseInt(ctx.strokeStyle.substring(3, 5), 16);
@@ -251,12 +252,15 @@ var outlineText = (ctx, text, x, y) => {
   ctx.strokeText(text, x, y);
 }
 
+var clear = (state) => {
+  const ctx = state.ctx;
+  ctx.clearRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+}
+
 var drawBackground = (state) => {
   // draw background
   const ctx = state.ctx;
-  ctx.clearRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
-  ctx.beginPath();
-  ctx.fillStyle = "darkslategray";
+  ctx.fillStyle = colors.emergent;
   ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
 }
 
@@ -265,14 +269,15 @@ var drawBorder = (state) => {
   const mindim = state.mindim;
 
   ctx.beginPath();
-  ctx.strokeStyle = "darkslategray"; // weed barrier
-  ctx.fillStyle = "saddlebrown"; // soil
+  ctx.strokeStyle = colors.secondary; // weed barrier
+  ctx.fillStyle = state.pattern.soil;//colors.tertiary; // soil
   ctx.lineWidth = .05 * mindim;
   const r = mindim;
   const x = state.dx * mindim;
   const y = state.dy * mindim;
   drawArc(ctx, x, y, r);
   ctx.fill();
+
   ctx.stroke();
 
   ctx.save();
@@ -286,7 +291,7 @@ var drawBorder = (state) => {
   // ctx.fill();
   ctx.beginPath();
   ctx.lineWidth = .05 * mindim;
-  ctx.strokeStyle = "darkgreen";
+  ctx.strokeStyle = colors.primary;
   for (let i = -20; i < 20; i++) {
     ctx.lineTo(-mindim + x - (2 * i * mindim / 10), -mindim + y);
     ctx.lineTo(x - (2 * i * mindim / 10), mindim + y);
@@ -301,7 +306,7 @@ var drawPlayer = (state) => {
   const mindim = state.mindim;
   const r = .05 * mindim;
   ctx.beginPath();
-  ctx.fillStyle = "lightgray";
+  ctx.fillStyle = colors.emergent;
   drawArc(ctx, 0, 0, r);
   ctx.fill();
 }
@@ -309,7 +314,7 @@ var drawPlayer = (state) => {
 var drawRing = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
-  ctx.strokeStyle = "lightgray";
+  ctx.strokeStyle = colors.emergent;
   // ctx.lineWidth = 3;
   // ctx.beginPath();
   // // fill unit circle ~5m
@@ -329,8 +334,8 @@ var drawActive = (state) => {
   ctx.beginPath();
   ctx.lineWidth = 1;
   // TODO: make color fade per plant... somehow performantly
-  ctx.fillStyle = "darkgreen";
-  ctx.strokeStyle = "darkolivegreen";
+  ctx.fillStyle = colors.primary; // with a pattern mask?
+  ctx.strokeStyle = colors.emergent; // tertiary with stamina system
   for (plant of state.active) {
     x = (plant.x + state.dx) * mindim;
     y = (plant.y + state.dy) * mindim;
@@ -351,14 +356,14 @@ var drawFoliage = (state) => {
     let x = (plant.x) * mindim;
     let y = (plant.y) * mindim;
     let r = plant.r * mindim;
-    let c = "darkgreen";//(plant.t == "grass") ? "lawngreen" : "darkgreen";
+    let c = colors.primary;//(plant.t == "grass") ? "lawngreen" : "darkgreen";
     ctx.fillStyle = c;
 
     drawArc(ctx, x, y, r);
     // ctx.strokeStyle = "lawngreen";
     // ctx.stroke();
   }
-  ctx.fill();
+  // ctx.fill();
 
 }
 
@@ -370,7 +375,7 @@ var drawNearby = (state) => {
     let x = (plant.x + state.dx) * mindim;
     let y = (plant.y + state.dy) * mindim;
     let r = plant.r * mindim;
-    let c = "darkgreen";//(plant.t == "grass") ? "lawngreen" : "darkgreen";
+    let c = colors.primary;//(plant.t == "grass") ? "lawngreen" : "darkgreen";
     ctx.beginPath();
     drawArc(ctx, x, y, r);
     ctx.fillStyle = c;
