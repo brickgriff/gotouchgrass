@@ -69,8 +69,8 @@ var createOffscreenCanvas = (state) => {
   state.terrain = false;
   var offScreenCanvas = document.createElement('canvas');
   const mindim = state.mindim;
-  offScreenCanvas.width = 2 * mindim;
-  offScreenCanvas.height = 2 * mindim;
+  offScreenCanvas.width = 2.5 * mindim;
+  offScreenCanvas.height = 2.5 * mindim;
   var context = offScreenCanvas.getContext("2d");
 
   context.translate(offScreenCanvas.width / 2, offScreenCanvas.height / 2);
@@ -81,6 +81,7 @@ var createOffscreenCanvas = (state) => {
   context.beginPath();
   context.arc(0, 0, r, 0, Math.PI * 2);
   context.stroke();
+  // context.strokeRect(-offScreenCanvas.width/2,-offScreenCanvas.height/2,offScreenCanvas.width,offScreenCanvas.height);
 
   return offScreenCanvas; //return canvas element
 }
