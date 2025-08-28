@@ -105,7 +105,7 @@ const Display = (function (/*api*/) {
     state.ctx.drawImage(state.offscreen, miniX, miniY, miniW, miniH);
   }
 
-  function saveTerrain (state) {
+  function saveTerrain(state) {
     drawFoliage(state);
   }
 
@@ -125,7 +125,11 @@ var drawNav = (state) => {
   drawArc(ctx, 0, 0, mindim * .1);
   ctx.stroke();
 
-  if (!state.events.isPressed) return;
+  if (state.events.isKeyboard) {
+    mouse.x_ = mouse._x; // state.inputs.keyboard.x_;
+    mouse.y_ = mouse._y; // state.inputs.keyboard.y_;
+  }
+
   ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.emergent;
   ctx.beginPath();

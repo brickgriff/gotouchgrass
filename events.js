@@ -1,5 +1,6 @@
 const inputs = {
   buttons: [],
+  keyboard: {},
   mouse: {
     // mouse down
     x_: 0,
@@ -107,6 +108,12 @@ window.addEventListener("keydown", (e) => {
   // dev
   // e.preventDefault()
   pushInput(e.code);
+
+  // if (e.code !== keybinds.primary) return;
+
+  // inputs.keyboard.x_ = inputs.keyboard._x = inputs.mouse._x || 0;
+  // inputs.keyboard.y_ = inputs.keyboard._y = inputs.mouse._y || 0;
+
 });
 
 window.addEventListener("keyup", (e) => {
@@ -136,8 +143,8 @@ window.addEventListener("mouseup", (e) => {
   state.events.isClicked = !state.events.isDragged;
 
   if (findInput(keybinds.mouseL)) {
-    inputs.mouse._x = inputs.mouse.x_ = 0;
-    inputs.mouse._y = inputs.mouse.y_ = 0;
+    inputs.mouse.x_ = 0;
+    inputs.mouse.y_ = 0;
     state.events.isDragged = false;
     state.events.isPressed = false;
   }
@@ -146,9 +153,10 @@ window.addEventListener("mouseup", (e) => {
 
 window.addEventListener("mousemove", (e) => {
   const state = document.state;
+  inputs.mouse._x = e.clientX - state.cx;
+  inputs.mouse._y = e.clientY - state.cy;
+
   if (findInput(keybinds.mouseL)) {
-    inputs.mouse._x = e.clientX - state.cx;
-    inputs.mouse._y = e.clientY - state.cy;
 
     const dist = Math.hypot(inputs.mouse._x - inputs.mouse.x_, inputs.mouse._y - inputs.mouse.y_);
     if ((dist >= inputs.mouse.dragMin * state.mindim)) {
