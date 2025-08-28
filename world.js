@@ -80,17 +80,32 @@ var createOffscreenCanvas = (state) => {
   var context = offScreenCanvas.getContext("2d");
 
   context.translate(offScreenCanvas.width / 2, offScreenCanvas.height / 2);
-  context.strokeStyle = "gold";
   var r = .1 * state.mindim;
-  context.lineWidth = .05 * state.mindim;
+  context.lineWidth = .03 * state.mindim;
 
+  context.strokeStyle = "goldenrod";
+  context.beginPath();
+  context.arc(0, 0, r * .71, 0, Math.PI * 2);
+  context.stroke();
+  context.strokeStyle = "gold";
   context.beginPath();
   context.arc(0, 0, r, 0, Math.PI * 2);
   context.stroke();
-  // context.strokeRect(-offScreenCanvas.width/2,-offScreenCanvas.height/2,offScreenCanvas.width,offScreenCanvas.height);
 
+  context.fillStyle = "darkslategray";
+  context.strokeStyle = "gold";
+  context.save();
+  context.beginPath();
+  context.rect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
+  context.arc(0, 0, mindim, 0, Math.PI * 2, true);
+  context.clip();
+  context.fillRect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
+  context.strokeRect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
+  context.restore();
   return offScreenCanvas; //return canvas element
 }
+
+// TODO duplicate this code for creating an offscreen canvas for the secret clover area and the title card at the end (large)
 
 var resize = (state) => {
   state.canvas.width = self.innerWidth;

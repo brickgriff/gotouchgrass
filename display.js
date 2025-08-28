@@ -7,7 +7,8 @@ const Display = (function (/*api*/) {
     state.ctx.drawImage(state.offscreen, x, y);
   }
 
-  function drawMiniMap(state) {
+  // FIXME: put a minidot on the minimap
+  function drawMinimap(state) {
     const ctx = state.ctx;
     const k = state.mindim * .2;
     const miniX = -k / 2;
@@ -102,7 +103,7 @@ const Display = (function (/*api*/) {
 
     // drawGamepad(state);
     drawNav(state);
-    // drawMiniMap(state);
+    // drawMinimap(state);
   };
 
   // return the public API
