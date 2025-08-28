@@ -9,5 +9,6 @@ const colors = {
     "primary": "forestgreen",
     "secondary": "fuchsia",
     "tertiary": "goldenrod",
-    "emergent": "lightgray"
+    "emergent": "lightgray",
+    "entropic": "navyblue"
 };
