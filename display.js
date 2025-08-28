@@ -113,6 +113,13 @@ var drawNav = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
   const mouse = getMouse();
+  if (!state.events.isPressed && !state.events.isKeyboard) return;
+  ctx.strokeStyle = "lightgray";
+  ctx.fillStyle = "lightgray";
+  ctx.beginPath();
+  drawArc(ctx, 0, 0, mindim * .1);
+  ctx.stroke();
+
   if (!state.events.isPressed) return;
   ctx.strokeStyle = "lightgray";
   ctx.fillStyle = "lightgray";

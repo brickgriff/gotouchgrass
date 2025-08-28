@@ -49,6 +49,12 @@ const World = (function (/*api*/) {
       state.frameStanding = null;
     }
 
+    if (findInput(keybinds.primary)) {
+      state.events.isKeyboard = true;
+    } else if (state.events.isKeyboard) {
+      state.events.isKeyboard = false;
+    }
+
     //console.log(state.frame - state.frameStanding > 60 * 3);
 
     updateGamepad(state);
