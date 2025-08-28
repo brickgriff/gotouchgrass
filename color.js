@@ -7,7 +7,7 @@ const Color = (function (/*api*/) {
 
 const colors = {
     "primary": "forestgreen",
-    "secondary": "brickred",
+    "secondary": "fuchsia",
     "tertiary": "goldenrod",
     "emergent": "lightgray"
 };

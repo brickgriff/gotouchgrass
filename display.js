@@ -313,18 +313,36 @@ var drawPlayer = (state) => {
 
 var drawRing = (state) => {
   const ctx = state.ctx;
-  const mindim = state.mindim;
+  const mindim = state.mindim; // mindim ~ 10m
   ctx.strokeStyle = colors.emergent;
-  // ctx.lineWidth = 3;
-  // ctx.beginPath();
-  // // fill unit circle ~5m
-  // drawArc(ctx, 0, 0, 0.5 * mindim);
-  // ctx.stroke();
-  // ctx.lineWidth = 1;
+  ctx.lineWidth = .001 * mindim; // ~ 1mm, i think
   ctx.beginPath();
-  // 20% radius ~1m
+  drawArc(ctx, 0, 0, 0.5 * mindim);
   drawArc(ctx, 0, 0, 0.1 * mindim);
   ctx.stroke();
+
+  const r = 0.1 * mindim;
+
+  ctx.fillStyle = colors.primary;
+  ctx.beginPath();
+  drawArc(ctx, -r*2.5, 0, r); // ~ 1
+  ctx.fill();
+
+  ctx.fillStyle = colors.secondary;
+  ctx.beginPath();
+  drawArc(ctx, r*2.5, 0, r); // ~ 1
+  ctx.fill();
+
+  ctx.fillStyle = colors.tertiary;
+  ctx.beginPath();
+  drawArc(ctx, 0, -r*2.5, r); // ~ 1
+  ctx.fill();
+
+  ctx.fillStyle = colors.emergent;
+  ctx.beginPath();
+  drawArc(ctx, 0, r*2.5, r); // ~ 1
+  ctx.fill();
+
 }
 
 

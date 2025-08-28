@@ -6,13 +6,18 @@ const Observations = (function (/*api*/) {
     const state = document.state;
     // console.log("Observations.draw()");
     const ctx = state.ctx;
-    const offset = .5;
+
+    const offset = .5; // ??? 50% of Math.PI clock-wise
+
     const mindim = state.mindim;
-    const margin = .05 * mindim;
-    const radius = .1 * mindim;
-    const offsetX = state.cx - radius - margin;
-    const offsetY = - state.cy + (radius + margin);
-    ctx.lineWidth = 2;
+    const radius = .1 * mindim; // ~ 1m
+    // const margin = .5 * radius; // ~ 50cm
+    
+    const offsetX = state.cx - radius * 2;
+    const offsetY = state.cy - radius * 2;
+    
+    ctx.lineWidth = .05 * radius; // ~ 5cm
+    ctx.lineCap = "round";
 
     const makeTransparent = (ctx, style, alpha) => {
       let red = parseInt(ctx[style].substring(1, 3), 16);
@@ -32,11 +37,11 @@ const Observations = (function (/*api*/) {
     }
 
     ctx.beginPath();
-    drawArc(ctx, -offsetX + radius * .5, offsetY, radius - 3);
-    drawArc(ctx, -offsetX - radius * .21, offsetY-.01*state.mindim, radius, { start: -.25 * Math.PI, end: Math.PI * .25 });
-    drawArc(ctx, -offsetX + radius * 1.21, offsetY-.01*state.mindim, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
-    ctx.moveTo(-offsetX + radius * .5, offsetY - radius * .8);
-    ctx.lineTo(-offsetX + radius * .5, offsetY + radius * .8);
+    drawArc(ctx, -offsetX, -offsetY, radius - 3);
+    drawArc(ctx, -offsetX - radius * .71, -offsetY - .1 * radius, radius, { start: -.25 * Math.PI, end: Math.PI * .25 });
+    drawArc(ctx, -offsetX + radius * .71, -offsetY - .1 * radius, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
+    ctx.moveTo(-offsetX, -offsetY - radius * .8);
+    ctx.lineTo(-offsetX, -offsetY + radius * .8);
     ctx.fill();
     ctx.stroke();
 
@@ -47,13 +52,13 @@ const Observations = (function (/*api*/) {
       const lremainder = leaves % (10 ** (llevel + 1)); // 10 % 100 = 0
       const langle = lremainder * 10 / (10 ** (llevel + 2) - 1); // 0 / 90 = 0%
       ctx.strokeStyle = colors.emergent;
-      drawArc(ctx, -offsetX + radius * .5, offsetY, radius - 3, {
+      drawArc(ctx, -offsetX, -offsetY, radius - 3, {
         start: (offset + langle) * Math.PI,
         end: (offset - langle) * Math.PI,
         acw: langle < 1
       });
       for (let i = 0; i < llevel; i++) {
-        drawArc(ctx, -offsetX + radius * .5, offsetY, i * (ctx.lineWidth + 1) + radius);
+        drawArc(ctx, -offsetX, -offsetY, i * (ctx.lineWidth + 1) + radius);
       }
       ctx.stroke();
     }
@@ -68,14 +73,14 @@ const Observations = (function (/*api*/) {
     }
 
     ctx.beginPath();
-    drawArc(ctx, offsetX - radius * .5, offsetY, radius - 3);
+    drawArc(ctx, offsetX, -offsetY, radius - 3);
     const foffset = 1 / 12;
     for (let i = 0; i < 6; i++) {
       let fLogoAngle = foffset + i * 1 / 6;
 
       let fLogoX = .35 * radius * Math.cos(fLogoAngle * Math.PI * 2);
       let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI * 2);
-      drawArc(ctx, offsetX - radius * .5 + fLogoX, offsetY + fLogoY, radius * .3);
+      drawArc(ctx, offsetX + fLogoX, -offsetY + fLogoY, radius * .35);
     }
     ctx.fill();
     ctx.stroke();
@@ -87,13 +92,13 @@ const Observations = (function (/*api*/) {
       const fremainder = flowers % (10 ** (flevel + 1));
       const fangle = fremainder * 10 / (10 ** (flevel + 2) - 1);
       ctx.strokeStyle = colors.emergent;
-      drawArc(ctx, offsetX - radius * .5, offsetY, radius - 3, {
+      drawArc(ctx, offsetX, -offsetY, radius - 3, {
         start: (offset + fangle) * Math.PI,
         end: (offset - fangle) * Math.PI,
         acw: fangle < 1
       });
       for (let i = 0; i < flevel; i++) {
-        drawArc(ctx, offsetX - radius * .5, offsetY, i * (ctx.lineWidth + 1) + radius);
+        drawArc(ctx, offsetX, -offsetY, i * (ctx.lineWidth + 1) + radius);
       }
       ctx.stroke();
 
@@ -118,6 +123,8 @@ const Observations = (function (/*api*/) {
     // ctx.stroke();
 
     ctx.lineWidth = 1;
+    ctx.lineCap = "butt";
+
   }
 
   return api;
