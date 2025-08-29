@@ -19,6 +19,7 @@ const Display = (function (/*api*/) {
       state.terrain = true;
     }
 
+    drawBorder(state);
     drawTerrain(state);
 
     // drawNearby(state);
@@ -115,7 +116,7 @@ const Display = (function (/*api*/) {
   }
 
   function saveTerrain(state) {
-    drawBorder(state);
+    // drawBorder(state);
     drawFoliage(state);
   }
 
@@ -326,7 +327,7 @@ var drawBackground = (state) => {
 }
 
 var drawBorder = (state) => {
-  const ctx = state.offscreen.getContext("2d");
+  const ctx = state.ctx; //offscreen.getContext("2d");
   const mindim = state.mindim;
 
   var offScreenCanvas = state.offscreen;
@@ -345,8 +346,8 @@ var drawBorder = (state) => {
   // context.restore();
 
   const r = mindim;
-  const x = state.dx / 5;
-  const y = state.dy / 5;
+  const x = state.dx * mindim;
+  const y = state.dy * mindim;
 
   // ctx.strokeStyle = colors.emergent; // weed barrier
   // ctx.beginPath();
@@ -355,17 +356,22 @@ var drawBorder = (state) => {
   // ctx.stroke();
 
   ctx.beginPath();
-  ctx.strokeStyle = colors.secondary; // weed barrier
   ctx.fillStyle = colors.emergent; // soil
   ctx.lineWidth = .05 * mindim;
   drawArc(ctx, x, y, r);
   ctx.fill();
 
-
   ctx.beginPath();
+  ctx.strokeStyle = colors.secondary; // weed barrier
   ctx.lineWidth = .01 * mindim;
-  for (let i = 0; i < 10; i++) {
-    drawArc(ctx, x, y, r + ctx.lineWidth * (2 ** i));
+  const animLength = 25;
+  const seriesGap = .5 * ctx.lineWidth;
+  const limit = .02 * ctx.lineWidth * animLength + seriesGap * (animLength - 2);
+  for (let i = 0; i < animLength; i++) {
+    const rate = .01;
+    const dr = (seriesGap * i + ctx.lineWidth * state.frame * rate) % limit;
+    // if (r1 > limit) r1 - limit;
+    drawArc(ctx, x, y, r + dr ** 2);
   }
   ctx.stroke();
 
