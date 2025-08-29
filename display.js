@@ -444,7 +444,7 @@ var drawActive = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
   ctx.beginPath();
-  ctx.lineWidth = .001 * mindim;
+  ctx.lineWidth = .002 * mindim;
   // TODO: make color fade per plant... somehow performantly
   ctx.fillStyle = colors.primary; // with a pattern mask?
   ctx.strokeStyle = colors.emergent; // tertiary with stamina system
@@ -458,16 +458,16 @@ var drawActive = (state) => {
   ctx.fill();
   ctx.stroke();
 
-  ctx.beginPath();
-  ctx.strokeStyle = colors.secondary; // with a pattern mask?
-  for (plant of state.active) {
-    if (!plant.flowers || plant.flowers < 0.009) continue;
-    x = (plant.x + state.dx) * mindim;
-    y = (plant.y + state.dy) * mindim;
-    r = plant.r * mindim;
-    drawArc(ctx, x, y, r);
-  }
-  ctx.stroke();
+  // ctx.beginPath();
+  // ctx.strokeStyle = colors.secondary; // with a pattern mask?
+  // for (plant of state.active) {
+  //   if (!plant.flowers || plant.flowers < 0.009) continue;
+  //   x = (plant.x + state.dx) * mindim;
+  //   y = (plant.y + state.dy) * mindim;
+  //   r = plant.r * mindim;
+  //   drawArc(ctx, x, y, r);
+  // }
+  // ctx.stroke();
 
 
 }
