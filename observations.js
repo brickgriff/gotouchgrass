@@ -68,7 +68,7 @@ const Observations = (function (/*api*/) {
 
     const value = Math.floor(state[name]);
     ctx.strokeStyle = ICON_COLOR[name];
-    ctx.lineWidth = .01 * mindim;
+    ctx.lineWidth = .005 * mindim;
 
     ctx.save();
 
@@ -80,13 +80,13 @@ const Observations = (function (/*api*/) {
     ICON_FUNCTION[name](ctx, -offsetX, -offsetY, radius);
     ctx.restore();
 
+
     if (value > 0) {
       drawLevelRings(ctx, value, -offsetX, -offsetY, radius);
     }
   }
 
   function drawLevelRings(ctx, value, offsetX, offsetY, radius, offsetA = .5) {
-    ctx.beginPath();
     // I want 10 to count as level 0, 100 as level 1, and so on
     // but I also want 0 to count as level 0, not level -1!
     const level = Math.max(0, Math.floor(Math.max(0, Math.log(value - 1)) / Math.log(10)));
@@ -94,14 +94,29 @@ const Observations = (function (/*api*/) {
     const angle = remainder / (9 * 10 ** (level));
     // const angle = .01;
     // console.log(value, level, remainder, angle+offsetA);
+
+    // if (level) {
+    ctx.save();
+
+    ctx.beginPath();
+    const origLine = ctx.lineWidth;
+    ctx.lineWidth = origLine * (level) * 1.5 + .1 * radius;
+    drawArc(ctx, offsetX, offsetY, radius + ctx.lineWidth * .5 - .1 * radius);
+    ctx.stroke();
+
+    ctx.restore();
+    // }  
+
+    ctx.beginPath();
     ctx.strokeStyle = colors.emergent;
     drawArc(ctx, offsetX, offsetY, radius - .1 * radius, {
       start: (offsetA + angle) * Math.PI,
       end: (offsetA - angle) * Math.PI,
       acw: true,
     });
+
     for (let i = 0; i < level; i++) {
-      drawArc(ctx, offsetX, offsetY, (i) * (1.6 * ctx.lineWidth) + radius);
+      drawArc(ctx, offsetX, offsetY, (i) * (1.5 * ctx.lineWidth) + radius);
     }
     ctx.stroke();
 
@@ -110,6 +125,9 @@ const Observations = (function (/*api*/) {
   function drawLeavesIcon(ctx, offsetX, offsetY, radius) {
     ctx.beginPath();
     drawArc(ctx, offsetX, offsetY, radius - .1 * radius);
+    ctx.fill();
+
+    ctx.beginPath();
     drawArc(ctx, offsetX - radius * .71, offsetY - .1 * radius, radius, { start: -.25 * Math.PI, end: Math.PI * .25 });
     drawArc(ctx, offsetX + radius * .71, offsetY - .1 * radius, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
     ctx.moveTo(offsetX, offsetY - radius * .8);
@@ -121,6 +139,9 @@ const Observations = (function (/*api*/) {
   function drawFlowersIcon(ctx, offsetX, offsetY, radius) {
     ctx.beginPath();
     drawArc(ctx, offsetX, offsetY, radius - .1 * radius);
+    ctx.fill();
+
+    ctx.beginPath();
     const foffset = 1 / 12;
     for (let i = 0; i < 6; i++) {
       let fLogoAngle = foffset + i * 1 / 6;
