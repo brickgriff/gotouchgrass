@@ -116,7 +116,7 @@ const Observations = (function (/*api*/) {
     });
 
     for (let i = 0; i < level; i++) {
-      drawArc(ctx, offsetX, offsetY, (i) * (1.5 * ctx.lineWidth) + radius);
+      drawArc(ctx, offsetX, offsetY, i * 1.5 * ctx.lineWidth + radius);
     }
     ctx.stroke();
 

@@ -12,6 +12,7 @@ const Display = (function (/*api*/) {
     // for most, ctx, mindim, and various screen params should work
     clear(state);
     // drawBackground(state);
+    drawBorder(state);
 
     if (!state.terrain) {
       // console.log("once");
@@ -115,7 +116,7 @@ const Display = (function (/*api*/) {
   }
 
   function saveTerrain(state) {
-    drawBorder(state);
+    // drawBorder(state);
     drawFoliage(state);
   }
 
@@ -326,12 +327,12 @@ var drawBackground = (state) => {
 }
 
 var drawBorder = (state) => {
-  const ctx = state.offscreen.getContext("2d");
+  const ctx = state.ctx; //offscreen.getContext("2d");
   const mindim = state.mindim;
 
-  var offScreenCanvas = state.offscreen;
-  var context = offScreenCanvas.getContext("2d");
-  context.lineWidth = .1 * state.mindim;
+  // var offScreenCanvas = state.offscreen;
+  // var context = offScreenCanvas.getContext("2d");
+  // context.lineWidth = .1 * state.mindim;
 
   // context.fillStyle = colors.primary;
   // context.strokeStyle = colors.tertiary;
@@ -345,8 +346,8 @@ var drawBorder = (state) => {
   // context.restore();
 
   const r = mindim;
-  const x = state.dx / 5;
-  const y = state.dy / 5;
+  const x = state.dx * mindim;
+  const y = state.dy * mindim;
 
   // ctx.strokeStyle = colors.emergent; // weed barrier
   // ctx.beginPath();
@@ -355,17 +356,22 @@ var drawBorder = (state) => {
   // ctx.stroke();
 
   ctx.beginPath();
-  ctx.strokeStyle = colors.secondary; // weed barrier
   ctx.fillStyle = colors.emergent; // soil
   ctx.lineWidth = .05 * mindim;
   drawArc(ctx, x, y, r);
   ctx.fill();
 
-
   ctx.beginPath();
+  ctx.strokeStyle = colors.secondary; // weed barrier
   ctx.lineWidth = .01 * mindim;
-  for (let i = 0; i < 10; i++) {
-    drawArc(ctx, x, y, r + ctx.lineWidth * (2 ** i));
+  const animLength = 25;
+  const seriesGap = .5 * ctx.lineWidth;
+  const limit = .02 * ctx.lineWidth * animLength + seriesGap * (animLength - 2);
+  for (let i = 0; i < animLength; i++) {
+    const rate = .01;
+    const dr = (seriesGap * i + ctx.lineWidth * state.frame * rate) % limit;
+    // if (r1 > limit) r1 - limit;
+    drawArc(ctx, x, y, r + dr ** 2);
   }
   ctx.stroke();
 
@@ -396,26 +402,6 @@ var drawBorder = (state) => {
     ctx.lineTo(x - (2 * i * mindim / 10), mindim + y);
   }
   ctx.stroke();
-
-  var r1 = .1 * state.mindim;
-  context.lineWidth = .05 * state.mindim;
-  context.strokeStyle = colors.tertiary;
-  // context.beginPath();
-  // context.arc(0, 0, r * .71, 0, Math.PI * 2);
-  // context.stroke();
-  // TODO alternate the pattern
-  context.beginPath();
-  context.arc(0, 0, r1, 0, Math.PI * 2);
-  context.stroke();
-
-  context.lineWidth = .01 * state.mindim;
-  context.strokeStyle = colors.emergent;
-
-  context.beginPath();
-  drawArc(context, 0, 0, r1);
-  drawArc(context, 0, 0, r1 + .02 * mindim);
-  drawArc(context, 0, 0, r1 - .02 * mindim);
-  context.stroke();
 
   ctx.restore();
 }
@@ -477,6 +463,28 @@ var drawActive = (state) => {
 var drawFoliage = (state) => {
   const ctx = state.offscreen.getContext("2d");
   const mindim = state.mindim;
+
+  var r1 = .1 * state.mindim;
+  ctx.lineWidth = .05 * state.mindim;
+  ctx.strokeStyle = colors.tertiary;
+  // context.beginPath();
+  // context.arc(0, 0, r * .71, 0, Math.PI * 2);
+  // context.stroke();
+  // TODO alternate the pattern
+  ctx.beginPath();
+  ctx.arc(0, 0, r1, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.lineWidth = .01 * state.mindim;
+  ctx.strokeStyle = colors.emergent;
+
+  ctx.beginPath();
+  // drawArc(context, 0, 0, r1);
+  drawArc(ctx, 0, 0, r1 + .02 * mindim);
+  drawArc(ctx, 0, 0, r1 - .02 * mindim);
+  ctx.stroke();
+
+
 
   ctx.beginPath();
   for (plant of state.plants || []) {
