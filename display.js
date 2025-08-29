@@ -155,6 +155,7 @@ var drawNav = (state) => {
 
   if (!state.events.isDragged || state.events.isClicked) {
     r = mindim * .05;
+    state.stamina -= .05
   }
 
 

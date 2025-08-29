@@ -19,6 +19,8 @@ const World = (function (/*api*/) {
       frame: 0,
       time: 0, // ???
       seed: 42,
+      stamina: 0,
+      staminaLimit: 0,
       // active: [],
       inputs: inputs, // from events.js
       events: {},
@@ -167,6 +169,10 @@ var updatePlants = (state) => {
         plant.leaves = lp;
         plant.flowers = fp;
       }
+
+      state.staminaLimit += plant.flowers * .1;
+      state.stamina += plant.leaves * .1;
+
       plant.frame = state.frame;
     } else if (plant.frame != undefined) {
       plant.frame = -1;
