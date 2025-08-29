@@ -418,7 +418,7 @@ var drawBorder = (state) => {
   context.strokeStyle = colors.emergent;
 
   context.beginPath();
-  drawArc(context, 0, 0, r1);
+  // drawArc(context, 0, 0, r1);
   drawArc(context, 0, 0, r1 + .02 * mindim);
   drawArc(context, 0, 0, r1 - .02 * mindim);
   context.stroke();
