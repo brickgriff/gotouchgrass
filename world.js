@@ -12,22 +12,27 @@ const World = (function (/*api*/) {
       // NOTE: how _much_ , not how _fast_
       dx: 0,
       dy: 0,
-      speed: 0.003,
+      speed: 0.001,
+      zoom: 0.25, // [0, 1]
+      pitch: 1, // [0, 1]
+      yaw: 0, // [-1, 1]
       frame: 0,
-      time: 0,
+      time: 0, // ???
       seed: 42,
       // active: [],
+      inputs: inputs, // from events.js
       events: {},
+      pattern: {},
       touchCount: 0,
       default: { // so you can always revert
-        speed: 0.003,
+        speed: 0.001,
       },
     };
 
     resize(state);
     createPlants(state);
 
-    return state;
+    document.state = state;
   };
 
   // update the state
@@ -47,6 +52,12 @@ const World = (function (/*api*/) {
       state.frameStanding = state.frame;
     } else if (state.vector.x != 0 || state.vector.y != 0) {
       state.frameStanding = null;
+    }
+
+    if (findInput(keybinds.primary)) {
+      state.events.isKeyboard = true;
+    } else if (state.events.isKeyboard) {
+      state.events.isKeyboard = false;
     }
 
     //console.log(state.frame - state.frameStanding > 60 * 3);
@@ -69,21 +80,15 @@ var createOffscreenCanvas = (state) => {
   state.terrain = false;
   var offScreenCanvas = document.createElement('canvas');
   const mindim = state.mindim;
-  offScreenCanvas.width = 2 * mindim;
-  offScreenCanvas.height = 2 * mindim;
+  offScreenCanvas.width = 5 * mindim;
+  offScreenCanvas.height = 5 * mindim;
   var context = offScreenCanvas.getContext("2d");
 
   context.translate(offScreenCanvas.width / 2, offScreenCanvas.height / 2);
-  context.strokeStyle = "gold";
-  var r = .1 * state.mindim;
-  context.lineWidth = .05 * state.mindim;
-
-  context.beginPath();
-  context.arc(0, 0, r, 0, Math.PI * 2);
-  context.stroke();
-
   return offScreenCanvas; //return canvas element
 }
+
+// TODO duplicate this code for creating an offscreen canvas for the secret clover area and the title card at the end (large)
 
 var resize = (state) => {
   state.canvas.width = self.innerWidth;
@@ -97,6 +102,7 @@ var resize = (state) => {
   state.ctx.translate(state.cx, state.cy);
 
   state.offscreen = createOffscreenCanvas(state);
+  window.focus();
   // console.log("once");
 }
 
@@ -124,7 +130,7 @@ var createPlants = (state) => {
     let y = hypot * Math.sin(theta); // (random() * max * 2 - max);
     let r = (random() * .6 + .4) * 0.025;
 
-    let c = (random() < .2) ? "darkgreen" : "lawngreen";
+    let c = (random() < .2) ? colors.primary : colors.tertiary;
     let t = (random() < .2) ? "clover" : "grass";
     const plant = { x: x, y: y, r: r, t: t, c: c };
     plants.push(plant);
@@ -133,6 +139,7 @@ var createPlants = (state) => {
 
 var updatePlayer = (state) => {
   const vector = state.vector;
+  state.events.isDragged = (vector.x != 0 || vector.y != 0);
   state.dx -= vector.x * state.speed;
   state.dy -= vector.y * state.speed;
 }
@@ -145,19 +152,24 @@ var updatePlants = (state) => {
   for (plant of state.nearby) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     // FIXME: maybe using a set will make this step simpler
-    const isActive = checkActive(plant, state.frame - 1 * 60);
+    const isActive = checkActive(plant, state.frame - 150);
 
     if (isActive) {
       state.active.push(plant);
     } else if (hypot < .025) {
-      if (plant.frame < 0) {
-        state.leaves += Math.random() * 0.1;
-        state.flowers += Math.random() * 0.01;
+      if (plant.frame == undefined) {
+        const lp = Math.random() * 0.1;
+        const fp = Math.random() * 0.01;
+
+        state.leaves += lp;
+        state.flowers += fp;
+
+        plant.leaves = lp;
+        plant.flowers = fp;
       }
       plant.frame = state.frame;
-      // state.active.push(plant);
-    } else {
-      plant.frame = -1000;
+    } else if (plant.frame != undefined) {
+      plant.frame = -1;
     }
   }
 
@@ -184,7 +196,7 @@ var updateNearby = (state) => {
 }
 
 var checkActive = (plant, limit) => {
-  return plant.frame > 0 && plant.frame > limit;
+  return plant.frame != undefined && plant.frame > 0 && plant.frame > limit;
 }
 
 var checkStanding = (frame_, _frame) => { return _frame - frame_ > (3 * 60) }

@@ -28,12 +28,9 @@ function main() {
   const ctx = canvas.getContext("2d", { willReadFrequently: true }); // now we can draw
 
   document.body.appendChild(canvas); // add to body
-  window.focus();
 
   // const state = { canvas: canvas, ctx: ctx }; // minimum requirement
-  const state = World.create(canvas, ctx); // initialize!
-  state.inputs = inputs; // from events.js
-  document.state = state;
+  World.create(canvas, ctx); // initialize!
 
   requestAnimationFrame(now => mainLoop(now));
 }
