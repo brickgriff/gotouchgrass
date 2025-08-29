@@ -128,12 +128,15 @@ const Observations = (function (/*api*/) {
     ctx.fill();
 
     ctx.beginPath();
+    ctx.save();
+    ctx.lineWidth = .02 * radius;
     drawArc(ctx, offsetX - radius * .71, offsetY - .1 * radius, radius, { start: -.25 * Math.PI, end: Math.PI * .25 });
     drawArc(ctx, offsetX + radius * .71, offsetY - .1 * radius, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
     ctx.moveTo(offsetX, offsetY - radius * .8);
     ctx.lineTo(offsetX, offsetY + radius * .8);
     ctx.fill();
     ctx.stroke();
+    ctx.restore();
   }
 
   function drawFlowersIcon(ctx, offsetX, offsetY, radius) {
@@ -142,6 +145,8 @@ const Observations = (function (/*api*/) {
     ctx.fill();
 
     ctx.beginPath();
+    ctx.save();
+    ctx.lineWidth = .02 * radius;
     const foffset = 1 / 12;
     for (let i = 0; i < 6; i++) {
       let fLogoAngle = foffset + i * 1 / 6;
@@ -152,6 +157,7 @@ const Observations = (function (/*api*/) {
     }
     ctx.fill();
     ctx.stroke();
+    ctx.restore();
   }
 
   function makeTransparent(ctx, style, alpha) {
