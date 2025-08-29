@@ -47,8 +47,8 @@ const Display = (function (/*api*/) {
 
     drawPlayer(state);
     drawRing(state);
-    Stamina.draw();
     Observations.draw();
+    Stamina.draw();
 
     // -- trackpad --
     // let rectX = -.9 * state.cx;

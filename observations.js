@@ -59,7 +59,7 @@ const Observations = (function (/*api*/) {
 
 
   function drawObservation(state, name, offsetX, offsetY) {
-    // if (!Math.floor(state[name])) state[name] = 123;
+    if (!Math.floor(state[name])) state[name] = 123;
     // state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
 
     const ctx = state.ctx;
@@ -154,8 +154,12 @@ const Observations = (function (/*api*/) {
       let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI * 2);
       drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35);
     }
-    ctx.fill();
+    // ctx.fill();
     ctx.stroke();
+
+    ctx.beginPath();
+    drawArc(ctx, offsetX, offsetY, radius * .35);
+    ctx.fill();
     ctx.restore();
   }
 
