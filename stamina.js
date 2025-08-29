@@ -23,7 +23,7 @@ const Stamina = (function (/*api*/) {
         if (staminaPercent >= .1) {
             ctx.beginPath();
             ctx.strokeStyle = colors.tertiary;
-            ctx.lineWidth = 0.025 * mindim;
+            ctx.lineWidth = 0.03 * mindim;
             drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
             ctx.stroke();
         }
