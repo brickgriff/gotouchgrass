@@ -12,6 +12,7 @@ const Display = (function (/*api*/) {
     // for most, ctx, mindim, and various screen params should work
     clear(state);
     // drawBackground(state);
+    drawBorder(state);
 
     if (!state.terrain) {
       // console.log("once");
@@ -19,7 +20,6 @@ const Display = (function (/*api*/) {
       state.terrain = true;
     }
 
-    drawBorder(state);
     drawTerrain(state);
 
     // drawNearby(state);
@@ -330,9 +330,9 @@ var drawBorder = (state) => {
   const ctx = state.ctx; //offscreen.getContext("2d");
   const mindim = state.mindim;
 
-  var offScreenCanvas = state.offscreen;
-  var context = offScreenCanvas.getContext("2d");
-  context.lineWidth = .1 * state.mindim;
+  // var offScreenCanvas = state.offscreen;
+  // var context = offScreenCanvas.getContext("2d");
+  // context.lineWidth = .1 * state.mindim;
 
   // context.fillStyle = colors.primary;
   // context.strokeStyle = colors.tertiary;
@@ -403,26 +403,6 @@ var drawBorder = (state) => {
   }
   ctx.stroke();
 
-  var r1 = .1 * state.mindim;
-  context.lineWidth = .05 * state.mindim;
-  context.strokeStyle = colors.tertiary;
-  // context.beginPath();
-  // context.arc(0, 0, r * .71, 0, Math.PI * 2);
-  // context.stroke();
-  // TODO alternate the pattern
-  context.beginPath();
-  context.arc(0, 0, r1, 0, Math.PI * 2);
-  context.stroke();
-
-  context.lineWidth = .01 * state.mindim;
-  context.strokeStyle = colors.emergent;
-
-  context.beginPath();
-  // drawArc(context, 0, 0, r1);
-  drawArc(context, 0, 0, r1 + .02 * mindim);
-  drawArc(context, 0, 0, r1 - .02 * mindim);
-  context.stroke();
-
   ctx.restore();
 }
 
@@ -483,6 +463,28 @@ var drawActive = (state) => {
 var drawFoliage = (state) => {
   const ctx = state.offscreen.getContext("2d");
   const mindim = state.mindim;
+
+  var r1 = .1 * state.mindim;
+  ctx.lineWidth = .05 * state.mindim;
+  ctx.strokeStyle = colors.tertiary;
+  // context.beginPath();
+  // context.arc(0, 0, r * .71, 0, Math.PI * 2);
+  // context.stroke();
+  // TODO alternate the pattern
+  ctx.beginPath();
+  ctx.arc(0, 0, r1, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.lineWidth = .01 * state.mindim;
+  ctx.strokeStyle = colors.emergent;
+
+  ctx.beginPath();
+  // drawArc(context, 0, 0, r1);
+  drawArc(ctx, 0, 0, r1 + .02 * mindim);
+  drawArc(ctx, 0, 0, r1 - .02 * mindim);
+  ctx.stroke();
+
+
 
   ctx.beginPath();
   for (plant of state.plants || []) {
