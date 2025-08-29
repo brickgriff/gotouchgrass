@@ -139,7 +139,7 @@ var drawNav = (state) => {
   if (!state.events.isPressed && !state.events.isKeyboard /*&& !wasClicked*/) return;
   ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.emergent;
-  ctx.lineWidth = .001 * mindim; // ~ 1mm, i think
+  ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
 
   if (!state.events.isDragged) {
     ctx.beginPath();
@@ -420,7 +420,7 @@ var drawRing = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim; // mindim ~ 10m
   ctx.strokeStyle = colors.emergent;
-  ctx.lineWidth = .001 * mindim; // ~ 1mm, i think
+  ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
   ctx.beginPath();
   // drawArc(ctx, 0, 0, 0.5 * mindim);
   drawArc(ctx, 0, 0, 0.1 * mindim);
