@@ -80,8 +80,8 @@ var createOffscreenCanvas = (state) => {
   state.terrain = false;
   var offScreenCanvas = document.createElement('canvas');
   const mindim = state.mindim;
-  offScreenCanvas.width = 2.5 * mindim;
-  offScreenCanvas.height = 2.5 * mindim;
+  offScreenCanvas.width = 5 * mindim;
+  offScreenCanvas.height = 5 * mindim;
   var context = offScreenCanvas.getContext("2d");
 
   context.translate(offScreenCanvas.width / 2, offScreenCanvas.height / 2);

@@ -330,27 +330,6 @@ var drawBorder = (state) => {
 
   var offScreenCanvas = state.offscreen;
   var context = offScreenCanvas.getContext("2d");
-  var r1 = .1 * state.mindim;
-  context.lineWidth = .05 * state.mindim;
-  context.strokeStyle = colors.tertiary;
-  // context.beginPath();
-  // context.arc(0, 0, r * .71, 0, Math.PI * 2);
-  // context.stroke();
-  // TODO alternate the pattern
-  context.beginPath();
-  context.arc(0, 0, r1, 0, Math.PI * 2);
-  context.stroke();
-
-  context.lineWidth = .01 * state.mindim;
-  context.strokeStyle = colors.emergent;
-
-  context.beginPath();
-  context.arc(0, 0, r1, 0, Math.PI * 2);
-  context.arc(0, 0, r1 + .02 * mindim, 0, Math.PI * 2);
-  context.arc(0, 0, r1 - .02 * mindim, 0, Math.PI * 2);
-  context.lineTo(-(r1 + .02 * mindim), 0);
-  context.stroke();
-
   context.lineWidth = .1 * state.mindim;
 
   // context.fillStyle = colors.primary;
@@ -384,11 +363,9 @@ var drawBorder = (state) => {
 
   ctx.beginPath();
   ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, x, y, r);
-  drawArc(ctx, x, y, r + ctx.lineWidth * 1.5);
-  drawArc(ctx, x, y, r + ctx.lineWidth * 3);
-  drawArc(ctx, x, y, r + ctx.lineWidth * 6);
-  drawArc(ctx, x, y, r + ctx.lineWidth * 12);
+  for (let i = 0; i < 10; i++) {
+    drawArc(ctx, x, y, r + ctx.lineWidth * (2 ** (i)) * 1);
+  }
   ctx.stroke();
 
 
@@ -411,13 +388,33 @@ var drawBorder = (state) => {
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.lineWidth = .1 * mindim;
+  ctx.lineWidth = .05 * mindim;
   ctx.strokeStyle = colors.primary;
   for (let i = -20; i < 20; i++) {
     ctx.lineTo(-mindim + x - (2 * i * mindim / 10), -mindim + y);
     ctx.lineTo(x - (2 * i * mindim / 10), mindim + y);
   }
   ctx.stroke();
+
+  var r1 = .1 * state.mindim;
+  context.lineWidth = .05 * state.mindim;
+  context.strokeStyle = colors.tertiary;
+  // context.beginPath();
+  // context.arc(0, 0, r * .71, 0, Math.PI * 2);
+  // context.stroke();
+  // TODO alternate the pattern
+  context.beginPath();
+  context.arc(0, 0, r1, 0, Math.PI * 2);
+  context.stroke();
+
+  context.lineWidth = .01 * state.mindim;
+  context.strokeStyle = colors.emergent;
+
+  context.beginPath();
+  drawArc(context, 0, 0, r1);
+  drawArc(context, 0, 0, r1 + .02 * mindim);
+  drawArc(context, 0, 0, r1 - .02 * mindim);
+  context.stroke();
 
   ctx.restore();
 }
