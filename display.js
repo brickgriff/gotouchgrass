@@ -477,12 +477,17 @@ var drawFoliage = (state) => {
   ctx.arc(0, 0, r1, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.lineWidth = .002 * state.mindim;
   ctx.strokeStyle = colors.emergent;
+  ctx.lineWidth = .004 * state.mindim;
+
+  ctx.beginPath();
+  drawArc(ctx, 0, 0, r1 + .025 * mindim);
+  ctx.stroke();
+
+  ctx.lineWidth = .002 * state.mindim;
 
   ctx.beginPath();
   drawArc(ctx, 0, 0, r1 + .019 * mindim);
-  drawArc(ctx, 0, 0, r1 + .025 * mindim);
   drawArc(ctx, 0, .003 * mindim, r1 - .020 * mindim);
   drawArc(ctx, 0, -.002 * mindim, r1 + .014 * mindim);
   drawArc(ctx, -.001 * mindim, 0, r1 - .009 * mindim);
