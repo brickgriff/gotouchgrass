@@ -60,7 +60,7 @@ const Observations = (function (/*api*/) {
 
   function drawObservation(state, name, offsetX, offsetY) {
     // if (!Math.floor(state[name])) state[name] = 0;
-    state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
+    // state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
 
     const ctx = state.ctx;
     const mindim = state.mindim;

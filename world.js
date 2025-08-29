@@ -102,7 +102,7 @@ var resize = (state) => {
   state.ctx.translate(state.cx, state.cy);
 
   state.offscreen = createOffscreenCanvas(state);
-  // window.focus();
+  window.focus();
   // console.log("once");
 }
 
