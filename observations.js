@@ -78,12 +78,12 @@ const Observations = (function (/*api*/) {
     }
 
     ICON_FUNCTION[name](ctx, -offsetX, -offsetY, radius);
-    ctx.restore();
-
 
     if (value > 0) {
       drawLevelRings(ctx, value, -offsetX, -offsetY, radius);
     }
+    ctx.restore();
+
   }
 
   function drawLevelRings(ctx, value, offsetX, offsetY, radius, offsetA = .5) {
