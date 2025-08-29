@@ -20,7 +20,7 @@ const Stamina = (function (/*api*/) {
         ctx.lineCap = "round";
         const r = state.cy * 3;
         const offsetY = state.cy * 3.8;
-        const coef = mindim / maxdim;
+        const coef = .9 * mindim / maxdim;
 
         if (staminaPercent < .01) return;
 
