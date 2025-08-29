@@ -20,9 +20,9 @@ const Stamina = (function (/*api*/) {
         const coef = mindim / maxdim;
 
         // stamina full indicator
-        if (staminaPercent >= .99) {
+        if (staminaPercent >= .1) {
             ctx.beginPath();
-            ctx.strokeStyle = colors.emergent;
+            ctx.strokeStyle = colors.tertiary;
             ctx.lineWidth = 0.025 * mindim;
             drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
             ctx.stroke();
@@ -30,7 +30,7 @@ const Stamina = (function (/*api*/) {
 
         // stamina bar border
         ctx.beginPath();
-        ctx.strokeStyle = colors.tertiary;
+        ctx.strokeStyle = colors.emergent;
         ctx.lineWidth = 0.02 * mindim;
         drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
         // drawArc(ctx, 0, -offsetY - 5 * ctx.lineWidth, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
@@ -40,14 +40,14 @@ const Stamina = (function (/*api*/) {
         // stamina limit
         ctx.beginPath();
         ctx.strokeStyle = colors.secondary;
-        ctx.lineWidth = 0.01 * mindim;
-        drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * staminaLimitPercent * .05) * Math.PI, end: (.5 + coef * staminaLimitPercent * .05) * Math.PI });
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.strokeStyle = colors.emergent;
         ctx.lineWidth = 0.005 * mindim;
         drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * staminaLimitPercent * .05) * Math.PI, end: (.5 + coef * staminaLimitPercent * .05) * Math.PI });
         ctx.stroke();
+        // ctx.beginPath();
+        // ctx.strokeStyle = colors.secondary;
+        // ctx.lineWidth = 0.005 * mindim;
+        // drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * staminaLimitPercent * .05) * Math.PI, end: (.5 + coef * staminaLimitPercent * .05) * Math.PI });
+        // ctx.stroke();
 
         // stamina
         ctx.beginPath();
