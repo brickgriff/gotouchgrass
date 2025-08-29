@@ -87,23 +87,25 @@ var createOffscreenCanvas = (state) => {
 
   context.translate(offScreenCanvas.width / 2, offScreenCanvas.height / 2);
   var r = .1 * state.mindim;
-  context.lineWidth = .03 * state.mindim;
+  context.lineWidth = .05 * state.mindim;
 
   context.strokeStyle = colors.tertiary;
-  context.beginPath();
-  context.arc(0, 0, r * .71, 0, Math.PI * 2);
-  context.stroke();
+  // context.beginPath();
+  // context.arc(0, 0, r * .71, 0, Math.PI * 2);
+  // context.stroke();
   // TODO alternate the pattern
   context.beginPath();
   context.arc(0, 0, r, 0, Math.PI * 2);
   context.stroke();
+
+  context.lineWidth = .1 * state.mindim;
 
   context.fillStyle = colors.emergent;
   context.strokeStyle = colors.tertiary;
   context.save();
   context.beginPath();
   context.rect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
-  context.arc(0, 0, mindim, 0, Math.PI * 2, true);
+  context.arc(0, 0, mindim * 1.1, 0, Math.PI * 2, true);
   context.clip();
   context.fillRect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
   context.strokeRect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
@@ -174,7 +176,7 @@ var updatePlants = (state) => {
   for (plant of state.nearby) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     // FIXME: maybe using a set will make this step simpler
-    const isActive = checkActive(plant, state.frame - 1 * 60);
+    const isActive = checkActive(plant, state.frame - 30);
 
     if (isActive) {
       state.active.push(plant);

@@ -40,7 +40,7 @@ const Observations = (function (/*api*/) {
 
   function drawObservation(state, name, offsetX, offsetY) {
     // if (!Math.floor(state[name])) state[name] = 0;
-    // state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
+    state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
 
     const ctx = state.ctx;
     const mindim = state.mindim;
@@ -81,7 +81,7 @@ const Observations = (function (/*api*/) {
       acw: true,
     });
     for (let i = 0; i < level; i++) {
-      drawArc(ctx, offsetX, offsetY, i * (ctx.lineWidth + 1) + radius);
+      drawArc(ctx, offsetX, offsetY, (i - .5) * (1.5 * ctx.lineWidth) + radius);
     }
     ctx.stroke();
 
