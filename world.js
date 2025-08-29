@@ -31,8 +31,7 @@ const World = (function (/*api*/) {
 
     resize(state);
     createPlants(state);
-    // const pattern = Pattern.build(state);
-    // state.pattern.soil = pattern("soil");
+
     document.state = state;
   };
 
