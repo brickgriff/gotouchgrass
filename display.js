@@ -44,10 +44,9 @@ const Display = (function (/*api*/) {
       ctx.restore();
     }
 
-    Observations.draw();
-
     drawPlayer(state);
     drawRing(state);
+    Observations.draw();
 
     // -- trackpad --
     // let rectX = -.9 * state.cx;
@@ -364,7 +363,7 @@ var drawBorder = (state) => {
   ctx.beginPath();
   ctx.lineWidth = .01 * mindim;
   for (let i = 0; i < 10; i++) {
-    drawArc(ctx, x, y, r + ctx.lineWidth * (2 ** (i)) * 1);
+    drawArc(ctx, x, y, r + ctx.lineWidth * (2 ** i));
   }
   ctx.stroke();
 

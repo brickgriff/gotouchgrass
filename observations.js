@@ -22,8 +22,28 @@ const Observations = (function (/*api*/) {
     const offsetX = state.cx - radius * 2;
     const offsetY = state.cy - radius * 2;
 
-    ctx.lineWidth = .05 * radius; // ~ 5cm
+    ctx.lineWidth = .01 * radius; // ~ 5cm
     ctx.lineCap = "round";
+
+    // ctx.beginPath();
+    // drawArrowAt(state, "flowers", mindim, mindim);
+    // ctx.fill();
+    // ctx.stroke();
+
+    // ctx.beginPath();
+    // drawArrowAt(state, "leaves", -mindim / 2, mindim / 2);
+    // ctx.fill();
+    // ctx.stroke();
+
+    ctx.beginPath();
+    for (plant of state.nearby) {
+      const hypot = Math.hypot((plant.x + state.dx) * mindim, (plant.y + state.dy) * mindim);
+      if (hypot > .1 * mindim) continue;
+      drawArrowAt(state, "leaves", plant.x, plant.y, plant.r);
+    }
+    ctx.fill();
+    ctx.stroke();
+
     ctx.fillStyle = colors.emergent; // common
 
     // // "Area of plant matter, in cm^2"
@@ -119,6 +139,49 @@ const Observations = (function (/*api*/) {
     let blue = parseInt(ctx[style].substring(5, 7), 16);
     // let alpha = Math.min(1, (ratio));
     ctx[style] = `rgba(${red},${green},${blue},${alpha})`;
+  }
+
+  // function drawArrowTo(ctx, style, theta) {
+
+  // }
+
+  function drawArrowAt(state, style, x, y, r = null) {
+    const ctx = state.ctx;
+    const mindim = state.mindim;
+    const maxdim = Math.max(state.canvas.width, state.canvas.height);
+
+    if (r == null) r = .01;
+    r *= mindim * .25;
+    // ctx.beginPath();
+
+    ctx.strokeStyle = colors.emergent;
+    ctx.fillStyle = ICON_COLOR[style];
+
+    x = (x + state.dx) * mindim;
+    y = (y + state.dy) * mindim;
+
+    const hypot = Math.hypot(x, y);
+    const angle = Math.atan2(y, x);
+    var d = hypot;
+
+    if (hypot > mindim * .5) {
+      d = .1;
+    }
+    if (hypot < mindim * .05) {
+      d = .05;
+    } else if (hypot < maxdim / mindim * mindim) {
+      drawArc(ctx, x, y, r);
+    }
+
+    if (d != hypot) {
+      var x2 = d * Math.cos(angle);
+      var y2 = d * Math.sin(angle);
+    }
+
+    drawArc(ctx, x2 * mindim, y2 * mindim, r);
+
+    // ctx.fill();
+    // ctx.stroke();
   }
 
   // ctx.lineWidth = 5;
