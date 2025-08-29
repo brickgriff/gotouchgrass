@@ -8,8 +8,8 @@ const Stamina = (function (/*api*/) {
         const mindim = state.mindim;
         const maxdim = Math.max(state.canvas.height, state.canvas.width);
 
-        state.stamina = state.stamina == undefined ? 0 : state.stamina + .001;
-        state.staminaLimit = state.staminaLimit == undefined ? 0 : state.staminaLimit + .01;
+        state.stamina = state.stamina == undefined ? 0 : state.stamina + .01;
+        state.staminaLimit = state.staminaLimit == undefined ? 0 : state.staminaLimit + .02;
 
         if (state.staminaLimit > 10) state.staminaLimit = 10;
         if (state.stamina > state.staminaLimit) state.stamina = state.staminaLimit;
@@ -26,6 +26,11 @@ const Stamina = (function (/*api*/) {
 
         // stamina full indicator
         if (staminaPercent >= .99) {
+            ctx.beginPath();
+            ctx.strokeStyle = colors.emergent;
+            ctx.lineWidth = 0.04 * mindim;
+            drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
+            ctx.stroke();
             ctx.beginPath();
             ctx.strokeStyle = colors.tertiary;
             ctx.lineWidth = 0.03 * mindim;
