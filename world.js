@@ -13,11 +13,16 @@ const World = (function (/*api*/) {
       dx: 0,
       dy: 0,
       speed: 0.003,
+      zoom: 0.25, // [0, 1]
+      pitch: 1, // [0, 1]
+      yaw: 0, // [-1, 1]
       frame: 0,
-      time: 0,
+      time: 0, // ???
       seed: 42,
       // active: [],
+      inputs: inputs, // from events.js
       events: {},
+      pattern: {},
       touchCount: 0,
       default: { // so you can always revert
         speed: 0.003,
@@ -26,8 +31,9 @@ const World = (function (/*api*/) {
 
     resize(state);
     createPlants(state);
-
-    return state;
+    // const pattern = Pattern.build(state);
+    // state.pattern.soil = pattern("soil");
+    document.state = state;
   };
 
   // update the state
@@ -81,23 +87,25 @@ var createOffscreenCanvas = (state) => {
 
   context.translate(offScreenCanvas.width / 2, offScreenCanvas.height / 2);
   var r = .1 * state.mindim;
-  context.lineWidth = .03 * state.mindim;
+  context.lineWidth = .05 * state.mindim;
 
-  context.strokeStyle = "goldenrod";
-  context.beginPath();
-  context.arc(0, 0, r * .71, 0, Math.PI * 2);
-  context.stroke();
-  context.strokeStyle = "gold";
+  context.strokeStyle = colors.tertiary;
+  // context.beginPath();
+  // context.arc(0, 0, r * .71, 0, Math.PI * 2);
+  // context.stroke();
+  // TODO alternate the pattern
   context.beginPath();
   context.arc(0, 0, r, 0, Math.PI * 2);
   context.stroke();
 
-  context.fillStyle = "darkslategray";
-  context.strokeStyle = "gold";
+  context.lineWidth = .1 * state.mindim;
+
+  context.fillStyle = colors.emergent;
+  context.strokeStyle = colors.tertiary;
   context.save();
   context.beginPath();
   context.rect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
-  context.arc(0, 0, mindim, 0, Math.PI * 2, true);
+  context.arc(0, 0, mindim * 1.1, 0, Math.PI * 2, true);
   context.clip();
   context.fillRect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
   context.strokeRect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
@@ -147,7 +155,7 @@ var createPlants = (state) => {
     let y = hypot * Math.sin(theta); // (random() * max * 2 - max);
     let r = (random() * .6 + .4) * 0.025;
 
-    let c = (random() < .2) ? "darkgreen" : "lawngreen";
+    let c = (random() < .2) ? colors.primary : colors.tertiary;
     let t = (random() < .2) ? "clover" : "grass";
     const plant = { x: x, y: y, r: r, t: t, c: c };
     plants.push(plant);
@@ -168,7 +176,7 @@ var updatePlants = (state) => {
   for (plant of state.nearby) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     // FIXME: maybe using a set will make this step simpler
-    const isActive = checkActive(plant, state.frame - 1 * 60);
+    const isActive = checkActive(plant, state.frame - 30);
 
     if (isActive) {
       state.active.push(plant);
