@@ -159,7 +159,7 @@ var updatePlants = (state) => {
     } else if (hypot < .025) {
       if (plant.frame == undefined) {
         const lp = Math.random() * 0.1;
-        const fp= Math.random() * 0.01;
+        const fp = Math.random() * 0.01;
 
         state.leaves += lp;
         state.flowers += fp;
