@@ -133,7 +133,6 @@ const Observations = (function (/*api*/) {
     drawArc(ctx, offsetX + radius * .71, offsetY - .1 * radius, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
     ctx.moveTo(offsetX, offsetY - radius * .8);
     ctx.lineTo(offsetX, offsetY + radius * .8);
-    ctx.fill();
     ctx.stroke();
     ctx.restore();
   }
@@ -146,7 +145,7 @@ const Observations = (function (/*api*/) {
     ctx.beginPath();
     ctx.save();
     ctx.lineWidth = .02 * radius;
-    const foffset = 1 / 12;
+    const foffset = 2 / 12;
     for (let i = 0; i < 6; i++) {
       let fLogoAngle = foffset + i * 1 / 6;
 
@@ -154,7 +153,6 @@ const Observations = (function (/*api*/) {
       let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI * 2);
       drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35);
     }
-    // ctx.fill();
     ctx.stroke();
 
     ctx.beginPath();
