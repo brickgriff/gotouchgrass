@@ -86,30 +86,6 @@ var createOffscreenCanvas = (state) => {
   var context = offScreenCanvas.getContext("2d");
 
   context.translate(offScreenCanvas.width / 2, offScreenCanvas.height / 2);
-  var r = .1 * state.mindim;
-  context.lineWidth = .05 * state.mindim;
-
-  context.strokeStyle = colors.tertiary;
-  // context.beginPath();
-  // context.arc(0, 0, r * .71, 0, Math.PI * 2);
-  // context.stroke();
-  // TODO alternate the pattern
-  context.beginPath();
-  context.arc(0, 0, r, 0, Math.PI * 2);
-  context.stroke();
-
-  context.lineWidth = .1 * state.mindim;
-
-  context.fillStyle = colors.emergent;
-  context.strokeStyle = colors.tertiary;
-  context.save();
-  context.beginPath();
-  context.rect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
-  context.arc(0, 0, mindim * 1.1, 0, Math.PI * 2, true);
-  context.clip();
-  context.fillRect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
-  context.strokeRect(-offScreenCanvas.width / 2, -offScreenCanvas.height / 2, offScreenCanvas.width, offScreenCanvas.height);
-  context.restore();
   return offScreenCanvas; //return canvas element
 }
 
@@ -182,8 +158,14 @@ var updatePlants = (state) => {
       state.active.push(plant);
     } else if (hypot < .025) {
       if (plant.frame == undefined) {
-        state.leaves += Math.random() * 0.1;
-        state.flowers += Math.random() * 0.01;
+        const lp = Math.random() * 0.1;
+        const fp= Math.random() * 0.01;
+
+        state.leaves += lp;
+        state.flowers += fp;
+
+        plant.leaves = lp;
+        plant.flowers = fp;
       }
       plant.frame = state.frame;
     } else if (plant.frame != undefined) {
