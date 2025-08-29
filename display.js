@@ -527,6 +527,15 @@ var drawNearby = (state) => {
 
 }
 
+function makeTransparent(ctx, style, alpha) {
+  let red = parseInt(ctx[style].substring(1, 3), 16);
+  let green = parseInt(ctx[style].substring(3, 5), 16);
+  let blue = parseInt(ctx[style].substring(5, 7), 16);
+  // let alpha = Math.min(1, (ratio));
+  ctx[style] = `rgba(${red},${green},${blue},${alpha})`;
+}
+
+
 var drawArc = (ctx, x, y, r, params = {}) => {
   let start = params.start || 0;
   let end = params.end || Math.PI * 2;
