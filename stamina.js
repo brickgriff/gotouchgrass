@@ -8,8 +8,8 @@ const Stamina = (function (/*api*/) {
         const mindim = state.mindim;
         const maxdim = Math.max(state.canvas.height, state.canvas.width);
 
-        // state.stamina = state.stamina == undefined ? 0 : state.stamina;// + .005;
-        // state.staminaLimit = state.staminaLimit == undefined ? 0 : state.staminaLimit;// + .01;
+        state.stamina = state.stamina == undefined ? 0 : state.stamina + .001;
+        state.staminaLimit = state.staminaLimit == undefined ? 0 : state.staminaLimit + .01;
 
         if (state.staminaLimit > 10) state.staminaLimit = 10;
         if (state.stamina > state.staminaLimit) state.stamina = state.staminaLimit;
