@@ -12,7 +12,7 @@ const World = (function (/*api*/) {
       // NOTE: how _much_ , not how _fast_
       dx: 0,
       dy: 0,
-      speed: 0.001,
+      speed: 0.005,
       zoom: 0.25, // [0, 1]
       pitch: 1, // [0, 1]
       yaw: 0, // [-1, 1]

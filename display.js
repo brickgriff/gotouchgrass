@@ -343,8 +343,8 @@ var drawBorder = (state) => {
   // context.restore();
 
   const r = mindim;
-  const x = state.dx * mindim;
-  const y = state.dy * mindim;
+  const x = state.dx / 5;
+  const y = state.dy / 5;
 
   // ctx.strokeStyle = colors.emergent; // weed barrier
   // ctx.beginPath();
