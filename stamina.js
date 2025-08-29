@@ -20,7 +20,7 @@ const Stamina = (function (/*api*/) {
         const coef = mindim / maxdim;
 
         // stamina full indicator
-        if (staminaPercent >= .1) {
+        if (staminaPercent >= .99) {
             ctx.beginPath();
             ctx.strokeStyle = colors.emergent;
             ctx.lineWidth = 0.025 * mindim;
