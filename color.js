@@ -6,9 +6,9 @@ const Color = (function (/*api*/) {
 }());
 
 const colors = {
-    "primary": "forestgreen",
-    "secondary": "fuchsia",
-    "tertiary": "goldenrod",
-    "emergent": "lightgray",
+    "primary": "darkgreen",
+    "secondary": "darkviolet",
+    "tertiary": "saddlebrown",
+    "emergent": "darkgray",
     "entropic": "navyblue"
 };
