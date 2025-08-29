@@ -160,9 +160,6 @@ const Observations = (function (/*api*/) {
     ctx.beginPath();
     drawArc(ctx, offsetX, offsetY, radius * .35);
     ctx.fill();
-    ctx.beginPath();
-    drawArc(ctx, offsetX, offsetY, radius * .17);
-    // ctx.stroke();
     ctx.restore();
   }
 
