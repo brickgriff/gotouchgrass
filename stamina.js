@@ -8,8 +8,8 @@ const Stamina = (function (/*api*/) {
         const mindim = state.mindim;
         const maxdim = Math.max(state.canvas.height, state.canvas.width);
 
-        state.stamina = 3;
-        state.staminaLimit = 7;
+        state.stamina = 1;
+        state.staminaLimit = 3;
 
         const staminaPercent = state.stamina * 10 / 100;
         const staminaLimitPercent = state.staminaLimit * 10 / 100;
@@ -22,7 +22,7 @@ const Stamina = (function (/*api*/) {
         // stamina full indicator
         if (staminaPercent >= .1) {
             ctx.beginPath();
-            ctx.strokeStyle = colors.secondary;
+            ctx.strokeStyle = colors.emergent;
             ctx.lineWidth = 0.025 * mindim;
             drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
             ctx.stroke();
@@ -30,7 +30,7 @@ const Stamina = (function (/*api*/) {
 
         // stamina bar border
         ctx.beginPath();
-        ctx.strokeStyle = colors.emergent;
+        ctx.strokeStyle = colors.tertiary;
         ctx.lineWidth = 0.02 * mindim;
         drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
         // drawArc(ctx, 0, -offsetY - 5 * ctx.lineWidth, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
