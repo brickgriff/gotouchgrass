@@ -139,7 +139,7 @@ var drawNav = (state) => {
   if (!state.events.isPressed && !state.events.isKeyboard /*&& !wasClicked*/) return;
   ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.emergent;
-  ctx.lineWidth = .001 * mindim; // ~ 1mm, i think
+  ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
 
   if (!state.events.isDragged) {
     ctx.beginPath();
@@ -420,7 +420,7 @@ var drawRing = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim; // mindim ~ 10m
   ctx.strokeStyle = colors.emergent;
-  ctx.lineWidth = .001 * mindim; // ~ 1mm, i think
+  ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
   ctx.beginPath();
   // drawArc(ctx, 0, 0, 0.5 * mindim);
   drawArc(ctx, 0, 0, 0.1 * mindim);
@@ -471,20 +471,23 @@ var drawFoliage = (state) => {
   // context.arc(0, 0, r * .71, 0, Math.PI * 2);
   // context.stroke();
   // TODO alternate the pattern
+
+  // tree stump
   ctx.beginPath();
   ctx.arc(0, 0, r1, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.lineWidth = .01 * state.mindim;
+  ctx.lineWidth = .002 * state.mindim;
   ctx.strokeStyle = colors.emergent;
 
   ctx.beginPath();
-  // drawArc(context, 0, 0, r1);
-  drawArc(ctx, 0, 0, r1 + .02 * mindim);
-  drawArc(ctx, 0, 0, r1 - .02 * mindim);
+  drawArc(ctx, 0, 0, r1 + .019 * mindim);
+  drawArc(ctx, 0, 0, r1 + .025 * mindim);
+  drawArc(ctx, 0, .003 * mindim, r1 - .020 * mindim);
+  drawArc(ctx, 0, -.002 * mindim, r1 + .014 * mindim);
+  drawArc(ctx, -.001 * mindim, 0, r1 - .009 * mindim);
+  drawArc(ctx, 0, 0, r1 + .005 * mindim);
   ctx.stroke();
-
-
 
   ctx.beginPath();
   for (plant of state.plants || []) {
@@ -497,7 +500,6 @@ var drawFoliage = (state) => {
     drawArc(ctx, x, y, r);
   }
   ctx.fill();
-
 }
 
 var drawNearby = (state) => {

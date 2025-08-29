@@ -10,5 +10,5 @@ const colors = {
     "secondary": "darkviolet",
     "tertiary": "saddlebrown",
     "emergent": "darkgray",
-    "entropic": "navyblue"
+    "rewarding": "gold"
 };
