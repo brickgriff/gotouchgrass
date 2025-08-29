@@ -159,18 +159,6 @@ const Observations = (function (/*api*/) {
     ctx.restore();
   }
 
-  function makeTransparent(ctx, style, alpha) {
-    let red = parseInt(ctx[style].substring(1, 3), 16);
-    let green = parseInt(ctx[style].substring(3, 5), 16);
-    let blue = parseInt(ctx[style].substring(5, 7), 16);
-    // let alpha = Math.min(1, (ratio));
-    ctx[style] = `rgba(${red},${green},${blue},${alpha})`;
-  }
-
-  // function drawArrowTo(ctx, style, theta) {
-
-  // }
-
   function drawArrowAt(state, style, x, y, r = null) {
     const ctx = state.ctx;
     const mindim = state.mindim;
