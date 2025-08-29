@@ -43,11 +43,6 @@ const Stamina = (function (/*api*/) {
         ctx.lineWidth = 0.005 * mindim;
         drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * staminaLimitPercent * .05) * Math.PI, end: (.5 + coef * staminaLimitPercent * .05) * Math.PI });
         ctx.stroke();
-        // ctx.beginPath();
-        // ctx.strokeStyle = colors.secondary;
-        // ctx.lineWidth = 0.005 * mindim;
-        // drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * staminaLimitPercent * .05) * Math.PI, end: (.5 + coef * staminaLimitPercent * .05) * Math.PI });
-        // ctx.stroke();
 
         // stamina
         ctx.beginPath();
