@@ -47,6 +47,7 @@ const Display = (function (/*api*/) {
 
     drawPlayer(state);
     drawRing(state);
+    Stamina.draw();
     Observations.draw();
 
     // -- trackpad --
