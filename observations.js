@@ -60,7 +60,7 @@ const Observations = (function (/*api*/) {
 
   function drawObservation(state, name, offsetX, offsetY) {
     // if (!Math.floor(state[name])) state[name] = 0;
-    // state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
+    state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
 
     const ctx = state.ctx;
     const mindim = state.mindim;
@@ -101,7 +101,7 @@ const Observations = (function (/*api*/) {
     ctx.beginPath();
     const origLine = ctx.lineWidth;
     ctx.lineWidth = origLine * (level) * 1.5 + .1 * radius;
-    drawArc(ctx, offsetX, offsetY, radius + ctx.lineWidth * .5 - .1 * radius);
+    drawArc(ctx, offsetX, offsetY, radius + ctx.lineWidth * .5 - (.75 * origLine + .1 * radius));
     ctx.stroke();
 
     ctx.restore();
@@ -119,12 +119,11 @@ const Observations = (function (/*api*/) {
       drawArc(ctx, offsetX, offsetY, i * 1.5 * ctx.lineWidth + radius);
     }
     ctx.stroke();
-
   }
 
   function drawLeavesIcon(ctx, offsetX, offsetY, radius) {
     ctx.beginPath();
-    drawArc(ctx, offsetX, offsetY, radius - .1 * radius);
+    drawArc(ctx, offsetX, offsetY, radius - (ctx.lineWidth * .5 + .1 * radius));
     ctx.fill();
 
     ctx.beginPath();
@@ -141,7 +140,7 @@ const Observations = (function (/*api*/) {
 
   function drawFlowersIcon(ctx, offsetX, offsetY, radius) {
     ctx.beginPath();
-    drawArc(ctx, offsetX, offsetY, radius - .1 * radius);
+    drawArc(ctx, offsetX, offsetY, radius - (ctx.lineWidth * .5 + .1 * radius));
     ctx.fill();
 
     ctx.beginPath();
