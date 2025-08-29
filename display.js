@@ -149,7 +149,9 @@ var drawNav = (state) => {
   if (state.events.isKeyboard/*!wasClicked*/) {
     mouse.x_ = mouse._x; // state.inputs.keyboard.x_;
     mouse.y_ = mouse._y; // state.inputs.keyboard.y_;
-  } else if (!state.events.isDragged) {
+  }
+
+  if (!state.events.isDragged || state.events.isClicked) {
     r = mindim * .05;
   }
 
@@ -343,8 +345,8 @@ var drawBorder = (state) => {
   // context.restore();
 
   const r = mindim;
-  const x = state.dx * mindim;
-  const y = state.dy * mindim;
+  const x = state.dx / 5;
+  const y = state.dy / 5;
 
   // ctx.strokeStyle = colors.emergent; // weed barrier
   // ctx.beginPath();
