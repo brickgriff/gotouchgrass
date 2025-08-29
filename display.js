@@ -149,7 +149,9 @@ var drawNav = (state) => {
   if (state.events.isKeyboard/*!wasClicked*/) {
     mouse.x_ = mouse._x; // state.inputs.keyboard.x_;
     mouse.y_ = mouse._y; // state.inputs.keyboard.y_;
-  } else if (!state.events.isDragged) {
+  }
+
+  if (!state.events.isDragged || state.events.isClicked) {
     r = mindim * .05;
   }
 
