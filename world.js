@@ -12,7 +12,7 @@ const World = (function (/*api*/) {
       // NOTE: how _much_ , not how _fast_
       dx: 0,
       dy: 0,
-      speed: 0.003,
+      speed: 0.001,
       zoom: 0.25, // [0, 1]
       pitch: 1, // [0, 1]
       yaw: 0, // [-1, 1]
@@ -25,7 +25,7 @@ const World = (function (/*api*/) {
       pattern: {},
       touchCount: 0,
       default: { // so you can always revert
-        speed: 0.003,
+        speed: 0.001,
       },
     };
 
@@ -151,7 +151,7 @@ var updatePlants = (state) => {
   for (plant of state.nearby) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     // FIXME: maybe using a set will make this step simpler
-    const isActive = checkActive(plant, state.frame - 600);
+    const isActive = checkActive(plant, state.frame - 150);
 
     if (isActive) {
       state.active.push(plant);

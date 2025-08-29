@@ -22,7 +22,7 @@ const Observations = (function (/*api*/) {
     const offsetX = state.cx - radius * 2;
     const offsetY = state.cy - radius * 2;
 
-    ctx.lineWidth = .01 * radius; // ~ 5cm
+    ctx.lineWidth = .02 * radius; // ~ 5cm
     ctx.lineCap = "round";
 
     // ctx.beginPath();
@@ -35,14 +35,14 @@ const Observations = (function (/*api*/) {
     // ctx.fill();
     // ctx.stroke();
 
-    ctx.beginPath();
-    for (plant of state.nearby) {
-      const hypot = Math.hypot((plant.x + state.dx) * mindim, (plant.y + state.dy) * mindim);
-      if (hypot > .1 * mindim) continue;
-      drawArrowAt(state, "leaves", plant.x, plant.y, plant.r);
-    }
-    ctx.fill();
-    ctx.stroke();
+    // ctx.beginPath();
+    // for (plant of state.nearby) {
+    //   const hypot = Math.hypot((plant.x + state.dx) * mindim, (plant.y + state.dy) * mindim);
+    //   if (hypot > .1 * mindim) continue;
+    //   drawArrowAt(state, "leaves", plant.x, plant.y, plant.r);
+    // }
+    // ctx.fill();
+    // ctx.stroke();
 
     ctx.fillStyle = colors.emergent; // common
 
@@ -68,6 +68,7 @@ const Observations = (function (/*api*/) {
 
     const value = Math.floor(state[name]);
     ctx.strokeStyle = ICON_COLOR[name];
+    ctx.lineWidth = .01 * mindim;
 
     ctx.save();
 
@@ -93,7 +94,6 @@ const Observations = (function (/*api*/) {
     const angle = remainder / (9 * 10 ** (level));
     // const angle = .01;
     // console.log(value, level, remainder, angle+offsetA);
-
     ctx.strokeStyle = colors.emergent;
     drawArc(ctx, offsetX, offsetY, radius - .1 * radius, {
       start: (offsetA + angle) * Math.PI,
@@ -101,7 +101,7 @@ const Observations = (function (/*api*/) {
       acw: true,
     });
     for (let i = 0; i < level; i++) {
-      drawArc(ctx, offsetX, offsetY, (i - .5) * (1.5 * ctx.lineWidth) + radius);
+      drawArc(ctx, offsetX, offsetY, (i) * (1.6 * ctx.lineWidth) + radius);
     }
     ctx.stroke();
 
@@ -151,7 +151,7 @@ const Observations = (function (/*api*/) {
     const maxdim = Math.max(state.canvas.width, state.canvas.height);
 
     if (r == null) r = .01;
-    r *= mindim * .25;
+    r *= mindim * .5;
     // ctx.beginPath();
 
     ctx.strokeStyle = colors.emergent;
