@@ -8,8 +8,8 @@ const Stamina = (function (/*api*/) {
         const mindim = state.mindim;
         const maxdim = Math.max(state.canvas.height, state.canvas.width);
 
-        state.stamina = state.stamina == undefined ? 0 : state.stamina + .01;
-        state.staminaLimit = state.staminaLimit == undefined ? 0 : state.staminaLimit + .02;
+        state.stamina = state.stamina == undefined ? 0 : state.stamina + .002;
+        state.staminaLimit = state.staminaLimit == undefined ? 0 : state.staminaLimit + .005;
 
         if (state.staminaLimit > 10) state.staminaLimit = 10;
         if (state.stamina > state.staminaLimit) state.stamina = state.staminaLimit;
@@ -32,7 +32,7 @@ const Stamina = (function (/*api*/) {
             drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
             ctx.stroke();
             ctx.beginPath();
-            ctx.strokeStyle = colors.tertiary;
+            ctx.strokeStyle = colors.secondary;
             ctx.lineWidth = 0.03 * mindim;
             drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
             ctx.stroke();
@@ -60,7 +60,7 @@ const Stamina = (function (/*api*/) {
         // stamina
         ctx.beginPath();
         ctx.strokeStyle = colors.primary;
-        if (staminaPercent < 10) makeTransparent(ctx, "strokeStyle", staminaPercent * 10);
+        if (staminaPercent < 10) makeTransparent(ctx, "strokeStyle", staminaPercent * 5);
         ctx.lineWidth = 0.01 * mindim;
         drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * staminaPercent * .05) * Math.PI, end: (.5 + coef * staminaPercent * .05) * Math.PI });
         ctx.stroke();
