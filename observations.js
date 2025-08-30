@@ -59,7 +59,7 @@ const Observations = (function (/*api*/) {
 
 
   function drawObservation(state, name, offsetX, offsetY) {
-    if (!Math.floor(state[name])) state[name] = 123;
+    // if (!Math.floor(state[name])) state[name] = 123;
     // state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
 
     const ctx = state.ctx;
@@ -145,20 +145,15 @@ const Observations = (function (/*api*/) {
     ctx.beginPath();
     ctx.save();
     ctx.lineWidth = .02 * radius;
-    const foffset = 2 / 12;
+    // const foffset = 2 / 12;
     for (let i = 0; i < 6; i++) {
-      let fLogoAngle = foffset + i * 1 / 6;
+      let fLogoAngle = i * 1 / 6;
 
       let fLogoX = .35 * radius * Math.cos(fLogoAngle * Math.PI * 2);
       let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI * 2);
-      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35);
+      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35, { start: (fLogoAngle * 2 - 2 / 3) * Math.PI, end: (fLogoAngle * 2 + 2 / 3) * Math.PI });
     }
     ctx.stroke();
-
-    ctx.beginPath();
-    drawArc(ctx, offsetX, offsetY, radius * .35);
-    ctx.fill();
-    ctx.restore();
   }
 
   function drawArrowAt(state, style, x, y, r = null) {

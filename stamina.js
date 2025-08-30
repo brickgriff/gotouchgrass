@@ -8,8 +8,8 @@ const Stamina = (function (/*api*/) {
         const mindim = state.mindim;
         const maxdim = Math.max(state.canvas.height, state.canvas.width);
 
-        state.stamina = state.stamina == undefined ? 0 : state.stamina + .01;
-        state.staminaLimit = state.staminaLimit == undefined ? 0 : state.staminaLimit + .02;
+        // state.stamina = state.stamina == undefined ? 0 : state.stamina + .01;
+        // state.staminaLimit = state.staminaLimit == undefined ? 0 : state.staminaLimit + .02;
 
         if (state.staminaLimit > 10) state.staminaLimit = 10;
         if (state.stamina > state.staminaLimit) state.stamina = state.staminaLimit;
@@ -22,7 +22,7 @@ const Stamina = (function (/*api*/) {
         const offsetY = state.cy * 3.8;
         const coef = .9 * mindim / maxdim;
 
-        if (staminaPercent < .01) return;
+        if (staminaPercent < .01 || staminaLimitPercent < .025) return;
 
         // stamina full indicator
         if (staminaPercent >= .99) {

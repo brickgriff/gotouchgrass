@@ -24,9 +24,9 @@ const Display = (function (/*api*/) {
 
     // drawNearby(state);
     drawActive(state);
-    
+
     // -- glass panel --
-    if (state.glassLayer = true) {
+    if (state.glassLayer = false) {
       ctx.save();
       ctx.beginPath();
       ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
@@ -156,9 +156,11 @@ var drawNav = (state) => {
 
   if (!state.events.isDragged || state.events.isClicked) {
     r = mindim * .05;
-    state.stamina -= .05
   }
 
+  if (state.events.isClicked) {
+    state.stamina -= .05;
+  }
 
   ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.emergent;
