@@ -171,8 +171,8 @@ var updatePlants = (state) => {
         plant.flowers = fp;
       }
 
-      state.staminaLimit += plant.flowers * .1;
-      state.stamina += plant.leaves * .1;
+      state.staminaLimit += plant.flowers * .05;
+      state.stamina += plant.leaves * .05;
 
       plant.frame = state.frame;
     } else if (plant.frame != undefined) {
