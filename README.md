@@ -1,12 +1,14 @@
-<!-- Mother's Hip Productions presents -->
+<!-- the Mother's Hip Garden presents -->
+<!-- in association with House of Ease -->
 <!-- a Griffin Games experience -->
 # Go Touch Grass
 <!-- 
   keywords: clicker, idle, incremental, nature, eco, 
     solarpunk, permaculture, crafting, educational, 
-
+    puzzle, adventure, roguelite, gardening, 
+    minimalist, cozy, stewardship, rematriation,
 -->
-### Food Forest Simulator
+### Minimalist Ecology Simulator
 
 ## Overview
 
@@ -14,8 +16,13 @@
 
 ## Play
 
-## Issues
+## Support
+### GitHub Contributions
+### Itch.io Browser Plays
+### Twitch
+### Patreon
 
+## Design
 ### Screen <!-- Air/Space -->
 - [ ] HTML Canvas
   - [x] colors
@@ -30,13 +37,18 @@
 ### State <!-- Water/Time -->
 - [x] calculate frames per second
 - [ ] animations
-  - [x] normalize diagonal movement
-  - [x] normalize entity placement
+  - [x] normalize _diagonal_ movement
+  - [x] normalize entity placement; circularize
+  - [ ] fix unnatural _clustering_ due to random placement
   - [x] walking speed in state
   - [ ] zoom level in state
   - [ ] scale speed to framerate
 - [ ] simulations
 - [ ] score
+  - [x] experience 
+  - [x] stamina
+  - [ ] traits
+  - [ ] keys
 - [ ] save data system
 - [ ] numbers
   - [x] seeded pseudo-random number generator (SPRNG)
@@ -47,8 +59,8 @@
 
 ### Entities <!-- Earth/Matter -->
 - [x] player
-- [ ] foliage
-- [ ] terrain
+- [ ] plants
+- [x] terrain
 - [ ] pathways
 - [ ] walls
 - [ ] objects
@@ -64,37 +76,42 @@
   - [x] mousemove
   - [ ] mousescroll
 - [x] touch
+- [ ] gyro/orientation
+  - [ ] 6-axis tilt (orientation, pitch, twist, etc)
+  - [ ] velocity
+  - [ ] shake
+- [ ] errors
 
-- [x] make sure the dynamic canvas plays nicely with the browser frame in itch.io
-  - [x] looks like it keeps a square aspect ratio; it doesn't update when self/window/document changes
-  - [x] double-confirm which events get fired, if any
+### Goals
+- [x] make sure the dynamic `canvas` plays nicely with the browser frame on **Itch.io**
+  - [x] looks like it keeps a _square_ aspect ratio; it doesn't update when `self`/`window`/`document` changes; preview is a static 600px by 600px square by default
+  - [x] double-confirm which events get fired, if any (touch)
+  - [ ] check if using `self` vs `window` vs `document` works as expected in the browser player
 - [ ] automate zip file creation
-  - [x] command line script ready
-    - double-confirm proper archive structure
+  - [x] command line script ready; double-confirm proper archive structure
   - [x] try using
-    - winrar (not yet installed)
-    - gzip (just a compression algo)
-    - tar (creates tarballs, not zip files)
-    - tar.exe (creates tarballs, not zip files)
-    - jar (seems to work the best)
-    - 7z (???)
+    - `winrar` (not yet installed)
+    - `gzip` (just a compression algo)
+    - `tar` (creates tarballs, not zip files)
+    - `tar.exe` (creates tarballs, not zip files)
+    - `jar` (seems to work the best)
+    - `7z` (???)
   - [x] order of operations
-    - dev using stackblitz or sublime (feature branch)
-    - version control with github (push into work)
-    - archive locally with jar (after pull from work)
-    - upload to itch.io (then refresh)
-  - [ ] can GitHub Actions/Deployments do this?
+    - develop using **StackBlitz** or **Sublime** (feature branch)
+    - pull request via **GitHub** (push into `work`)
+    - archive locally with `jar` (after pull from `work`)
+    - upload to **Itch.io** (then refresh)
+  - [ ] can **GitHub** Actions/Deployments do this?
   - [x] why are simulated inputs so buggy (gamepad)
-    - [x] now that mousemove works, keyboard is buggy!
-
-## Next Goals
-Basically I want to implement feedback (events and animations):
+    - [x] now that `mousemove` works, keyboard is buggy!
+- [ ] Basically I want to implement feedback (events and animations):
 - [x] there's currently an implied visibility horizon (~1m dia)
-- [ ] there should be a halo around the currently "selected" plant
+- [x] there should be a halo around the currently "selected" plant (type species zone)
 - [x] there should be a gray outline that persists after the player moves far away (plant state)
 - [ ] develop state management/machine for simulations
 - [ ] setup framework for adding ecosystem parameters
-- [ ] rework debug menu (top or right)
-- [ ] dev console (top or right)
+- [ ] rework debug menu
+- [ ] developer console
 - [ ] worker services
-- [ ] off-screen canvas for sprites (and collision detection)
+- [x] `OffScreenCanvas` for backgrounds, sprites, and collision detection
+- [ ] entity editor/viewer; modify exeperience meters
