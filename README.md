@@ -11,11 +11,27 @@
 ### Minimalist Ecology Simulator
 
 ## Overview
-
+Go Touch Grass is a top-down puzzle-like experience where you play as a rookie community land steward. This demo is designed as a self-paced tutorial and a proof-of-concept.
 ## Install
+**Checkout the repo (_link_) or download the zip archive(_link_)**, fetch or extract the files, then open `index.html` in your favorite browser.
 
 ## Play
 
+**Move** : ESDF Keys, Left Mouse Drag, Pan (Touchscreen)
+
+> Observe plants directly underfoot at minimal cost.
+
+**Play\*** : Spacebar, Left Mouse Click, Tap (Touchscreen)
+
+> Observe plants within range at moderate cost.
+
+**Rest\*** : No Action (3s)
+
+> Observe plants within range at no cost; slowly restores stamina.
+
+_* Feature currently under development._
+
+_Further information can be found on the wiki (_link_)._
 ## Support
 ### GitHub Contributions
 ### Itch.io Browser Plays
