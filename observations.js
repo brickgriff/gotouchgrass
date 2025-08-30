@@ -151,9 +151,14 @@ const Observations = (function (/*api*/) {
 
       let fLogoX = .35 * radius * Math.cos(fLogoAngle * Math.PI * 2);
       let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI * 2);
-      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35, { start: (fLogoAngle * 2 - 2 / 3) * Math.PI, end: (fLogoAngle * 2 + 2 / 3) * Math.PI });
+      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35, { start: (fLogoAngle * 2 - 1 / 3) * Math.PI, end: (fLogoAngle * 2 + 1 / 3) * Math.PI });
     }
     ctx.stroke();
+
+    ctx.beginPath();
+    drawArc(ctx, offsetX, offsetY, .17 * radius);
+    ctx.stroke();
+    ctx.restore();
   }
 
   function drawArrowAt(state, style, x, y, r = null) {
