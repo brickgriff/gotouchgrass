@@ -19,8 +19,8 @@ const Experience = (function (/*api*/) {
     const mindim = state.mindim;
     const radius = .1 * mindim; // ~ 1m
 
-    const offsetX = state.cx - radius * 2;
-    const offsetY = state.cy - radius * 2;
+    const offsetX = state.cx - radius;
+    const offsetY = state.cy - radius;
 
     ctx.lineWidth = .02 * radius; // ~ 5cm
     ctx.lineCap = "round";

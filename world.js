@@ -183,7 +183,7 @@ var updatePlants = (state) => {
 }
 
 var updateNearby = (state) => {
-  if (state.frame % 60 !== 0) return;
+  if (state.frame % 6 !== 0) return;
 
   const plants = state.plants;
   if (!plants) return;

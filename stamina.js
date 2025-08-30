@@ -28,12 +28,12 @@ const Stamina = (function (/*api*/) {
         if (staminaPercent >= .99) {
             ctx.beginPath();
             ctx.strokeStyle = colors.emergent;
-            ctx.lineWidth = 0.04 * mindim;
+            ctx.lineWidth = 0.05 * mindim;
             drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
             ctx.stroke();
             ctx.beginPath();
-            ctx.strokeStyle = colors.secondary;
-            ctx.lineWidth = 0.03 * mindim;
+            ctx.strokeStyle = colors.tertiary;
+            ctx.lineWidth = 0.04 * mindim;
             drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * .05) * Math.PI, end: (.5 + coef * .05) * Math.PI });
             ctx.stroke();
         }
@@ -51,17 +51,23 @@ const Stamina = (function (/*api*/) {
 
         // stamina limit
         ctx.beginPath();
-        ctx.strokeStyle = colors.secondary;
+        ctx.strokeStyle = colors.tertiary;
         if (staminaPercent < 10) makeTransparent(ctx, "strokeStyle", staminaPercent * 10);
-        ctx.lineWidth = 0.005 * mindim;
+        ctx.lineWidth = 0.01 * mindim;
         drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * staminaLimitPercent * .05) * Math.PI, end: (.5 + coef * staminaLimitPercent * .05) * Math.PI });
         ctx.stroke();
 
         // stamina
         ctx.beginPath();
-        ctx.strokeStyle = colors.primary;
+        ctx.strokeStyle = colors.emergent;
         if (staminaPercent < 10) makeTransparent(ctx, "strokeStyle", staminaPercent * 5);
-        ctx.lineWidth = 0.01 * mindim;
+        ctx.lineWidth = 0.03 * mindim;
+        drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * staminaPercent * .05) * Math.PI, end: (.5 + coef * staminaPercent * .05) * Math.PI });
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.strokeStyle = colors.tertiary;
+        if (staminaPercent < 10) makeTransparent(ctx, "strokeStyle", staminaPercent * 5);
+        ctx.lineWidth = 0.02 * mindim;
         drawArc(ctx, 0, -offsetY, r, { start: (.5 - coef * staminaPercent * .05) * Math.PI, end: (.5 + coef * staminaPercent * .05) * Math.PI });
         ctx.stroke();
 
