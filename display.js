@@ -21,12 +21,13 @@ const Display = (function (/*api*/) {
     }
 
     drawTerrain(state);
-
     drawNearby(state);
     drawActive(state);
+    drawPlayer(state);
+    drawRing(state);
 
     // -- glass panel --
-    if (state.glassLayer = false) {
+    if (state.glassLayer = true) {
       ctx.save();
       ctx.beginPath();
       ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
@@ -46,8 +47,6 @@ const Display = (function (/*api*/) {
       ctx.restore();
     }
 
-    drawPlayer(state);
-    drawRing(state);
     Experience.draw();
     Stamina.draw();
 
@@ -430,8 +429,8 @@ var drawActive = (state) => {
   ctx.beginPath();
   ctx.lineWidth = .002 * mindim;
   // TODO: make color fade per plant... somehow performantly
-  ctx.fillStyle = colors.tertiary; // with a pattern mask?
-  ctx.strokeStyle = colors.emergent; // tertiary with stamina system
+  ctx.fillStyle = colors.emergent; // with a pattern mask?
+  ctx.strokeStyle = colors.primary; // tertiary with stamina system
   for (plant of state.active) {
     if (!plant.leaves || plant.leaves < 0.09) continue;
     x = (plant.x + state.dx) * mindim;
@@ -514,7 +513,7 @@ var drawNearby = (state) => {
     let c = colors.primary;//(plant.t == "grass") ? "lawngreen" : "darkgreen";
     ctx.beginPath();
     drawArc(ctx, x, y, r);
-    ctx.fillStyle = colors.secondary;//c;
+    ctx.fillStyle = c;
     // ctx.strokeStyle = "lawngreen";
     ctx.fill();
     // ctx.stroke();

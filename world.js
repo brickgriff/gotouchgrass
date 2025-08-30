@@ -13,7 +13,7 @@ const World = (function (/*api*/) {
       dx: 0,
       dy: 0,
       speed: 0.001,
-      zoom: 0.25, // [0, 1]
+      zoom: .2, // [0, 1]
       pitch: 1, // [0, 1]
       yaw: 0, // [-1, 1]
       frame: 0,
@@ -104,7 +104,7 @@ var resize = (state) => {
   state.canvas.height = self.innerHeight;
   state.cx = state.canvas.width / 2;
   state.cy = state.canvas.height / 2;
-  state.mindim = Math.min(state.canvas.width, state.canvas.height) * .95; // - .1 * state.cx;
+  state.mindim = Math.min(state.canvas.width, state.canvas.height) / (state.zoom * 4); // - .1 * state.cx;
   // const othdim = Math.max(state.canvas.width, state.canvas.height);
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
@@ -199,7 +199,7 @@ var updateNearby = (state) => {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     const mindim = state.mindim;
     const maxdim = state.canvas.height > state.mindim ? state.canvas.height : state.canvas.width;
-    if (hypot > 1/5) continue;
+    if (hypot > 1 / 5) continue;
     state.nearby.push(plant);
 
     // TODO: if the player stands still for 30 frames
