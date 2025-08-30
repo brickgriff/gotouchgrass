@@ -28,6 +28,7 @@ const World = (function (/*api*/) {
       touchCount: 0,
       default: { // so you can always revert
         speed: 0.001,
+        color: "FC", // "FC" for full-color or "BW" for black and white
       },
     };
 

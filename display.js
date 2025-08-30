@@ -24,8 +24,9 @@ const Display = (function (/*api*/) {
 
     // drawNearby(state);
     drawActive(state);
+    
     // -- glass panel --
-    if (state.glassLayer) {
+    if (state.glassLayer = true) {
       ctx.save();
       ctx.beginPath();
       ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
@@ -33,8 +34,8 @@ const Display = (function (/*api*/) {
       ctx.clip();
       ctx.beginPath();
       ctx.lineWidth = .005 * mindim;
-      ctx.fillStyle = "lightgray";
-      ctx.strokeStyle = "lightgray";
+      ctx.fillStyle = colors.emergent;//"lightgray";
+      ctx.strokeStyle = colors.emergent;//"lightgray";
       let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
       let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
       let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
