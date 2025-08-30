@@ -20,14 +20,13 @@ const World = (function (/*api*/) {
       time: 0,
       seed: 42,
       // experience (leaves & flowers)
-      leaves:0,
+      leaves: 0,
       flowers: 0,
       stamina: 0,
       staminaLimit: 0, // can be an update function
-      // active: [],
+      active: [],
       inputs: inputs, // from events.js
       events: {},
-      pattern: {},
       touchCount: 0,
       default: { // so you can always revert
         speed: 0.001,
@@ -35,7 +34,12 @@ const World = (function (/*api*/) {
       },
     };
 
+    // TODO make a service to read config files 
+    // to provide a state object to override the above one
+
+    // TODO make a window service or something
     resize(state);
+    // TODO move to its own foliage service
     createPlants(state);
 
     document.state = state;
@@ -46,35 +50,33 @@ const World = (function (/*api*/) {
     //console.log(`update(dt=${dt}, fps=${Math.floor(1/dt)})`);
     const state = document.state;
 
+    // TODO Window.update yadda yadda
     if (state.events.isResized) {
       resize(state);
       state.events.isResized = false;
     }
 
+    // ??? interesting.. we're checking player input?
     state.vector = getVector();
 
     // FIXME: control when the standing frame counter gets updated
-    if (!state.frameStanding && state.vector.x == 0 && state.vector.y == 0) {
-      state.frameStanding = state.frame;
-    } else if (state.vector.x != 0 || state.vector.y != 0) {
-      state.frameStanding = null;
-    }
-
+    // if (!state.frameStanding && state.vector.x == 0 && state.vector.y == 0) {
+    //   state.frameStanding = state.frame;
+    // } else if (state.vector.x != 0 || state.vector.y != 0) {
+    //   state.frameStanding = null;
+    // }
+    // TODO leave events to events service (listeners)
+    // TODO keyboard service (Keyboard.update)
     if (findInput(keybinds.primary)) {
       state.events.isKeyboard = true;
     } else if (state.events.isKeyboard) {
       state.events.isKeyboard = false;
     }
 
-    //console.log(state.frame - state.frameStanding > 60 * 3);
-
-    updateGamepad(state);
-    updatePlayer(state);
-    updatePlants(state);
-    updateNearby(state);
-    // updateScore(state);
-
-    // console.log(state.active.length, state.leaves, state.flowers);
+    // TODO all of these are services, too
+    updatePlayer(state);// Player.update
+    updatePlants(state);// Foliage.update
+    updateNearby(state);// included in Foliage.update
 
   };
 
@@ -82,6 +84,7 @@ const World = (function (/*api*/) {
   return api;
 }());
 
+// TODO technically, this is the foliage canvas
 var createOffscreenCanvas = (state) => {
   state.terrain = false;
   var offScreenCanvas = document.createElement('canvas');
@@ -95,7 +98,7 @@ var createOffscreenCanvas = (state) => {
 }
 
 // TODO duplicate this code for creating an offscreen canvas for the secret clover area and the title card at the end (large)
-
+// TODO Window.resize
 var resize = (state) => {
   state.canvas.width = self.innerWidth;
   state.canvas.height = self.innerHeight;
@@ -111,7 +114,7 @@ var resize = (state) => {
   window.focus();
   // console.log("once");
 }
-
+// TODO Foliage.create
 var createPlants = (state) => {
   const random = Random.seed(state.seed);
   const plants = [];
@@ -142,14 +145,14 @@ var createPlants = (state) => {
     plants.push(plant);
   }
 }
-
+// TODO Player.update
 var updatePlayer = (state) => {
   const vector = state.vector;
   state.events.isDragged = (vector.x != 0 || vector.y != 0);
   state.dx -= vector.x * state.speed;
   state.dy -= vector.y * state.speed;
 }
-
+// TODO Foliage.update
 var updatePlants = (state) => {
   if (state.frame % 3 !== 0) return;
 
@@ -184,7 +187,7 @@ var updatePlants = (state) => {
   }
 
 }
-
+// TODO Foliage.update
 var updateNearby = (state) => {
   if (state.frame % 6 !== 0) return;
 
@@ -204,33 +207,10 @@ var updateNearby = (state) => {
   }
 
 }
-
+// TODO helpers for either Foliage or maybe Player
 var checkActive = (plant, limit) => {
   return plant.frame != undefined && plant.frame > 0 && plant.frame > limit;
 }
 
 var checkStanding = (frame_, _frame) => { return _frame - frame_ > (3 * 60) }
 
-var updateGamepad = (state) => {
-  // console.log(state.events.isPressed);
-  //if (!state.events.isPressed) {
-  //  clearInputs();
-  //}
-  // check mouse pos
-  // if near the gamepad extents
-  // check which button it is near
-  // if w/i center button
-  // or
-  // check vector angle
-  // check which button should be active
-  // 0 +/- 22.5 => right
-  // 45 +/- 22.5 => upperright
-  // 90 +/- 22.5 => up
-  // ...
-  // 315 +/- 22.5 => lowerright
-  // add it to the animation list
-}
-
-var updateScore = (state) => {
-  console.log(state.leaves, state.flowers);
-}
