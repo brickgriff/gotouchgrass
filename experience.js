@@ -1,4 +1,4 @@
-const Observations = (function (/*api*/) {
+const Experience = (function (/*api*/) {
   var api = {};
 
   const ICON_FUNCTION = {
@@ -11,7 +11,7 @@ const Observations = (function (/*api*/) {
   };
 
   api.draw = function () {
-    // console.log("Observations.draw()");
+    // console.log("Experience.draw()");
 
     const state = document.state;
     const ctx = state.ctx;
@@ -59,8 +59,8 @@ const Observations = (function (/*api*/) {
 
 
   function drawObservation(state, name, offsetX, offsetY) {
-    // if (!Math.floor(state[name])) state[name] = 123;
-    state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
+    if (!Math.floor(state[name])) state[name] = 123;
+    // state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
 
     const ctx = state.ctx;
     const mindim = state.mindim;
@@ -133,7 +133,6 @@ const Observations = (function (/*api*/) {
     drawArc(ctx, offsetX + radius * .71, offsetY - .1 * radius, radius, { start: .75 * Math.PI, end: -Math.PI * .75 });
     ctx.moveTo(offsetX, offsetY - radius * .8);
     ctx.lineTo(offsetX, offsetY + radius * .8);
-    ctx.fill();
     ctx.stroke();
     ctx.restore();
   }
@@ -146,15 +145,18 @@ const Observations = (function (/*api*/) {
     ctx.beginPath();
     ctx.save();
     ctx.lineWidth = .02 * radius;
-    const foffset = 1 / 12;
+    // const foffset = 2 / 12;
     for (let i = 0; i < 6; i++) {
-      let fLogoAngle = foffset + i * 1 / 6;
+      let fLogoAngle = i * 1 / 6;
 
       let fLogoX = .35 * radius * Math.cos(fLogoAngle * Math.PI * 2);
       let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI * 2);
-      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35);
+      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35, { start: (fLogoAngle * 2 - 1 / 3) * Math.PI, end: (fLogoAngle * 2 + 1 / 3) * Math.PI });
     }
-    ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+    drawArc(ctx, offsetX, offsetY, .17 * radius);
     ctx.stroke();
     ctx.restore();
   }

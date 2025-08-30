@@ -24,8 +24,9 @@ const Display = (function (/*api*/) {
 
     // drawNearby(state);
     drawActive(state);
+
     // -- glass panel --
-    if (state.glassLayer) {
+    if (state.glassLayer = false) {
       ctx.save();
       ctx.beginPath();
       ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
@@ -33,8 +34,8 @@ const Display = (function (/*api*/) {
       ctx.clip();
       ctx.beginPath();
       ctx.lineWidth = .005 * mindim;
-      ctx.fillStyle = "lightgray";
-      ctx.strokeStyle = "lightgray";
+      ctx.fillStyle = colors.emergent;//"lightgray";
+      ctx.strokeStyle = colors.emergent;//"lightgray";
       let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
       let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
       let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
@@ -47,8 +48,8 @@ const Display = (function (/*api*/) {
 
     drawPlayer(state);
     drawRing(state);
+    Experience.draw();
     Stamina.draw();
-    Observations.draw();
 
     // -- trackpad --
     // let rectX = -.9 * state.cx;
@@ -128,10 +129,10 @@ var drawNav = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
   const mouse = getMouse();
-  // if (state.events.isClicked) {
-  //   console.log("clicked");
-  //   state.events.clicked = state.frame;
-  // }
+  if (state.events.isClicked) {
+    console.log("clicked");
+    //   state.events.clicked = state.frame;
+  }
 
   // if (state.frame - 60 < state.events.clicked) {
   //   const wasClicked = ;
@@ -153,10 +154,11 @@ var drawNav = (state) => {
     mouse.y_ = mouse._y; // state.inputs.keyboard.y_;
   }
 
-  if (!state.events.isDragged || state.events.isClicked) {
+  if (!state.events.isDragged || state.events.isClicked || state.events.isKeyboard) {
     r = mindim * .05;
+    state.stamina = Math.max(0, state.stamina - .05);
+    state.isClicked = false;
   }
-
 
   ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.emergent;

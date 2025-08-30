@@ -19,6 +19,8 @@ const World = (function (/*api*/) {
       frame: 0,
       time: 0, // ???
       seed: 42,
+      stamina: 0,
+      staminaLimit: 0,
       // active: [],
       inputs: inputs, // from events.js
       events: {},
@@ -26,6 +28,7 @@ const World = (function (/*api*/) {
       touchCount: 0,
       default: { // so you can always revert
         speed: 0.001,
+        color: "FC", // "FC" for full-color or "BW" for black and white
       },
     };
 
@@ -167,6 +170,10 @@ var updatePlants = (state) => {
         plant.leaves = lp;
         plant.flowers = fp;
       }
+
+      state.staminaLimit += plant.flowers * .05;
+      state.stamina += plant.leaves * .05;
+
       plant.frame = state.frame;
     } else if (plant.frame != undefined) {
       plant.frame = -1;
