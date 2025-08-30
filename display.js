@@ -129,16 +129,8 @@ var drawNav = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
   const mouse = getMouse();
-  if (state.events.isClicked) {
-    console.log("clicked");
-    //   state.events.clicked = state.frame;
-  }
 
-  // if (state.frame - 60 < state.events.clicked) {
-  //   const wasClicked = ;
-
-  // }
-  if (!state.events.isPressed && !state.events.isKeyboard /*&& !wasClicked*/) return;
+  if (!state.events.isPressed && !state.events.isKeyboard) return;
   ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.emergent;
   ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
@@ -148,13 +140,14 @@ var drawNav = (state) => {
     drawArc(ctx, 0, 0, mindim * .1);
     ctx.stroke();
   }
+
   var r = mindim * .1;
-  if (state.events.isKeyboard/*!wasClicked*/) {
+  if (state.events.isKeyboard) {
     mouse.x_ = mouse._x; // state.inputs.keyboard.x_;
     mouse.y_ = mouse._y; // state.inputs.keyboard.y_;
   }
 
-  if (!state.events.isDragged || state.events.isClicked || state.events.isKeyboard) {
+  if ((!state.events.isDragged && state.events.isPressed) || state.events.isKeyboard) {
     r = mindim * .05;
     state.stamina = Math.max(0, state.stamina - .05);
     state.isClicked = false;

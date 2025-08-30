@@ -159,7 +159,7 @@ var updatePlants = (state) => {
 
     if (isActive) {
       state.active.push(plant);
-    } else if (hypot < .025) {
+    } else if (hypot < .025 || (((!state.events.isDragged && state.events.isPressed) || state.events.isKeyboard) && hypot < .1)) {
       if (plant.frame == undefined) {
         const lp = Math.random() * 0.1;
         const fp = Math.random() * 0.01;
