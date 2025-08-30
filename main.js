@@ -34,7 +34,3 @@ function main() {
 
   requestAnimationFrame(now => mainLoop(now));
 }
-
-var func = () => {
-
-}
