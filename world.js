@@ -17,10 +17,13 @@ const World = (function (/*api*/) {
       pitch: 1, // [0, 1]
       yaw: 0, // [-1, 1]
       frame: 0,
-      time: 0, // ???
+      time: 0,
       seed: 42,
+      // experience (leaves & flowers)
+      leaves:0,
+      flowers: 0,
       stamina: 0,
-      staminaLimit: 0,
+      staminaLimit: 0, // can be an update function
       // active: [],
       inputs: inputs, // from events.js
       events: {},
