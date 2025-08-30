@@ -18,6 +18,8 @@ const Stamina = (function (/*api*/) {
         const staminaLimitPercent = state.staminaLimit / 10;
 
         ctx.lineCap = "round";
+
+        // TODO set in terms of `mindim`
         const r = state.cy * 3;
         const offsetY = state.cy * 3.8;
         const coef = .9 * mindim / maxdim;
