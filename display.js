@@ -31,7 +31,7 @@ const Display = (function (/*api*/) {
       ctx.save();
       ctx.beginPath();
       ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
-      drawArc(ctx, 0, 0, 0.5 * mindim, { acw: true });
+      drawArc(ctx, 0, 0, state.cy, { acw: true });
       ctx.clip();
       ctx.beginPath();
       ctx.lineWidth = .005 * mindim;
@@ -41,8 +41,8 @@ const Display = (function (/*api*/) {
       let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
       let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
       ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
-      ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
-      drawArc(ctx, 0, 0, 0.5 * mindim, { acw: true });
+      ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height / 8);
+      // drawArc(ctx, 0, 0, 0.5 * mindim, { start: -Math.PI * .75, end: -.25 * Math.PI, acw: false });
       ctx.stroke();
       ctx.restore();
     }
@@ -531,8 +531,8 @@ function makeTransparent(ctx, style, alpha) {
 
 
 var drawArc = (ctx, x, y, r, params = {}) => {
-  let start = params.start || 0;
-  let end = params.end || Math.PI * 2;
+  let start = params.start !== undefined ? params.start : 0;
+  let end = params.end !== undefined ? params.end : Math.PI * 2;
 
   let theta = Math.atan2(Math.sin(start), Math.cos(start));
   ctx.moveTo(x + r * Math.cos(theta), y + r * Math.sin(theta));

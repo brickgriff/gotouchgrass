@@ -105,6 +105,7 @@ var resize = (state) => {
   state.cx = state.canvas.width / 2;
   state.cy = state.canvas.height / 2;
   state.mindim = Math.min(state.canvas.width, state.canvas.height) / (state.zoom * 4); // - .1 * state.cx;
+  state.maxdim = Math.max(state.canvas.width, state.canvas.height) / (state.zoom * 4); // - .1 * state.cx;
   // const othdim = Math.max(state.canvas.width, state.canvas.height);
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
