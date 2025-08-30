@@ -154,7 +154,7 @@ var updatePlayer = (state) => {
 }
 // TODO Foliage.update
 var updatePlants = (state) => {
-  if (state.frame % 3 !== 0) return;
+  if (state.frame % 6 !== 0) return;
 
   state.active = [];
 
@@ -189,7 +189,7 @@ var updatePlants = (state) => {
 }
 // TODO Foliage.update
 var updateNearby = (state) => {
-  if (state.frame % 6 !== 0) return;
+  if (state.frame % 60 !== 0) return;
 
   const plants = state.plants;
   if (!plants) return;
@@ -199,7 +199,7 @@ var updateNearby = (state) => {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
     const mindim = state.mindim;
     const maxdim = state.canvas.height > state.mindim ? state.canvas.height : state.canvas.width;
-    if (hypot > maxdim / mindim) continue;
+    if (hypot > 1/5) continue;
     state.nearby.push(plant);
 
     // TODO: if the player stands still for 30 frames
