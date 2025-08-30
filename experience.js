@@ -1,4 +1,4 @@
-const Observations = (function (/*api*/) {
+const Experience = (function (/*api*/) {
   var api = {};
 
   const ICON_FUNCTION = {
@@ -11,7 +11,7 @@ const Observations = (function (/*api*/) {
   };
 
   api.draw = function () {
-    // console.log("Observations.draw()");
+    // console.log("Experience.draw()");
 
     const state = document.state;
     const ctx = state.ctx;
@@ -59,7 +59,7 @@ const Observations = (function (/*api*/) {
 
 
   function drawObservation(state, name, offsetX, offsetY) {
-    // if (!Math.floor(state[name])) state[name] = 123;
+    if (!Math.floor(state[name])) state[name] = 123;
     // state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
 
     const ctx = state.ctx;
