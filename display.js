@@ -24,6 +24,7 @@ const Display = (function (/*api*/) {
 
     // drawNearby(state);
     drawActive(state);
+    
     // -- glass panel --
     if (state.glassLayer = true) {
       ctx.save();
