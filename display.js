@@ -26,26 +26,6 @@ const Display = (function (/*api*/) {
     drawPlayer(state);
     drawRing(state);
 
-    // -- glass panel --
-    if (state.glassLayer = true) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
-      drawArc(ctx, 0, 0, state.cy, { acw: true });
-      ctx.clip();
-      ctx.beginPath();
-      ctx.lineWidth = .005 * mindim;
-      ctx.fillStyle = colors.emergent;//"lightgray";
-      ctx.strokeStyle = colors.emergent;//"lightgray";
-      let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
-      let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
-      let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
-      ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
-      ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height / 8);
-      // drawArc(ctx, 0, 0, 0.5 * mindim, { start: -Math.PI * .75, end: -.25 * Math.PI, acw: false });
-      ctx.stroke();
-      ctx.restore();
-    }
 
     Experience.draw();
     Stamina.draw();
@@ -538,3 +518,26 @@ var drawArc = (ctx, x, y, r, params = {}) => {
   ctx.moveTo(x + r * Math.cos(theta), y + r * Math.sin(theta));
   ctx.arc(x, y, r, start, end, params.acw || false);
 }
+
+
+    // // -- glass panel --
+    // if (state.glassLayer = true) {
+    //   ctx.save();
+    //   ctx.beginPath();
+    //   ctx.rect(-state.cx, -state.cy, state.canvas.width, state.canvas.height);
+    //   drawArc(ctx, 0, 0, mindim*.5, { acw: true });
+    //   ctx.clip();
+    //   ctx.filter = "blur(5px)";
+    //   ctx.beginPath();
+    //   ctx.lineWidth = .005 * mindim;
+    //   ctx.fillStyle = colors.emergent;//"lightgray";
+    //   ctx.strokeStyle = colors.emergent;//"lightgray";
+    //   let red = parseInt(ctx.fillStyle.substring(1, 3), 16);
+    //   let green = parseInt(ctx.fillStyle.substring(3, 5), 16);
+    //   let blue = parseInt(ctx.fillStyle.substring(5, 7), 16);
+    //   ctx.fillStyle = `rgba(${red},${green},${blue},0.75)`;
+    //   ctx.fillRect(-state.cx, -state.cy, state.canvas.width, state.canvas.height / 8);
+    //   drawArc(ctx, 0, 0, 0.5 * mindim, { acw: false });
+    //   ctx.stroke();
+    //   ctx.restore();
+    // }
