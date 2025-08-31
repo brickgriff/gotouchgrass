@@ -41,17 +41,17 @@ const Experience = (function (/*api*/) {
     if (val !== undefined) {
       return .01 * (10 ** Math.floor(Math.log(val) / Math.log(10)) + 1);
     }
-    return true ? 1/60 : 0;
+    return true ? 1 / 60 : 0;
   };
 
   return api;
-  
+
   function drawLeaves(state, offsetX, offsetY) {
-    drawExperience(state, state.leaves+=testVal(state.leaves), ICON_FUNCTION.leaves, ICON_COLOR.leaves, offsetX, offsetY);
+    drawExperience(state, state.leaves += testVal(state.leaves), ICON_FUNCTION.leaves, ICON_COLOR.leaves, offsetX, offsetY);
 
   }
   function drawFlowers(state, offsetX, offsetY) {
-    drawExperience(state, state.flowers+=testVal(state.flowers/10), ICON_FUNCTION.flowers, ICON_COLOR.flowers, offsetX, offsetY);
+    drawExperience(state, state.flowers += testVal(state.flowers / 10), ICON_FUNCTION.flowers, ICON_COLOR.flowers, offsetX, offsetY);
   }
 
   function drawExperience(state, value, iconFunction, iconColor, offsetX, offsetY) {
@@ -63,8 +63,8 @@ const Experience = (function (/*api*/) {
     const radius = .1 * mindim; // ~ 1m
 
     ctx.save();
+    ctx.lineWidth = .05 * radius; // 5mm
     ctx.strokeStyle = iconColor;
-    ctx.lineWidth = .005 * mindim; // 5mm
 
     if (Math.floor(value) < 10) {
       makeTransparent(ctx, "strokeStyle", value / 10);
@@ -81,9 +81,9 @@ const Experience = (function (/*api*/) {
   }
 
   function drawLevelRings(ctx, value, offsetX, offsetY, radius, offsetA = .5) {
-    // I want 10 to count as level 0, 100 as level 1, and so on
-    // but I also want 0 to count as level 0, not level -1!
-    const level = Math.max(0, Math.floor(Math.max(0, Math.log(value - 1)) / Math.log(10)));
+    // TODO level 0 : 0.0-0.9, level 1 : 1-9, level 2 : 10-99, etc
+    const level = Math.floor(Math.log(value - 0.1) / Math.log(10));
+    // const level = Math.max(0, Math.floor(Math.max(0, Math.log(value - 0.1)) / Math.log(10)));
     const remainder = (value - (10 ** level)) % (10 ** (level + 1));
     const angle = remainder / (9 * 10 ** (level));
     // const angle = .01;
@@ -117,8 +117,9 @@ const Experience = (function (/*api*/) {
 
   function drawLeavesIcon(ctx, offsetX, offsetY, radius) {
     ctx.beginPath();
-    drawArc(ctx, offsetX, offsetY, radius - (ctx.lineWidth * .5 + .1 * radius));
+    drawArc(ctx, offsetX, offsetY, radius);// - (ctx.lineWidth * .5 + .1 * radius));
     ctx.fill();
+    ctx.stroke();
 
     ctx.beginPath();
     ctx.save();
@@ -133,19 +134,20 @@ const Experience = (function (/*api*/) {
 
   function drawFlowersIcon(ctx, offsetX, offsetY, radius) {
     ctx.beginPath();
-    drawArc(ctx, offsetX, offsetY, radius - (ctx.lineWidth * .5 + .1 * radius));
+    drawArc(ctx, offsetX, offsetY, radius);// - (ctx.lineWidth * .5 + .1 * radius));
     ctx.fill();
+    ctx.stroke();
 
     ctx.beginPath();
     ctx.save();
     ctx.lineWidth = .02 * radius;
     // const foffset = 2 / 12;
     for (let i = 0; i < 6; i++) {
-      let fLogoAngle = i * 1 / 6;
+      let fLogoAngle = i * 1 / 3;
 
-      let fLogoX = .35 * radius * Math.cos(fLogoAngle * Math.PI * 2);
-      let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI * 2);
-      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35, { start: (fLogoAngle * 2 - 1 / 3) * Math.PI, end: (fLogoAngle * 2 + 1 / 3) * Math.PI });
+      let fLogoX = .35 * radius * Math.cos(fLogoAngle * Math.PI);
+      let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI);
+      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .25, { start: (fLogoAngle - 1 / 3 - 1 / 12) * Math.PI, end: (fLogoAngle + 1 / 3 + 1 / 12) * Math.PI });
     }
     ctx.stroke();
 
