@@ -13,6 +13,7 @@ const colors = true ? {
     "rewarding": "gold",
     "hostile": "firebrick",
     "mercurial": "navy",
+    "umbral": "#3c3c3c",
 } : {
     "primary": "gray",
     "secondary": "dimgray",

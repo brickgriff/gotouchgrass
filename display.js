@@ -12,34 +12,26 @@ const Display = (function (/*api*/) {
     // for most, ctx, mindim, and various screen params should work
     clear(state);
     drawBackground(state);
-
-
     if (!state.terrain) {
       // console.log("once");
       saveTerrain(state);
       state.terrain = true;
     }
-
-    drawTerrain(state);
+    // drawTerrain(state);
     // TODO when drawing glass, clip out the center circle
     // then apply blur and draw the terrain again
     // then draw the glass layer without blur
     // final restore context settings
-    ctx.save();
-    ctx.filter = "blur(4px)";
-    drawBorder(state);
-    ctx.restore();
-
-    drawNearby(state);
-    drawActive(state);
+    // ctx.save();
+    // ctx.filter = "blur(4px)";
+    // drawBorder(state);
+    // ctx.restore();
+    // drawNearby(state);
+    // drawActive(state);
     drawPlayer(state);
     drawRing(state);
-
-
-    Experience.draw();
-    Stamina.draw();
-
-
+    // Experience.draw();
+    // Stamina.draw();
     // drawGamepad(state);
     drawNav(state);
     // drawMinimap(state);
@@ -90,13 +82,16 @@ const Display = (function (/*api*/) {
 
 
 var drawNav = (state) => {
+
   const ctx = state.ctx;
   const mindim = state.mindim;
   const mouse = getMouse();
 
   if (!state.events.isPressed && !state.events.isKeyboard) return;
+  
   ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.emergent;
+  
   ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
 
   if (!state.events.isDragged) {
@@ -260,29 +255,39 @@ var drawBackground = (state) => {
 
   // color dot test
   const mindim = state.mindim;
-  state.dotTest = false;
+  state.dotTest = true;
   if (state.dotTest) {
-    const r = 0.1 * state.mindim;
+    const r = 0.1 * mindim;
+    const offsetX = state.dx * mindim;
+    const offsetY = state.dy * mindim;
 
     ctx.fillStyle = colors.primary;
     ctx.beginPath();
-    drawArc(ctx, -r * 2.5, 0, r); // ~ 1
+    drawArc(ctx, -r * 2.5 + offsetX, offsetY, r); // ~ 1
     ctx.fill();
 
     ctx.fillStyle = colors.secondary;
     ctx.beginPath();
-    drawArc(ctx, r * 2.5, 0, r); // ~ 1
+    drawArc(ctx, r * 2.5 + offsetX, offsetY, r); // ~ 1
     ctx.fill();
 
     ctx.fillStyle = colors.tertiary;
     ctx.beginPath();
-    drawArc(ctx, 0, -r * 2.5, r); // ~ 1
+    drawArc(ctx, offsetX, -r * 2.5 + offsetY, r); // ~ 1
     ctx.fill();
 
     ctx.fillStyle = colors.emergent;
     ctx.beginPath();
-    drawArc(ctx, 0, r * 2.5, r); // ~ 1
+    drawArc(ctx, offsetX, r * 2.5 + offsetY, r); // ~ 1
     ctx.fill();
+
+    const hypot = Math.hypot(offsetX, r * 2.5 + offsetY);
+
+    if (hypot < .15 * mindim) {
+      state.events.isRingEnabled = true;
+    } else {
+      state.events.isRingEnabled = false;
+    }
   }
 }
 
@@ -317,19 +322,34 @@ var drawPlayer = (state) => {
   const r = .05 * mindim;
   ctx.beginPath();
   ctx.fillStyle = colors.emergent;
+  ctx.strokeStyle = colors.umbral;
+  ctx.lineWidth = .01 * r;
   drawArc(ctx, 0, 0, r);
   ctx.fill();
+  ctx.stroke();
 }
 
 var drawRing = (state) => {
+
+  if (!state.events.isRingEnabled && !state.events.isRingLocked) return;
+
   const ctx = state.ctx;
   const mindim = state.mindim; // mindim ~ 10m
+  ctx.lineWidth = .003 * mindim; // ~ 1mm, i think
+  ctx.strokeStyle = colors.umbral;
+  ctx.beginPath();
+  // drawArc(ctx, 0, 0, 0.5 * mindim);
+  drawArc(ctx, 0, 0, 0.1 * mindim);
+  ctx.stroke();
+
   ctx.strokeStyle = colors.emergent;
   ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
   ctx.beginPath();
   // drawArc(ctx, 0, 0, 0.5 * mindim);
   drawArc(ctx, 0, 0, 0.1 * mindim);
   ctx.stroke();
+
+
 }
 
 
@@ -410,12 +430,12 @@ var drawLitter = (state) => {
 var drawGate = (state) => {
   const ctx = state.offscreen.getContext("2d");
   const mindim = state.mindim;
-  const r = .3*mindim;
+  const r = .3 * mindim;
   const x = state.dx * mindim;
   const y = state.dy * mindim;
 
   ctx.fillStyle = colors.emergent;
-  ctx.fillRect(-r/2, -mindim-r*.1, r,r*.4);
+  ctx.fillRect(-r / 2, -mindim - r * .1, r, r * .4);
 }
 
 var drawFoliage = (state) => {

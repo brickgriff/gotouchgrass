@@ -71,6 +71,7 @@ const World = (function (/*api*/) {
       state.events.isKeyboard = true;
     } else if (state.events.isKeyboard) {
       state.events.isKeyboard = false;
+      state.events.isRingLocked ^= state.events.isRingEnabled;
     }
 
     // TODO all of these are services, too
