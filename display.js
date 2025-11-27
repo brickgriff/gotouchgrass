@@ -12,6 +12,7 @@ const Display = (function (/*api*/) {
     // for most, ctx, mindim, and various screen params should work
     clear(state);
     drawBackground(state);
+    drawPark(state);
     if (!state.terrain) {
       // console.log("once");
       saveTerrain(state);
@@ -132,7 +133,34 @@ var drawNav = (state) => {
   ctx.fill();
   // ctx.restore();
 }
+var drawPark = (state) => {
+  const ctx = state.ctx;
+  const mindim = state.mindim;
+  const w = 5*mindim;
+  const h = 2*mindim;
+  const dx = state.dx*mindim;
+  const dy = state.dy*mindim;
+  
+  ctx.beginPath();
+  ctx.fillStyle = colors.primary;
+  ctx.rect(-.5*w+dx,-.5*h-(1.1*mindim)+dy,w,h);
+  ctx.fill();
 
+  ctx.beginPath();
+  ctx.lineWidth = .3 * mindim;
+  ctx.strokeStyle = colors.tertiary;
+  ctx.rect(-.5*w+dx-(.5*ctx.lineWidth),-.5*h-(1.1*mindim)+dy-(.5*ctx.lineWidth),w+ctx.lineWidth,h+ctx.lineWidth);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.strokeStyle = colors.secondary;
+  ctx.setLineDash([.28 * mindim, .01 * mindim]);
+  ctx.rect(-.5*w+dx-(.5*ctx.lineWidth),-.5*h-(1.1*mindim)+dy-(.5*ctx.lineWidth),w+ctx.lineWidth,h+ctx.lineWidth);
+  ctx.lineWidth = .28 * mindim;
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+}
 var drawGamepad = (state) => {
   const ctx = state.ctx;
   const ratio = state.canvas.height / state.canvas.width;
@@ -322,7 +350,7 @@ var drawPlayer = (state) => {
   const r = .05 * mindim;
   ctx.beginPath();
   ctx.fillStyle = colors.emergent;
-  ctx.strokeStyle = colors.umbral;
+  ctx.strokeStyle = colors.tertiary;
   ctx.lineWidth = .01 * r;
   drawArc(ctx, 0, 0, r);
   ctx.fill();
@@ -336,7 +364,7 @@ var drawRing = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim; // mindim ~ 10m
   ctx.lineWidth = .003 * mindim; // ~ 1mm, i think
-  ctx.strokeStyle = colors.umbral;
+  ctx.strokeStyle = colors.tertiary;
   ctx.beginPath();
   // drawArc(ctx, 0, 0, 0.5 * mindim);
   drawArc(ctx, 0, 0, 0.1 * mindim);

@@ -6,10 +6,10 @@ const Color = (function (/*api*/) {
 }());
 
 const colors = true ? {
-    "primary": "darkgreen",
-    "secondary": "darkviolet",
-    "tertiary": "saddlebrown",
-    "emergent": "darkgray",
+    "primary": "#88b24b", //"darkgreen",
+    "secondary": "#5f4c8b", //"darkviolet"
+    "tertiary": "#fe6f61", //"saddlebrown"
+    "emergent": "#f7cac8", //"darkgray"
     "rewarding": "gold",
     "hostile": "firebrick",
     "mercurial": "navy",

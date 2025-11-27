@@ -131,3 +131,32 @@ _Further information can be found on the wiki (_link_)._
 - [ ] worker services
 - [x] `OffScreenCanvas` for backgrounds, sprites, and collision detection
 - [ ] entity editor/viewer; modify exeperience meters
+
+## Overview
+Go Touch Grass is an interactive experience that puts players through an accelerated introduction to ecology concepts.
+
+Biologicial Succession
+
+## Install
+Go Touch Grass is shipped as self-contained HTML package that can be played on any browser that supports HTML 5 (Canvas).
+
+## Play
+Go Touch Grass is designed to have minimalistic and intuitive play. All interactions are accepted: keyboard, mouse, and touch (mobile).
+
+### Controls
+- Rest (no input)
+  - Causes no Disturbance
+  - Activates nearby Plants
+  - Reveals next Target
+- Walk (drag)
+  - Causes low Disturbance
+  - Activates touched Plants
+  - Reveals nearby Plants
+- Feel (click/tap)
+  - Causes high Disturbance
+  - Activates nearby Plants
+  - Remove last Target
+
+### Map
+The map consists of the immediate area around a large park with a grass field, walking paths, trees, fences, and other features. The player will start outside the gate at the information desk. If the player does not receive a key from the desk, their observations will not grant new skills. With the key, individual plants can be distinguished, not just patches.
+There is a walking path leading from the gate to a jogging track around the center of the park. There are several small trees around the track and larger trees near the fence. There are natural paths throughout the wooded areas.
