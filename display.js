@@ -287,8 +287,8 @@ var drawBackground = (state) => {
   state.dotTest = true;
   if (state.dotTest) {
     const r = 0.1 * mindim;
-    const offsetX = 0;//state.dx * mindim;
-    const offsetY = 0;//state.dy * mindim;
+    const offsetX = state.dx * mindim;
+    const offsetY = state.dy * mindim;
 
     ctx.fillStyle = colors.primary;
     ctx.beginPath();
@@ -312,16 +312,16 @@ var drawBackground = (state) => {
     ctx.stroke();
     ctx.fill();
 
-    ctx.strokeStyle = colors.emergent;
-    ctx.setLineDash([.03 * r, .01 * r]);
-    ctx.lineWidth = .06 * r;
-    ctx.beginPath();
-    drawArc(ctx, r * 2.5 + offsetX - .5 * r, offsetY, .05 * r);
-    ctx.stroke();
-    ctx.fillStyle = colors.emergent;
-    ctx.beginPath();
-    drawArc(ctx, r * 2.5 + offsetX - .5 * r, offsetY, .05 * r);
-    ctx.fill();
+    // ctx.strokeStyle = colors.emergent;
+    // ctx.setLineDash([.03 * r, .01 * r]);
+    // ctx.lineWidth = .04 * r;
+    // ctx.beginPath();
+    // drawArc(ctx, r * 2.5 + offsetX - .5 * r, offsetY, .08 * r);
+    // ctx.stroke();
+    // ctx.fillStyle = colors.emergent;
+    // ctx.beginPath();
+    // drawArc(ctx, r * 2.5 + offsetX - .5 * r, offsetY, .04 * r);
+    // ctx.fill();
 
     ctx.fillStyle = colors.emergent;
     ctx.strokeStyle = colors.primary;
@@ -332,16 +332,16 @@ var drawBackground = (state) => {
     ctx.stroke();
     ctx.fill();
 
-    ctx.strokeStyle = colors.secondary;
-    ctx.setLineDash([.01 * r, .03 * r]);
-    ctx.lineWidth = .07 * r;
-    ctx.beginPath();
-    drawArc(ctx, r * 2.5 + offsetX + .5 * r, offsetY, .07 * r);
-    ctx.stroke();
-    ctx.fillStyle = colors.secondary;
-    ctx.beginPath();
-    drawArc(ctx, r * 2.5 + offsetX + .5 * r, offsetY, .03 * r);
-    ctx.fill();
+    // ctx.strokeStyle = colors.secondary;
+    // ctx.setLineDash([.01 * r, .03 * r]);
+    // ctx.lineWidth = .07 * r;
+    // ctx.beginPath();
+    // drawArc(ctx, r * 2.5 + offsetX + .5 * r, offsetY, .07 * r);
+    // ctx.stroke();
+    // ctx.fillStyle = colors.secondary;
+    // ctx.beginPath();
+    // drawArc(ctx, r * 2.5 + offsetX + .5 * r, offsetY, .03 * r);
+    // ctx.fill();
 
     ctx.setLineDash([]);
 
@@ -404,11 +404,11 @@ var drawClover = (state, x, y, r, options={offset:0, stage:false}) => {
     ctx.lineWidth = .1 * r;
     drawArc(ctx, x, y, 1 * r);
     ctx.fill();
-    ctx.stroke();
-    drawArc(ctx, x, y, .7 * r);
-    ctx.stroke();
-    drawArc(ctx, x, y, .3 * r);
-    ctx.stroke();
+    // ctx.stroke();
+    // drawArc(ctx, x, y, .7 * r);
+    // ctx.stroke();
+    // drawArc(ctx, x, y, .3 * r);
+    // ctx.stroke();
   }
 
 }
@@ -417,7 +417,7 @@ var drawGrass = (state, x, y, r, options={offset:0}) => {
   const ctx = state.ctx;
   ctx.strokeStyle = colors.primary;
   const offset = options.offset ? options.offset : 0;
-  ctx.setLineDash([.2 * r, .5 * r]);
+  ctx.setLineDash([.2 * r, .2 * r]);
   ctx.lineWidth = .5 * r;
   ctx.beginPath();
   drawArc(ctx, x, y, r, {start:offset, end:Math.PI*2+offset});
@@ -461,7 +461,7 @@ var drawPlayer = (state) => {
   ctx.beginPath();
   ctx.fillStyle = colors.emergent;
   ctx.strokeStyle = colors.tertiary;
-  ctx.lineWidth = .01 * r;
+  ctx.lineWidth = .001 * mindim;
   drawArc(ctx, 0, 0, r);
   ctx.fill();
   ctx.stroke();
@@ -469,11 +469,11 @@ var drawPlayer = (state) => {
 
 var drawRing = (state) => {
 
-  if (!state.events.isRingEnabled && !state.events.isRingLocked) return;
+  //if (!state.events.isRingEnabled && !state.events.isRingLocked) return;
 
   const ctx = state.ctx;
   const mindim = state.mindim; // mindim ~ 10m
-  ctx.lineWidth = .003 * mindim; // ~ 1mm, i think
+  ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
   ctx.strokeStyle = colors.tertiary;
   ctx.beginPath();
   // drawArc(ctx, 0, 0, 0.5 * mindim);
@@ -481,7 +481,7 @@ var drawRing = (state) => {
   ctx.stroke();
 
   ctx.strokeStyle = colors.emergent;
-  ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
+  ctx.lineWidth = .001 * mindim; // ~ 1mm, i think
   ctx.beginPath();
   // drawArc(ctx, 0, 0, 0.5 * mindim);
   drawArc(ctx, 0, 0, 0.1 * mindim);
