@@ -159,6 +159,14 @@ var drawPark = (state) => {
   ctx.rect(-.5 * w - x + dx - (.5 * ctx.lineWidth), -.5 * h - y + dy - (.5 * ctx.lineWidth), w + ctx.lineWidth, h + ctx.lineWidth);
   ctx.lineWidth = .28 * mindim;
   ctx.stroke();
+
+  ctx.beginPath();
+  ctx.lineWidth = .01 * mindim;
+  ctx.strokeStyle = colors.emergent;
+  ctx.setLineDash([.1 * mindim, .1 * mindim]);
+  ctx.rect(-.3 * w - .6 * x + dx - (.5 * ctx.lineWidth), -.3 * h - .6 * y + dy - (.5 * ctx.lineWidth), .85*w + ctx.lineWidth, .85 * h + ctx.lineWidth);
+  ctx.stroke();
+
   ctx.setLineDash([]);
 
 }
@@ -418,11 +426,9 @@ var drawGrass = (state, x, y, r, options={offset:0}) => {
   ctx.strokeStyle = colors.primary;
   const offset = options.offset ? options.offset : 0;
   ctx.setLineDash([.2 * r, .2 * r]);
-  ctx.lineWidth = .5 * r;
+  ctx.lineWidth = r;
   ctx.beginPath();
   drawArc(ctx, x, y, r, {start:offset, end:Math.PI*2+offset});
-  drawArc(ctx, x, y, .8 * r, {});
-  drawArc(ctx, x, y, .5 * r, {});
   ctx.stroke();
   ctx.setLineDash([]);
 
