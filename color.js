@@ -7,8 +7,8 @@ const Color = (function (/*api*/) {
 
 const colors = true ? {
     "primary": "#88b24b", //"darkgreen",
-    "secondary": "#5f4c8b", //"darkviolet"
-    "tertiary": "#fe6f61", //"saddlebrown"
+    "secondary": "#fe6f61", //"darkviolet"
+    "tertiary": "#5f4c8b", //"saddlebrown"
     "emergent": "#f7cac8", //"darkgray"
     "rewarding": "gold",
     "hostile": "firebrick",
