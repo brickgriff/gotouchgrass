@@ -140,50 +140,57 @@ var drawTest = (state) => {
   // spawned plant max distance based on radius
 
 
+  // claimed crop
+  ctx.beginPath();
+  ctx.strokeStyle = colors.tertiary;
+  ctx.lineWidth = .01 * mindim;
+  drawArc(ctx, roomX - .00 * mindim, roomY - .44 * mindim, .09 * mindim);
+  ctx.stroke();
+
   // enabled crop
   ctx.beginPath();
-  ctx.strokeStyle=colors.emergent;
+  ctx.strokeStyle = colors.emergent;
   ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .11 * mindim, roomY + .11 * mindim, .09 *mindim);
+  drawArc(ctx, roomX - .11 * mindim, roomY + .11 * mindim, .09 * mindim);
   ctx.stroke();
 
   // disabled crop
   ctx.beginPath();
-  ctx.setLineDash([.025* mindim, .025*mindim]);
-  ctx.strokeStyle=colors.emergent;
+  ctx.setLineDash([.025 * mindim, .025 * mindim]);
+  ctx.strokeStyle = colors.emergent;
   ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .11 * mindim, roomY - .22 * mindim, .09 *mindim);
+  drawArc(ctx, roomX - .11 * mindim, roomY - .22 * mindim, .09 * mindim);
   ctx.stroke();
   ctx.setLineDash([]);
 
   // enabled weed
   ctx.beginPath();
-  ctx.strokeStyle=colors.secondary;
+  ctx.strokeStyle = colors.secondary;
   ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX + .44 * mindim, roomY + .00 * mindim, .09 *mindim);
+  drawArc(ctx, roomX + .44 * mindim, roomY + .00 * mindim, .09 * mindim);
   ctx.stroke();
 
 
   // disabled weed
   ctx.beginPath();
-  ctx.setLineDash([.025* mindim, .025*mindim]);
-  ctx.strokeStyle=colors.secondary;
+  ctx.setLineDash([.025 * mindim, .025 * mindim]);
+  ctx.strokeStyle = colors.secondary;
   ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .00 * mindim, roomY + .44 * mindim, .09 *mindim);
+  drawArc(ctx, roomX - .00 * mindim, roomY + .44 * mindim, .09 * mindim);
   ctx.stroke();
   ctx.setLineDash([]);
 
   // locked crop
   ctx.beginPath();
-  ctx.strokeStyle=colors.emergent;
+  ctx.strokeStyle = colors.emergent;
   ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 *mindim);
+  drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 * mindim);
   ctx.stroke();
   ctx.beginPath();
-  ctx.setLineDash([.025* mindim, .025*mindim]);
-  ctx.strokeStyle=colors.secondary;
+  ctx.setLineDash([.025 * mindim, .025 * mindim]);
+  ctx.strokeStyle = colors.secondary;
   ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 *mindim);
+  drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 * mindim);
   ctx.stroke();
   ctx.setLineDash([]);
 
