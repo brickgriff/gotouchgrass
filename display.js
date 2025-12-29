@@ -116,22 +116,25 @@ var drawTest = (state) => {
   // [in world] each room spawns its set of patches
   // [in world] each patch spawns its set of plants
   // get this list from state.clumps
-  drawArc(ctx, roomX - .11 * mindim, roomY + .33 * mindim, .1 * mindim);
-  drawArc(ctx, roomX - .33 * mindim, roomY - .11 * mindim, .1 * mindim);
-  drawArc(ctx, roomX + .33 * mindim, roomY - .22 * mindim, .1 * mindim);
-  drawArc(ctx, roomX + .00 * mindim, roomY - .44 * mindim, .1 * mindim);
-  drawArc(ctx, roomX + .22 * mindim, roomY + .22 * mindim, .1 * mindim);
-  drawArc(ctx, roomX - .11 * mindim, roomY - .22 * mindim, .1 * mindim);
-  drawArc(ctx, roomX - .33 * mindim, roomY + .22 * mindim, .1 * mindim);
-  drawArc(ctx, roomX + .44 * mindim, roomY + .00 * mindim, .1 * mindim);
-  drawArc(ctx, roomX + .22 * mindim, roomY + .00 * mindim, .1 * mindim);
-  drawArc(ctx, roomX + .00 * mindim, roomY + .44 * mindim, .1 * mindim);
-  drawArc(ctx, roomX - .22 * mindim, roomY + .00 * mindim, .1 * mindim);
-  drawArc(ctx, roomX - .11 * mindim, roomY + .11 * mindim, .1 * mindim);
-  drawArc(ctx, roomX - .22 * mindim, roomY - .33 * mindim, .1 * mindim);
-  drawArc(ctx, roomX - .44 * mindim, roomY - .00 * mindim, .1 * mindim);
-  drawArc(ctx, roomX + .22 * mindim, roomY + .33 * mindim, .1 * mindim);
-  drawArc(ctx, roomX + .33 * mindim, roomY + .11 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX - .11 * mindim, roomY + .33 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX - .33 * mindim, roomY - .11 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX + .33 * mindim, roomY - .22 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX + .00 * mindim, roomY - .44 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX + .22 * mindim, roomY + .22 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX - .11 * mindim, roomY - .22 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX - .33 * mindim, roomY + .22 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX + .44 * mindim, roomY + .00 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX + .22 * mindim, roomY + .00 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX + .00 * mindim, roomY + .44 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX - .22 * mindim, roomY + .00 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX - .11 * mindim, roomY + .11 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX - .22 * mindim, roomY - .33 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX - .44 * mindim, roomY - .00 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX + .22 * mindim, roomY + .33 * mindim, .1 * mindim);
+  // drawArc(ctx, roomX + .33 * mindim, roomY + .11 * mindim, .1 * mindim);
+  for (plant of state.plants) {
+    drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,plant.r*mindim);
+  }
   ctx.fill();
 
 
@@ -140,59 +143,59 @@ var drawTest = (state) => {
   // spawned plant max distance based on radius
 
 
-  // claimed crop
-  ctx.beginPath();
-  ctx.strokeStyle = colors.tertiary;
-  ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .00 * mindim, roomY - .44 * mindim, .09 * mindim);
-  ctx.stroke();
+  // // claimed crop
+  // ctx.beginPath();
+  // ctx.strokeStyle = colors.tertiary;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .00 * mindim, roomY - .44 * mindim, .09 * mindim);
+  // ctx.stroke();
 
-  // enabled crop
-  ctx.beginPath();
-  ctx.strokeStyle = colors.emergent;
-  ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .11 * mindim, roomY + .11 * mindim, .09 * mindim);
-  ctx.stroke();
+  // // enabled crop
+  // ctx.beginPath();
+  // ctx.strokeStyle = colors.emergent;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .11 * mindim, roomY + .11 * mindim, .09 * mindim);
+  // ctx.stroke();
 
-  // disabled crop
-  ctx.beginPath();
-  ctx.setLineDash([.025 * mindim, .025 * mindim]);
-  ctx.strokeStyle = colors.emergent;
-  ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .11 * mindim, roomY - .22 * mindim, .09 * mindim);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  // // disabled crop
+  // ctx.beginPath();
+  // ctx.setLineDash([.025 * mindim, .025 * mindim]);
+  // ctx.strokeStyle = colors.emergent;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .11 * mindim, roomY - .22 * mindim, .09 * mindim);
+  // ctx.stroke();
+  // ctx.setLineDash([]);
 
-  // enabled weed
-  ctx.beginPath();
-  ctx.strokeStyle = colors.secondary;
-  ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX + .44 * mindim, roomY + .00 * mindim, .09 * mindim);
-  ctx.stroke();
+  // // enabled weed
+  // ctx.beginPath();
+  // ctx.strokeStyle = colors.secondary;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX + .44 * mindim, roomY + .00 * mindim, .09 * mindim);
+  // ctx.stroke();
 
 
-  // disabled weed
-  ctx.beginPath();
-  ctx.setLineDash([.025 * mindim, .025 * mindim]);
-  ctx.strokeStyle = colors.secondary;
-  ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .00 * mindim, roomY + .44 * mindim, .09 * mindim);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  // // disabled weed
+  // ctx.beginPath();
+  // ctx.setLineDash([.025 * mindim, .025 * mindim]);
+  // ctx.strokeStyle = colors.secondary;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .00 * mindim, roomY + .44 * mindim, .09 * mindim);
+  // ctx.stroke();
+  // ctx.setLineDash([]);
 
-  // locked crop
-  ctx.beginPath();
-  ctx.strokeStyle = colors.emergent;
-  ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 * mindim);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.setLineDash([.025 * mindim, .025 * mindim]);
-  ctx.strokeStyle = colors.secondary;
-  ctx.lineWidth = .01 * mindim;
-  drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 * mindim);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  // // locked crop
+  // ctx.beginPath();
+  // ctx.strokeStyle = colors.emergent;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 * mindim);
+  // ctx.stroke();
+  // ctx.beginPath();
+  // ctx.setLineDash([.025 * mindim, .025 * mindim]);
+  // ctx.strokeStyle = colors.secondary;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 * mindim);
+  // ctx.stroke();
+  // ctx.setLineDash([]);
 
 }
 

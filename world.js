@@ -20,12 +20,12 @@ const World = (function (/*api*/) {
       time: 0,
       seed: 42,
       // experience (leaves & flowers)
-      plants:[],
+      plants: [],
       leaves: 0,
       flowers: 0,
       stamina: 0,
       staminaLimit: 0, // can be an update function
-      nearby:[],
+      nearby: [],
       active: [],
       inputs: inputs, // from events.js
       events: {},
@@ -33,6 +33,9 @@ const World = (function (/*api*/) {
       default: { // so you can always revert
         speed: 0.001,
         color: "FC", // "FC" for full-color or "BW" for black and white
+        nearbyUpdate: 90,
+        activeUpdate: 3,
+
       },
     };
 
@@ -43,6 +46,7 @@ const World = (function (/*api*/) {
     resize(state);
     // TODO move to its own foliage service
     //createPlants(state);
+    createPatches(state);
 
     document.state = state;
   };
@@ -121,11 +125,36 @@ var resize = (state) => {
 }
 // TODO Foliage.create
 var createPatches = (state) => {
-  const plants = [];
 
   // essentially i'm going to pull in the patches from display.js
   // whether we randomize them or not, we get to sort them as crop or weed
-  // 
+  // we want ~15 large circles (about 60cm~2.4m in diameter)
+  // circle packing? cellular automata? somehow both?
+  // just create, sort, place, check (collisions)
+  const random = Random.seed(state.seed);
+  const plants = state.plants;
+  var num = 16;
+  // const max = 2.4;
+  // const min = .6;
+  while (num--) {
+    let r = random() * (.18 - .04) + .04;
+    let hypot = random() * (.5 - .05 - r) + .05 + r
+    let theta = random() * Math.PI * 2;
+
+    let x = hypot * Math.cos(theta); // (random() * max * 2 - max);
+    let y = hypot * Math.sin(theta); // (random() * max * 2 - max);
+
+    let c = colors.primary;//(random() < .2) ? colors.primary : colors.tertiary;
+    let t = "grass";//(random() < .2) ? "clover" : "grass";
+    const plant = { x: x, y: y, r: r, t: t, c: c };
+    // if collision: separate
+    // otherwise: continue
+    // patches can overlap up to 50%
+    // even less so soil layer is visible
+    // iteratively condense, if desired
+    // 
+    plants.push(plant);
+  }
 
 }
 
@@ -133,10 +162,10 @@ var createPlants = (state) => {
   const random = Random.seed(state.seed);
   const plants = [];
   state.plants = plants;
-  state.nearby = [];
-  state.active = [];
-  state.leaves = 0;
-  state.flowers = 0;
+  // state.nearby = [];
+  // state.active = [];
+  // state.leaves = 0;
+  // state.flowers = 0;
   state.nearbyUpdate = 90;
   state.activeUpdate = 3;
   state.default.activeUpdate = state.activeUpdate;
