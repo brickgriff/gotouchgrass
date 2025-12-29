@@ -133,7 +133,7 @@ var createPatches = (state) => {
   // just create, sort, place, check (collisions)
   const random = Random.seed(state.seed);
   const plants = state.plants;
-  var num = 100;
+  var num = 125;
   // const max = 2.4;
   // const min = .6;
   while (num--) {
