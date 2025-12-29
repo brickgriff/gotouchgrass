@@ -96,11 +96,19 @@ var drawTest = (state) => {
 
   // draw a large gold background for soil
   ctx.beginPath();
-  ctx.fillStyle = colors.secondary;
-  // ctx.lineWidth = mindim * .001;
-  drawArc(ctx, state.dx * mindim, state.dy * mindim, mindim * .1);
+  ctx.fillStyle = colors.emergent;
+  ctx.strokeStyle = colors.tertiary;
+  ctx.lineWidth = mindim * .005; // 5cm
+
+  const roomX =  state.dx * mindim;
+  const roomY = state.dy * mindim;
+  const roomRadius = mindim * .5; // 5m
+  drawArc(ctx, roomX, roomY, roomRadius);
+  ctx.stroke();
   ctx.fill();
   // draw like 100 green dots in the local area
+  // rectilinear? circumpolar?
+
 }
 
 var drawNav = (state) => {
@@ -111,18 +119,32 @@ var drawNav = (state) => {
 
   if (!state.events.isPressed && !state.events.isKeyboard) return;
 
-  ctx.strokeStyle = colors.emergent;
-  // ctx.fillStyle = colors.emergent;
 
-  ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
+  // if (!state.events.isDragged) {
+  //   ctx.strokeStyle = colors.tertiary;
+  //   // ctx.fillStyle = colors.emergent;  
+  //   ctx.lineWidth = .001 * mindim; // ~ 5mm, i think
 
-  if (!state.events.isDragged) {
-    ctx.beginPath();
-    drawArc(ctx, 0, 0, mindim * .1);
-    ctx.stroke();
-  }
+  //     ctx.beginPath();
+  //   drawArc(ctx, 0, 0, mindim * .1);
+  //   ctx.stroke();
+
+  //   ctx.strokeStyle = colors.tertiary;
+  //   // ctx.fillStyle = colors.emergent;  
+  //   // ctx.lineWidth = .005 * mindim; // ~ 5mm, i think
+  //   // ctx.setLineDash([.005 * mindim, .005 * mindim]);
+    
+  //   //   ctx.beginPath();
+  //   // drawArc(ctx, 0, 0, mindim * .1);
+  //   // ctx.stroke();
+  //   // ctx.setLineDash([]);
+
+  // }
+
 
   var r = mindim * .1;
+    ctx.lineWidth = .001 * mindim; // ~ 5mm, i think
+    
   if (state.events.isKeyboard) {
     mouse.x_ = mouse._x; // state.inputs.keyboard.x_;
     mouse.y_ = mouse._y; // state.inputs.keyboard.y_;
@@ -134,7 +156,7 @@ var drawNav = (state) => {
     state.isClicked = false;
   }
 
-  ctx.strokeStyle = colors.emergent;
+  ctx.strokeStyle = colors.tertiary;
   ctx.fillStyle = colors.tertiary;
   ctx.beginPath();
   drawArc(ctx, mouse.x_, mouse.y_, r);
@@ -359,8 +381,11 @@ var drawBackground = (state) => {
 
 
     ctx.fillStyle = colors.secondary;
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = mindim * .01;
     ctx.beginPath();
     drawArc(ctx, offsetX, -r * 2.5 + offsetY, r); // ~ 1
+    ctx.stroke();
     ctx.fill();
 
     // draw clover
@@ -374,8 +399,11 @@ var drawBackground = (state) => {
     drawClover(state, offsetX-.5*r, offsetY - 2.5 * r-.4*r, .03 * r, {offset: 1.7});
 
     ctx.fillStyle = colors.emergent;
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = mindim * .01;
     ctx.beginPath();
     drawArc(ctx, offsetX, r * 2.5 + offsetY, r); // ~ 1
+    ctx.stroke();
     ctx.fill();
 
     // draw grass

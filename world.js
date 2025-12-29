@@ -103,8 +103,8 @@ var createOffscreenCanvas = (state) => {
 var resize = (state) => {
   state.canvas.width = self.innerWidth; // px
   state.canvas.height = self.innerHeight; // px
-  state.cx = state.canvas.width / 2;
-  state.cy = state.canvas.height / 2;
+  state.cx = state.canvas.width / 2; // px
+  state.cy = state.canvas.height / 2; // px
   // mindim == ~10m
   state.mindim = Math.min(state.canvas.width, state.canvas.height);// / (state.zoom * 4); // - .1 * state.cx;
   state.maxdim = Math.max(state.canvas.width, state.canvas.height);// / (state.zoom * 4); // - .1 * state.cx;
