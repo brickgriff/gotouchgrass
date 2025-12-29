@@ -532,7 +532,7 @@ var drawPlayer = (state) => {
   ctx.lineWidth = .005 * mindim;
   drawArc(ctx, 0, 0, r);
   ctx.fill();
-  ctx.stroke();
+  // ctx.stroke(); // avoid shadows!
 }
 
 var drawRing = (state) => {
