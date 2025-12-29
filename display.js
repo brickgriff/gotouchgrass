@@ -15,7 +15,7 @@ const Display = (function (/*api*/) {
 
     // drawRoom(state);
     // drawPark(state);
-     drawBackground(state);
+    drawBackground(state);
 
     if (!state.terrain) {
       // console.log("once");
@@ -98,9 +98,9 @@ var drawTest = (state) => {
   ctx.beginPath();
   ctx.fillStyle = colors.emergent;
   ctx.strokeStyle = colors.tertiary;
-  ctx.lineWidth = mindim * .005; // 5cm
+  ctx.lineWidth = mindim * .01; // 5cm
 
-  const roomX =  state.dx * mindim;
+  const roomX = state.dx * mindim;
   const roomY = state.dy * mindim;
   const roomRadius = mindim * .5; // 5m
   drawArc(ctx, roomX, roomY, roomRadius);
@@ -133,7 +133,7 @@ var drawNav = (state) => {
   //   // ctx.fillStyle = colors.emergent;  
   //   // ctx.lineWidth = .005 * mindim; // ~ 5mm, i think
   //   // ctx.setLineDash([.005 * mindim, .005 * mindim]);
-    
+
   //   //   ctx.beginPath();
   //   // drawArc(ctx, 0, 0, mindim * .1);
   //   // ctx.stroke();
@@ -143,8 +143,8 @@ var drawNav = (state) => {
 
 
   var r = mindim * .1;
-    ctx.lineWidth = .001 * mindim; // ~ 5mm, i think
-    
+  ctx.lineWidth = .0025 * mindim; // ~ 1mm, i think
+
   if (state.events.isKeyboard) {
     mouse.x_ = mouse._x; // state.inputs.keyboard.x_;
     mouse.y_ = mouse._y; // state.inputs.keyboard.y_;
@@ -157,15 +157,17 @@ var drawNav = (state) => {
   }
 
   ctx.strokeStyle = colors.tertiary;
-  ctx.fillStyle = colors.tertiary;
+  ctx.fillStyle = colors.emergent;
   ctx.beginPath();
-  drawArc(ctx, mouse.x_, mouse.y_, r);
+  drawArc(ctx, mouse.x_, mouse.y_, r+mindim * .0025);
   ctx.stroke();
+  // ctx.fill();
   // ctx.save();
   // ctx.beginPath();
   // drawArc(ctx, mouse.x_, mouse.y_, mindim * .1);
   // ctx.clip();
   if (!state.events.isDragged) return;
+  ctx.fillStyle = colors.tertiary;
   ctx.beginPath();
   const hypot = Math.min(mindim * .1, Math.hypot(mouse._x - mouse.x_, mouse._y - mouse.y_));
   const angle = Math.atan2(mouse._y - mouse.y_, mouse._x - mouse.x_);
@@ -173,6 +175,12 @@ var drawNav = (state) => {
   const x = hypot * Math.cos(angle);
   const y = hypot * Math.sin(angle);
   drawArc(ctx, x + mouse.x_, y + mouse.y_, mindim * .05);
+  ctx.fill();
+  ctx.lineWidth = mindim * .05;
+  ctx.moveTo(mouse.x_,mouse.y_);
+  ctx.lineTo(x+mouse.x_,y+mouse.y_);
+  ctx.stroke()
+  drawArc(ctx, mouse.x_, mouse.y_, mindim * .025);
   ctx.fill();
   // ctx.restore();
 }
@@ -208,7 +216,7 @@ var drawPark = (state) => {
   ctx.lineWidth = .01 * mindim;
   ctx.strokeStyle = colors.emergent;
   ctx.setLineDash([.1 * mindim, .1 * mindim]);
-  ctx.rect(-.3 * w - .6 * x + dx - (.5 * ctx.lineWidth), -.3 * h - .6 * y + dy - (.5 * ctx.lineWidth), .85*w + ctx.lineWidth, .85 * h + ctx.lineWidth);
+  ctx.rect(-.3 * w - .6 * x + dx - (.5 * ctx.lineWidth), -.3 * h - .6 * y + dy - (.5 * ctx.lineWidth), .85 * w + ctx.lineWidth, .85 * h + ctx.lineWidth);
   ctx.stroke();
 
   ctx.setLineDash([]);
@@ -390,13 +398,13 @@ var drawBackground = (state) => {
 
     // draw clover
     drawClover(state, offsetX, offsetY - 2.5 * r, .05 * r);
-    drawClover(state, offsetX+.3*r, offsetY - 2.5 * r-.2*r, .03 * r, {offset: .6});
-    drawClover(state, offsetX+.1*r, offsetY - 2.5 * r+.3*r, .05 * r, {offset: .9});
-    drawClover(state, offsetX-.4*r, offsetY - 2.5 * r-.2*r, .07 * r, {offset: 1.2, stage:2});
-    drawClover(state, offsetX-.3*r, offsetY - 2.5 * r+.4*r, .03 * r, {offset: 1.7});
-    drawClover(state, offsetX+.4*r, offsetY - 2.5 * r-.5*r, .05 * r, {offset: .9});
-    drawClover(state, offsetX-.3*r, offsetY - 2.5 * r+.6*r, .07 * r, {offset: 1.2, stage:2});
-    drawClover(state, offsetX-.5*r, offsetY - 2.5 * r-.4*r, .03 * r, {offset: 1.7});
+    drawClover(state, offsetX + .3 * r, offsetY - 2.5 * r - .2 * r, .03 * r, { offset: .6 });
+    drawClover(state, offsetX + .1 * r, offsetY - 2.5 * r + .3 * r, .05 * r, { offset: .9 });
+    drawClover(state, offsetX - .4 * r, offsetY - 2.5 * r - .2 * r, .07 * r, { offset: 1.2, stage: 2 });
+    drawClover(state, offsetX - .3 * r, offsetY - 2.5 * r + .4 * r, .03 * r, { offset: 1.7 });
+    drawClover(state, offsetX + .4 * r, offsetY - 2.5 * r - .5 * r, .05 * r, { offset: .9 });
+    drawClover(state, offsetX - .3 * r, offsetY - 2.5 * r + .6 * r, .07 * r, { offset: 1.2, stage: 2 });
+    drawClover(state, offsetX - .5 * r, offsetY - 2.5 * r - .4 * r, .03 * r, { offset: 1.7 });
 
     ctx.fillStyle = colors.emergent;
     ctx.strokeStyle = colors.tertiary;
@@ -408,10 +416,10 @@ var drawBackground = (state) => {
 
     // draw grass
     drawGrass(state, offsetX, offsetY + 2.5 * r, .1 * r);
-    drawGrass(state, offsetX + .2 * r, offsetY + 2.5 * r + .3 * r, .12 * r, {offset: .8});
-    drawGrass(state, offsetX - .3 * r, offsetY + 2.5 * r - .2 * r, .14 * r, {offset: 1.3});
-    drawGrass(state, offsetX + .2 * r, offsetY + 2.5 * r - .3 * r, .12 * r, {offset: .4});
-    drawGrass(state, offsetX - .4 * r, offsetY + 2.5 * r + .2 * r, .1 * r, {offset: 1.5});
+    drawGrass(state, offsetX + .2 * r, offsetY + 2.5 * r + .3 * r, .12 * r, { offset: .8 });
+    drawGrass(state, offsetX - .3 * r, offsetY + 2.5 * r - .2 * r, .14 * r, { offset: 1.3 });
+    drawGrass(state, offsetX + .2 * r, offsetY + 2.5 * r - .3 * r, .12 * r, { offset: .4 });
+    drawGrass(state, offsetX - .4 * r, offsetY + 2.5 * r + .2 * r, .1 * r, { offset: 1.5 });
 
     // const hypot = Math.hypot(offsetX, r * 2.5 + offsetY);
 
@@ -422,7 +430,7 @@ var drawBackground = (state) => {
     // }
   }
 }
-var drawDandelion = (state, x, y, r, options={}) => {
+var drawDandelion = (state, x, y, r, options = {}) => {
   ctx.fillStyle = colors.secondary;
   ctx.strokeStyle = colors.primary;
   ctx.setLineDash([.05 * r, .05 * r]);
@@ -445,7 +453,7 @@ var drawDandelion = (state, x, y, r, options={}) => {
 
 }
 
-var drawClover = (state, x, y, r, options={offset:0, stage:false}) => {
+var drawClover = (state, x, y, r, options = { offset: 0, stage: false }) => {
   const ctx = state.ctx;
   ctx.fillStyle = colors.primary;
   const offset = options.offset ? options.offset : 0;
@@ -453,7 +461,7 @@ var drawClover = (state, x, y, r, options={offset:0, stage:false}) => {
   const angle2 = Math.PI * ((5 / 6) + offset);
   const angle3 = Math.PI * ((1 / 6) + offset);
 
-  ctx.beginPath();  
+  ctx.beginPath();
   drawArc(ctx, x + Math.cos(angle1) * r, y + Math.sin(angle1) * r, r);
   drawArc(ctx, x + Math.cos(angle2) * r, y + Math.sin(angle2) * r, r);
   drawArc(ctx, x + Math.cos(angle3) * r, y + Math.sin(angle3) * r, r);
@@ -475,14 +483,14 @@ var drawClover = (state, x, y, r, options={offset:0, stage:false}) => {
 
 }
 
-var drawGrass = (state, x, y, r, options={offset:0}) => {
+var drawGrass = (state, x, y, r, options = { offset: 0 }) => {
   const ctx = state.ctx;
   ctx.strokeStyle = colors.primary;
   const offset = options.offset ? options.offset : 0;
   ctx.setLineDash([.2 * r, .2 * r]);
   ctx.lineWidth = r;
   ctx.beginPath();
-  drawArc(ctx, x, y, r, {start:Math.PI*offset, end:Math.PI*(2+offset)});
+  drawArc(ctx, x, y, r, { start: Math.PI * offset, end: Math.PI * (2 + offset) });
   ctx.stroke();
   ctx.setLineDash([]);
 
@@ -520,11 +528,11 @@ var drawPlayer = (state) => {
   const r = .05 * mindim;
   ctx.beginPath();
   ctx.fillStyle = colors.tertiary;
-  ctx.strokeStyle = colors.secondary;
-  ctx.lineWidth = .001 * mindim;
+  ctx.strokeStyle = colors.emergent;
+  ctx.lineWidth = .005 * mindim;
   drawArc(ctx, 0, 0, r);
   ctx.fill();
-  // ctx.stroke();
+  ctx.stroke();
 }
 
 var drawRing = (state) => {
@@ -533,7 +541,7 @@ var drawRing = (state) => {
 
   const ctx = state.ctx;
   const mindim = state.mindim; // mindim ~ 10m
-  ctx.setLineDash([10,20]);
+  ctx.setLineDash([10, 20]);
   ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
   ctx.strokeStyle = colors.secondary;
   ctx.beginPath();
