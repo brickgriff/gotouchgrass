@@ -120,6 +120,15 @@ var resize = (state) => {
   // console.log("once");
 }
 // TODO Foliage.create
+var createPatches = (state) => {
+  const plants = [];
+
+  // essentially i'm going to pull in the patches from display.js
+  // whether we randomize them or not, we get to sort them as crop or weed
+  // 
+
+}
+
 var createPlants = (state) => {
   const random = Random.seed(state.seed);
   const plants = [];
