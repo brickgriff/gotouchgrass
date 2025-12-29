@@ -133,19 +133,19 @@ var createPatches = (state) => {
   // just create, sort, place, check (collisions)
   const random = Random.seed(state.seed);
   const plants = state.plants;
-  var num = 16;
+  var num = 100;
   // const max = 2.4;
   // const min = .6;
   while (num--) {
-    let r = random() * (.18 - .04) + .04;
-    let hypot = random() * (.5 - .05 - r) + .05 + r
+    let r = random() * (.09 - .06) + .03;
+    let hypot = random() * (.5 - .05 - 1.5 * r) + .05 + r
     let theta = random() * Math.PI * 2;
 
     let x = hypot * Math.cos(theta); // (random() * max * 2 - max);
     let y = hypot * Math.sin(theta); // (random() * max * 2 - max);
 
     let c = colors.primary;//(random() < .2) ? colors.primary : colors.tertiary;
-    let t = "grass";//(random() < .2) ? "clover" : "grass";
+    let t = colors.emergent;//"grass";//(random() < .2) ? "clover" : "grass";
     const plant = { x: x, y: y, r: r, t: t, c: c };
     // if collision: separate
     // otherwise: continue

@@ -109,34 +109,36 @@ var drawTest = (state) => {
   ctx.fill();
   // draw like 100 green dots in the local area
   // rectilinear? circumpolar?
-  ctx.beginPath();
-  ctx.fillStyle = colors.primary;
   // drawArc(ctx,roomX,roomY,.15*mindim);
 
   // [in world] each room spawns its set of patches
   // [in world] each patch spawns its set of plants
   // get this list from state.clumps
-  // drawArc(ctx, roomX - .11 * mindim, roomY + .33 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX - .33 * mindim, roomY - .11 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX + .33 * mindim, roomY - .22 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX + .00 * mindim, roomY - .44 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX + .22 * mindim, roomY + .22 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX - .11 * mindim, roomY - .22 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX - .33 * mindim, roomY + .22 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX + .44 * mindim, roomY + .00 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX + .22 * mindim, roomY + .00 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX + .00 * mindim, roomY + .44 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX - .22 * mindim, roomY + .00 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX - .11 * mindim, roomY + .11 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX - .22 * mindim, roomY - .33 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX - .44 * mindim, roomY - .00 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX + .22 * mindim, roomY + .33 * mindim, .1 * mindim);
-  // drawArc(ctx, roomX + .33 * mindim, roomY + .11 * mindim, .1 * mindim);
+  ctx.beginPath();
+  ctx.fillStyle = colors.primary;
   for (plant of state.plants) {
+    if (plant.c !== ctx.fillStyle) continue;
     drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,plant.r*mindim);
   }
   ctx.fill();
 
+  ctx.beginPath();
+  ctx.strokeStyle = colors.emergent;
+  ctx.lineWidth = .005 * mindim;
+  for (plant of state.plants) {
+    const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
+    if (plant.t !== ctx.strokeStyle || hypot > (plant.r+.025) * mindim) continue;
+    drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,(plant.r-.01)*mindim);
+  }
+  ctx.stroke();
+
+  // ctx.beginPath();
+  // ctx.fillStyle = colors.primary;
+  // for (plant of state.plants) {
+  //   if (plant.c !== ctx.fillStyle);
+  //   drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,plant.r*mindim);
+  // }
+  // ctx.fill();
 
   // each clump is a spawner for plant mobs
   // spawned plant type is based on percentages
