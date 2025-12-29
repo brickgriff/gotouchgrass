@@ -12,13 +12,13 @@ function mainLoop(now) {
 
   // console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
-  // they both share player position and velocity
   World.update(dt); // update entities
   Display.draw(); // draw entities
 
   if (state.isQuit) return console.log("quit");
 
-  state.time = now; // update time for tracking
+  // update time for tracking
+  state.time = now;
   state.frame++;
   requestAnimationFrame(now => mainLoop(now));
 }

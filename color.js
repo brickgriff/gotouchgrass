@@ -6,13 +6,14 @@ const Color = (function (/*api*/) {
 }());
 
 const colors = true ? {
-    "primary": "darkgreen",
-    "secondary": "darkviolet",
-    "tertiary": "saddlebrown",
-    "emergent": "darkgray",
-    "rewarding": "gold",
+    "primary": "#88b24b", // "darkgreen",
+    "secondary": "#fe6f61", // "darkviolet"
+    "tertiary": "#5f4c8b", // "saddlebrown"
+    "emergent": "#f7cac8", // "#f7cac8", // "darkgray"
+    "rewarding": "#fed762", // "gold",
     "hostile": "firebrick",
     "mercurial": "navy",
+    "umbral": "#3c3c3c",
 } : {
     "primary": "gray",
     "secondary": "dimgray",
