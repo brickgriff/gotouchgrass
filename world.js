@@ -12,10 +12,10 @@ const World = (function (/*api*/) {
       // NOTE: how _much_ , not how _fast_
       dx: 0,
       dy: 0,
-      speed: 0.001,
-      zoom: .2, // [0, 1]
-      pitch: 1, // [0, 1]
-      yaw: 0, // [-1, 1]
+      speed: 0.001,// ><
+      zoom: .2, // [0, 1] // ><
+      //pitch: 1, // [0, 1]
+      //yaw: 0, // [-1, 1]
       frame: 0,
       time: 0,
       seed: 42,
@@ -101,12 +101,13 @@ var createOffscreenCanvas = (state) => {
 // TODO duplicate this code for creating an offscreen canvas for the secret clover area and the title card at the end (large)
 // TODO Window.resize
 var resize = (state) => {
-  state.canvas.width = self.innerWidth;
-  state.canvas.height = self.innerHeight;
+  state.canvas.width = self.innerWidth; // px
+  state.canvas.height = self.innerHeight; // px
   state.cx = state.canvas.width / 2;
   state.cy = state.canvas.height / 2;
-  state.mindim = Math.min(state.canvas.width, state.canvas.height) / (state.zoom * 4); // - .1 * state.cx;
-  state.maxdim = Math.max(state.canvas.width, state.canvas.height) / (state.zoom * 4); // - .1 * state.cx;
+  // mindim == ~10m
+  state.mindim = Math.min(state.canvas.width, state.canvas.height);// / (state.zoom * 4); // - .1 * state.cx;
+  state.maxdim = Math.max(state.canvas.width, state.canvas.height);// / (state.zoom * 4); // - .1 * state.cx;
   // const othdim = Math.max(state.canvas.width, state.canvas.height);
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);

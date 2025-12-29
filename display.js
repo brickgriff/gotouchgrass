@@ -11,8 +11,11 @@ const Display = (function (/*api*/) {
     // FIXME: these functions do not need the entire state
     // for most, ctx, mindim, and various screen params should work
     clear(state);
-    drawPark(state);
-    drawBackground(state);
+    drawTest(state);
+
+    // drawRoom(state);
+    // drawPark(state);
+     drawBackground(state);
 
     if (!state.terrain) {
       // console.log("once");
@@ -33,7 +36,7 @@ const Display = (function (/*api*/) {
     // drawActive(state);
 
     drawPlayer(state);
-    drawRing(state);
+    // drawRing(state);
 
     // Experience.draw();
     // Stamina.draw();
@@ -87,6 +90,18 @@ const Display = (function (/*api*/) {
 
 }());
 
+var drawTest = (state) => {
+  const ctx = state.ctx;
+  const mindim = state.mindim;
+
+  // draw a large gold background for soil
+  ctx.beginPath();
+  ctx.fillStyle = colors.secondary;
+  // ctx.lineWidth = mindim * .001;
+  drawArc(ctx, state.dx * mindim, state.dy * mindim, mindim * .1);
+  ctx.fill();
+  // draw like 100 green dots in the local area
+}
 
 var drawNav = (state) => {
 
@@ -97,7 +112,7 @@ var drawNav = (state) => {
   if (!state.events.isPressed && !state.events.isKeyboard) return;
 
   ctx.strokeStyle = colors.emergent;
-  ctx.fillStyle = colors.emergent;
+  // ctx.fillStyle = colors.emergent;
 
   ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
 
@@ -120,7 +135,7 @@ var drawNav = (state) => {
   }
 
   ctx.strokeStyle = colors.emergent;
-  ctx.fillStyle = colors.emergent;
+  ctx.fillStyle = colors.tertiary;
   ctx.beginPath();
   drawArc(ctx, mouse.x_, mouse.y_, r);
   ctx.stroke();
@@ -476,12 +491,12 @@ var drawPlayer = (state) => {
   const mindim = state.mindim;
   const r = .05 * mindim;
   ctx.beginPath();
-  ctx.fillStyle = colors.emergent;
+  ctx.fillStyle = colors.tertiary;
   ctx.strokeStyle = colors.secondary;
   ctx.lineWidth = .001 * mindim;
   drawArc(ctx, 0, 0, r);
   ctx.fill();
-  ctx.stroke();
+  // ctx.stroke();
 }
 
 var drawRing = (state) => {
@@ -569,10 +584,6 @@ var drawGround = (state) => {
   ctx.stroke();
 
   ctx.restore();
-
-}
-
-var drawRocks = (state) => {
 
 }
 
