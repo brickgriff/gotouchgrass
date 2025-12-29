@@ -20,10 +20,12 @@ const World = (function (/*api*/) {
       time: 0,
       seed: 42,
       // experience (leaves & flowers)
+      plants:[],
       leaves: 0,
       flowers: 0,
       stamina: 0,
       staminaLimit: 0, // can be an update function
+      nearby:[],
       active: [],
       inputs: inputs, // from events.js
       events: {},
@@ -40,7 +42,7 @@ const World = (function (/*api*/) {
     // TODO make a window service or something
     resize(state);
     // TODO move to its own foliage service
-    createPlants(state);
+    //createPlants(state);
 
     document.state = state;
   };
@@ -106,8 +108,8 @@ var resize = (state) => {
   state.cx = state.canvas.width / 2; // px
   state.cy = state.canvas.height / 2; // px
   // mindim == ~10m
-  state.mindim = Math.min(state.canvas.width, state.canvas.height);// / (state.zoom * 4); // - .1 * state.cx;
-  state.maxdim = Math.max(state.canvas.width, state.canvas.height);// / (state.zoom * 4); // - .1 * state.cx;
+  state.mindim = Math.min(state.canvas.width, state.canvas.height); // - .1 * state.cx;
+  state.maxdim = Math.max(state.canvas.width, state.canvas.height); // - .1 * state.cx;
   // const othdim = Math.max(state.canvas.width, state.canvas.height);
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
@@ -148,6 +150,7 @@ var createPlants = (state) => {
     plants.push(plant);
   }
 }
+
 // TODO Player.update
 var updatePlayer = (state) => {
   const vector = state.vector;

@@ -11,11 +11,12 @@ const Display = (function (/*api*/) {
     // FIXME: these functions do not need the entire state
     // for most, ctx, mindim, and various screen params should work
     clear(state);
+    drawBackground(state);
+
     drawTest(state);
 
     // drawRoom(state);
     // drawPark(state);
-    drawBackground(state);
 
     if (!state.terrain) {
       // console.log("once");
@@ -108,6 +109,83 @@ var drawTest = (state) => {
   ctx.fill();
   // draw like 100 green dots in the local area
   // rectilinear? circumpolar?
+  ctx.beginPath();
+  ctx.fillStyle = colors.primary;
+  // drawArc(ctx,roomX,roomY,.15*mindim);
+
+  // [in world] each room spawns its set of patches
+  // [in world] each patch spawns its set of plants
+  // get this list from state.clumps
+  drawArc(ctx, roomX - .11 * mindim, roomY + .33 * mindim, .1 * mindim);
+  drawArc(ctx, roomX - .33 * mindim, roomY - .11 * mindim, .1 * mindim);
+  drawArc(ctx, roomX + .33 * mindim, roomY - .22 * mindim, .1 * mindim);
+  drawArc(ctx, roomX + .00 * mindim, roomY - .44 * mindim, .1 * mindim);
+  drawArc(ctx, roomX + .22 * mindim, roomY + .22 * mindim, .1 * mindim);
+  drawArc(ctx, roomX - .11 * mindim, roomY - .22 * mindim, .1 * mindim);
+  drawArc(ctx, roomX - .33 * mindim, roomY + .22 * mindim, .1 * mindim);
+  drawArc(ctx, roomX + .44 * mindim, roomY + .00 * mindim, .1 * mindim);
+  drawArc(ctx, roomX + .22 * mindim, roomY + .00 * mindim, .1 * mindim);
+  drawArc(ctx, roomX + .00 * mindim, roomY + .44 * mindim, .1 * mindim);
+  drawArc(ctx, roomX - .22 * mindim, roomY + .00 * mindim, .1 * mindim);
+  drawArc(ctx, roomX - .11 * mindim, roomY + .11 * mindim, .1 * mindim);
+  drawArc(ctx, roomX - .22 * mindim, roomY - .33 * mindim, .1 * mindim);
+  drawArc(ctx, roomX - .44 * mindim, roomY - .00 * mindim, .1 * mindim);
+  drawArc(ctx, roomX + .22 * mindim, roomY + .33 * mindim, .1 * mindim);
+  drawArc(ctx, roomX + .33 * mindim, roomY + .11 * mindim, .1 * mindim);
+  ctx.fill();
+
+
+  // each clump is a spawner for plant mobs
+  // spawned plant type is based on percentages
+  // spawned plant max distance based on radius
+
+
+  // enabled crop
+  ctx.beginPath();
+  ctx.strokeStyle=colors.emergent;
+  ctx.lineWidth = .01 * mindim;
+  drawArc(ctx, roomX - .11 * mindim, roomY + .11 * mindim, .09 *mindim);
+  ctx.stroke();
+
+  // disabled crop
+  ctx.beginPath();
+  ctx.setLineDash([.025* mindim, .025*mindim]);
+  ctx.strokeStyle=colors.emergent;
+  ctx.lineWidth = .01 * mindim;
+  drawArc(ctx, roomX - .11 * mindim, roomY - .22 * mindim, .09 *mindim);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // enabled weed
+  ctx.beginPath();
+  ctx.strokeStyle=colors.secondary;
+  ctx.lineWidth = .01 * mindim;
+  drawArc(ctx, roomX + .44 * mindim, roomY + .00 * mindim, .09 *mindim);
+  ctx.stroke();
+
+
+  // disabled weed
+  ctx.beginPath();
+  ctx.setLineDash([.025* mindim, .025*mindim]);
+  ctx.strokeStyle=colors.secondary;
+  ctx.lineWidth = .01 * mindim;
+  drawArc(ctx, roomX - .00 * mindim, roomY + .44 * mindim, .09 *mindim);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // locked crop
+  ctx.beginPath();
+  ctx.strokeStyle=colors.emergent;
+  ctx.lineWidth = .01 * mindim;
+  drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 *mindim);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.setLineDash([.025* mindim, .025*mindim]);
+  ctx.strokeStyle=colors.secondary;
+  ctx.lineWidth = .01 * mindim;
+  drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 *mindim);
+  ctx.stroke();
+  ctx.setLineDash([]);
 
 }
 
@@ -159,7 +237,7 @@ var drawNav = (state) => {
   ctx.strokeStyle = colors.tertiary;
   ctx.fillStyle = colors.emergent;
   ctx.beginPath();
-  drawArc(ctx, mouse.x_, mouse.y_, r+mindim * .0025);
+  drawArc(ctx, mouse.x_, mouse.y_, r + mindim * .0025);
   ctx.stroke();
   // ctx.fill();
   // ctx.save();
@@ -177,8 +255,8 @@ var drawNav = (state) => {
   drawArc(ctx, x + mouse.x_, y + mouse.y_, mindim * .05);
   ctx.fill();
   ctx.lineWidth = mindim * .05;
-  ctx.moveTo(mouse.x_,mouse.y_);
-  ctx.lineTo(x+mouse.x_,y+mouse.y_);
+  ctx.moveTo(mouse.x_, mouse.y_);
+  ctx.lineTo(x + mouse.x_, y + mouse.y_);
   ctx.stroke()
   drawArc(ctx, mouse.x_, mouse.y_, mindim * .025);
   ctx.fill();
@@ -389,7 +467,7 @@ var drawBackground = (state) => {
 
 
     ctx.fillStyle = colors.secondary;
-    ctx.strokeStyle = colors.tertiary;
+    ctx.strokeStyle = colors.primary;
     ctx.lineWidth = mindim * .01;
     ctx.beginPath();
     drawArc(ctx, offsetX, -r * 2.5 + offsetY, r); // ~ 1
