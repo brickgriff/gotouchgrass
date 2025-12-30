@@ -204,8 +204,7 @@ var createPatches = (state) => {
     // if (plant1.t == "lock") continue;
     for (plant2 of plants) {
       // if (plant2.t == "lock") continue;
-      if ((plant1.x==plant2.x && plant1.y==plant2.y) || 
-        (plant1.t != plant2.t && plant1.t!="lock" && plant2.t!="lock")) continue;
+      if ((plant1==plant2) || (plant1.t=="lock" && plant2.t=="lock")) continue;
       if (plant1.n && plant2.n && plant1.n.includes(plant2) && plant2.n.includes(plant1)) continue;
 
       const dist = Math.hypot(plant1.x - plant2.x, plant1.y - plant2.y);
