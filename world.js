@@ -140,28 +140,50 @@ var createPatches = (state) => {
   const hMax = .5;
   const hMin = .05;
   const hBleed = .25;
+  var resets = 0;
   while (num--) {
     let r = random() * (rMax - rMin) + rMin;
-    let hypot = random() * (hMax - hMin - (2 - hBleed) * r) + hMin + r
-    let theta = random() * Math.PI * 2;
+    let d = random() * (hMax - hMin - (2 - hBleed) * r) + hMin + r
+    let a = random() * Math.PI * 2;
 
-    let x = hypot * Math.cos(theta); // (random() * max * 2 - max);
-    let y = hypot * Math.sin(theta); // (random() * max * 2 - max);
+    let x = d * Math.cos(a); // (random() * max * 2 - max);
+    let y = d * Math.sin(a); // (random() * max * 2 - max);
+    let isOverlap = false;
 
+    for (var plant of plants) {
+      const allowedOverlap = 1; // % of combined radii
+      const distMin = //Math.max(
+        //Math.max(r,plant.r),
+        (r + plant.r) + allowedOverlap;
+      //); // distance bw center points
+      // check distance
+      const dist = Math.hypot(x-plant.x,y-plant.y);
+      if (dist > distMin) continue;
+      // plant.t = colors.secondary;
+      // add 1 to num and spin again
+
+      num++;
+      resets++;
+      if (resets == 5) num--;
+      isOverlap = true;
+      break;
+    }
+
+    if (isOverlap) continue;
+    
     let c = colors.primary;//(random() < .2) ? colors.primary : colors.tertiary;
     let t = colors.emergent;//"grass";//(random() < .2) ? "clover" : "grass";
-    const plant = { x: x, y: y, r: r, t: t, c: c };
     // TODO: extract the above as a function to create rings of objects
     // TODO: offer num, max, min, etc but try adding density
-
     // if collision: separate
     // otherwise: continue
     
     // patches can overlap up to 50%
     // even less so soil layer is visible
     // iteratively condense, if desired
-    // 
-    plants.push(plant);
+    
+    const p = { x: x, y: y, r: r, t: t, c: c };
+    plants.push(p);
   }
 
 }

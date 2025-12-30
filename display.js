@@ -132,6 +132,16 @@ var drawTest = (state) => {
   }
   ctx.stroke();
 
+  ctx.beginPath();
+  ctx.strokeStyle = colors.secondary;
+  ctx.lineWidth = .005 * mindim;
+  for (plant of state.plants) {
+    const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
+    if (plant.t !== ctx.strokeStyle || hypot > (plant.r+.025) * mindim) continue;
+    drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,(plant.r-.01)*mindim);
+  }
+  ctx.stroke();
+
   // ctx.beginPath();
   // ctx.fillStyle = colors.primary;
   // for (plant of state.plants) {
