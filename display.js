@@ -156,7 +156,8 @@ var drawTest = (state) => {
   ctx.fill();
 
   ctx.beginPath();
-  ctx.strokeStyle = colors.secondary;
+  if (state.isLocked) ctx.strokeStyle = colors.secondary;
+  else ctx.strokeStyle = colors.emergent;
   ctx.lineWidth = .005 * mindim;
   for (plant of state.plants) {
     if (plant.t == "lock") continue;
@@ -173,7 +174,8 @@ var drawTest = (state) => {
   ctx.stroke();
   
   ctx.beginPath();
-  ctx.strokeStyle = colors.secondary;
+  if (state.isLocked) ctx.strokeStyle = colors.secondary;
+  else ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.primary;
   ctx.lineWidth = .01 * mindim;
   for (plant of state.plants) {
@@ -192,12 +194,13 @@ var drawTest = (state) => {
 
 
   ctx.beginPath();
-  ctx.strokeStyle = colors.tertiary;
+  ctx.strokeStyle = colors.emergent;
   ctx.lineWidth = .005 * mindim;
   for (plant of state.plants) {
     if (plant.t != "lock") continue;
     const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
-    if (hypot > (plant.r+.025) * mindim) continue;
+    if (hypot > .05 * mindim) continue;
+    state.isLocked = true;
     if (!plant.n) continue;
     // console.log(plant.n.length);
     for (neighbor of plant.n) {
@@ -209,13 +212,14 @@ var drawTest = (state) => {
   ctx.stroke();
   
   ctx.beginPath();
-  ctx.strokeStyle = colors.tertiary;
+  ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.primary;
   ctx.lineWidth = .01 * mindim;
   for (plant of state.plants) {
     if (plant.t != "lock") continue;
     const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
-    if (hypot > (plant.r+.025) * mindim) continue;
+    if (hypot > .05 * mindim) continue;
+    state.isLocked = true;
     if (!plant.n) continue;
     for (neighbor of plant.n) {
       if (neighbor.t != "grass") continue;
@@ -239,7 +243,8 @@ var drawTest = (state) => {
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.strokeStyle = colors.secondary;
+  if (state.isLocked) ctx.strokeStyle = colors.secondary;
+  else ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.primary;
   ctx.lineWidth = .005 * mindim;
   for (plant of state.plants) {
