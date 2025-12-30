@@ -186,7 +186,7 @@ var createPatches = (state) => {
 
     let c = colors.primary;//(random() < .2) ? colors.primary : colors.tertiary;
     const isOuterWeed = (d > .3 && r < .1 && random() <= .9);
-    const isInnerWeed = (d > .1 && r < .08 && random() <= .4);
+    const isInnerWeed = (d > .1 && r < .06 && random() <= .5);
     let t = isOuterWeed || isInnerWeed ? "clover" : "grass";
     // "grass";//(random() < .2) ? "clover" : "grass";
     // TODO: extract the above as a function to create rings of objects
@@ -201,15 +201,16 @@ var createPatches = (state) => {
 
   for (plant1 of plants) {
     // console.log(plant1.x, plant1.y);
-    if (plant1.t == "lock") continue;
+    // if (plant1.t == "lock") continue;
     for (plant2 of plants) {
-      if (plant2.t == "lock") continue;
-      if ((plant1.x==plant2.x && plant1.y==plant2.y) || plant1.t != plant2.t) continue;
+      // if (plant2.t == "lock") continue;
+      if ((plant1.x==plant2.x && plant1.y==plant2.y) || 
+        (plant1.t != plant2.t && plant1.t!="lock" && plant2.t!="lock")) continue;
       if (plant1.n && plant2.n && plant1.n.includes(plant2) && plant2.n.includes(plant1)) continue;
 
       const dist = Math.hypot(plant1.x - plant2.x, plant1.y - plant2.y);
 
-      if (dist < .9 * (plant1.r + plant2.r)) {
+      if (dist < (plant1.r + plant2.r)) {
         plant1.n.push(plant2);
         plant2.n.push(plant1);
       }
