@@ -134,16 +134,18 @@ var createPatches = (state) => {
   // just create, sort, place, check (collisions)
   const random = Random.seed(state.seed);
   const plants = state.plants;
-  var num = 50;
-  const rMax = .14;
-  const rMin = .04;
+  var num = 100;
+  const rMax = .1;
+  const rMin = .05;
   const hMax = .5;
-  const hMin = .1;
+  const hMin = .05;
   const hBleed = .25;
   var retries = 0;
+  var prevR = 0;
   while (num--) {
     let r = random() * (rMax - rMin) + rMin;
-    if (r % 2 == 0) r--;
+    if (prevR != 0) r = prevR;
+    if (Math.floor(r*100) % 2 != 0) r-=.01;
     let d = random() * (hMax - hMin - (2 - hBleed) * r) + hMin + r;
     let a = random() * Math.PI * 2;
 
@@ -152,7 +154,7 @@ var createPatches = (state) => {
     let isOverlap = false;
 
     for (var plant of plants) {
-      const allowedOverlap = .8; // % of combined radii
+      const allowedOverlap = .7; // % of combined radii
       const distMin = (r + plant.r) * allowedOverlap;
       const dist = Math.hypot(x - plant.x, y - plant.y);
       if (dist > distMin) continue;
@@ -162,8 +164,13 @@ var createPatches = (state) => {
 
       num++;
       retries++;
-      if (retries == 50) {
-        num--; // skip this number
+      if (retries == 100) {
+        if (r > rMin) {
+          prevR = r - .02;
+        } else {
+          prevR = 0;
+          num--; // skip this number
+        }
         retries = 0;
       }
       isOverlap = true;
@@ -171,11 +178,12 @@ var createPatches = (state) => {
     }
 
     if (isOverlap) continue;
+    prevR = 0;
 
     let c = colors.primary;//(random() < .2) ? colors.primary : colors.tertiary;
     const isOuterWeed = (d > .3 && r < .1 && random() <= .9);
     const isInnerWeed = (d > .1 && r < .08 && random() <= .4);
-    let t = isOuterWeed || isInnerWeed ? "clover" : "grass"; 
+    let t = isOuterWeed || isInnerWeed ? "clover" : "grass";
     // "grass";//(random() < .2) ? "clover" : "grass";
     // TODO: extract the above as a function to create rings of objects
     // TODO: offer num, max, min, etc but try adding density
