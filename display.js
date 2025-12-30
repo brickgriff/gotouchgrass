@@ -127,7 +127,7 @@ var drawTest = (state) => {
   ctx.lineWidth = .005 * mindim;
   for (plant of state.plants) {
     const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
-    if (plant.t !== ctx.strokeStyle || hypot > (plant.r+.025) * mindim) continue;
+    if (hypot > (plant.r+.025) * mindim) continue;
     drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,(plant.r-.01)*mindim);
   }
   ctx.stroke();
@@ -238,12 +238,10 @@ var drawNav = (state) => {
   //   // drawArc(ctx, 0, 0, mindim * .1);
   //   // ctx.stroke();
   //   // ctx.setLineDash([]);
-
   // }
 
-
   var r = mindim * .1;
-  ctx.lineWidth = .0025 * mindim; // ~ 1mm, i think
+  ctx.lineWidth = .005 * mindim;
 
   if (state.events.isKeyboard) {
     mouse.x_ = mouse._x; // state.inputs.keyboard.x_;
@@ -626,13 +624,31 @@ var drawPlayer = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
   const r = .05 * mindim;
-  ctx.beginPath();
+  const height = .05 * mindim;
   ctx.fillStyle = colors.tertiary;
-  ctx.strokeStyle = colors.emergent;
-  ctx.lineWidth = .005 * mindim;
+  ctx.strokeStyle = colors.tertiary;
+  // ctx.save();
+  // ctx.scale(1,1.5);
+  ctx.beginPath();
   drawArc(ctx, 0, 0, r);
+  // drawArc(ctx, 0, -height, r);
   ctx.fill();
-  // ctx.stroke(); // avoid shadows!
+  // ctx.lineCap = "round";
+  // ctx.lineWidth = (r*2);
+  // const offsetY = -.033 * mindim
+  // ctx.moveTo(0,offsetY);
+  // ctx.lineTo(0,-height-offsetY);
+  // ctx.stroke();
+  // ctx.restore();
+  
+  // ctx.beginPath();
+  // ctx.lineWidth = .005 * mindim;
+  // drawArc(ctx,0,0,r*1.5);
+  // ctx.stroke();
+  // use an ellipse 
+  // with a checkerboard pattern 
+  // for drop shadow
+
 }
 
 var drawRing = (state) => {

@@ -118,7 +118,7 @@ var resize = (state) => {
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
   state.ctx.translate(state.cx, state.cy);
-
+  // state.ctx.scale(.9,.7);
   state.offscreen = createOffscreenCanvas(state);
   window.focus();
   // console.log("once");
@@ -173,10 +173,10 @@ var createPatches = (state) => {
     if (isOverlap) continue;
 
     let c = colors.primary;//(random() < .2) ? colors.primary : colors.tertiary;
-    let t = (d > .3 && r < .1 && random() <= .9) || 
-      (d > .1 && r < .08 && random() <= .4) ? 
-        colors.secondary : 
-        colors.emergent;//"grass";//(random() < .2) ? "clover" : "grass";
+    const isOuterWeed = (d > .3 && r < .1 && random() <= .9);
+    const isInnerWeed = (d > .1 && r < .08 && random() <= .4);
+    let t = isOuterWeed || isInnerWeed ? "clover" : "grass"; 
+    // "grass";//(random() < .2) ? "clover" : "grass";
     // TODO: extract the above as a function to create rings of objects
     // TODO: offer num, max, min, etc but try adding density
 
