@@ -134,7 +134,7 @@ var createPatches = (state) => {
   // just create, sort, place, check (collisions)
   const random = Random.seed(state.seed);
   const plants = state.plants;
-  plants.push({ x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent});
+  plants.push({ x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [] });
 
   var num = 100;
   const rMax = .1;
@@ -156,9 +156,11 @@ var createPatches = (state) => {
     let isOverlap = false;
 
     for (var plant of plants) {
+
       const allowedOverlap = .7; // % of combined radii
       const distMin = (r + plant.r) * allowedOverlap;
       const dist = Math.hypot(x - plant.x, y - plant.y);
+
       if (dist > distMin) continue;
       // plant.t = colors.secondary;
       // add 1 to num and spin again
@@ -193,8 +195,25 @@ var createPatches = (state) => {
     // even less so soil layer is visible
     // iteratively condense, if desired
 
-    const p = { x: x, y: y, r: r, t: t, c: c };
+    const p = { x: x, y: y, r: r, t: t, c: c, n: [] };
     plants.push(p);
+  }
+
+  for (plant1 of plants) {
+    // console.log(plant1.x, plant1.y);
+    if (plant1.t == "lock") continue;
+    for (plant2 of plants) {
+      if (plant2.t == "lock") continue;
+      if ((plant1.x==plant2.x && plant1.y==plant2.y) || plant1.t != plant2.t) continue;
+      if (plant1.n && plant2.n && plant1.n.includes(plant2) && plant2.n.includes(plant1)) continue;
+
+      const dist = Math.hypot(plant1.x - plant2.x, plant1.y - plant2.y);
+
+      if (dist < .9 * (plant1.r + plant2.r)) {
+        plant1.n.push(plant2);
+        plant2.n.push(plant1);
+      }
+    }
   }
 
 }

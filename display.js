@@ -125,15 +125,32 @@ var drawTest = (state) => {
 
   ctx.beginPath();
   ctx.strokeStyle = colors.emergent;
+  ctx.fillStyle = colors.primary;
+  ctx.lineWidth = .005 * mindim;
+  for (plant of state.plants) {
+    const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
+    if (hypot > (plant.r+.025) * mindim) continue;
+    if (!plant.n) continue;
+    // console.log(plant.n.length);
+    for (neighbor of plant.n) {
+      ctx.moveTo(roomX+neighbor.x*mindim,roomY+neighbor.y*mindim);
+      ctx.lineTo(roomX+plant.x*mindim,roomY+plant.y*mindim);
+      drawArc(ctx,roomX+neighbor.x*mindim,roomY+neighbor.y*mindim,.005*mindim);
+    }
+  }
+  ctx.stroke();
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.fillStyle = colors.primary;
+  ctx.strokeStyle = colors.emergent;
   ctx.lineWidth = .005 * mindim;
   for (plant of state.plants) {
     const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
     if (hypot > (plant.r+.025) * mindim) continue;
     drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,(plant.r-.01)*mindim);
-
-    ctx.moveTo(roomX+.25*mindim,roomY-.25*mindim);
-    ctx.lineTo(roomX+plant.x*mindim,roomY+plant.y*mindim);
   }
+  ctx.fill();
   ctx.stroke();
 
   // lock pad
