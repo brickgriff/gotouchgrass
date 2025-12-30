@@ -134,16 +134,17 @@ var createPatches = (state) => {
   // just create, sort, place, check (collisions)
   const random = Random.seed(state.seed);
   const plants = state.plants;
-  var num = 10;
-  const rMax = .1;
-  const rMin = .1;
+  var num = 50;
+  const rMax = .14;
+  const rMin = .04;
   const hMax = .5;
-  const hMin = .05;
+  const hMin = .1;
   const hBleed = .25;
-  var resets = 0;
+  var retries = 0;
   while (num--) {
     let r = random() * (rMax - rMin) + rMin;
-    let d = random() * (hMax - hMin - (2 - hBleed) * r) + hMin + r
+    if (r % 2 == 0) r--;
+    let d = random() * (hMax - hMin - (2 - hBleed) * r) + hMin + r;
     let a = random() * Math.PI * 2;
 
     let x = d * Math.cos(a); // (random() * max * 2 - max);
@@ -151,37 +152,37 @@ var createPatches = (state) => {
     let isOverlap = false;
 
     for (var plant of plants) {
-      const allowedOverlap = 1; // % of combined radii
-      const distMin = //Math.max(
-        //Math.max(r,plant.r),
-        (r + plant.r) + allowedOverlap;
-      //); // distance bw center points
-      // check distance
-      const dist = Math.hypot(x-plant.x,y-plant.y);
+      const allowedOverlap = .8; // % of combined radii
+      const distMin = (r + plant.r) * allowedOverlap;
+      const dist = Math.hypot(x - plant.x, y - plant.y);
       if (dist > distMin) continue;
       // plant.t = colors.secondary;
       // add 1 to num and spin again
+      // if collision, then retry
 
       num++;
-      resets++;
-      if (resets == 5) num--;
+      retries++;
+      if (retries == 50) {
+        num--; // skip this number
+        retries = 0;
+      }
       isOverlap = true;
       break;
     }
 
     if (isOverlap) continue;
-    
+
     let c = colors.primary;//(random() < .2) ? colors.primary : colors.tertiary;
-    let t = colors.emergent;//"grass";//(random() < .2) ? "clover" : "grass";
+    let t = (d > .3 && r < .1 && random() <= .9) || 
+      (d > .1 && r < .08 && random() <= .4) ? 
+        colors.secondary : 
+        colors.emergent;//"grass";//(random() < .2) ? "clover" : "grass";
     // TODO: extract the above as a function to create rings of objects
     // TODO: offer num, max, min, etc but try adding density
-    // if collision: separate
-    // otherwise: continue
-    
-    // patches can overlap up to 50%
+
     // even less so soil layer is visible
     // iteratively condense, if desired
-    
+
     const p = { x: x, y: y, r: r, t: t, c: c };
     plants.push(p);
   }
