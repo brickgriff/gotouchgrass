@@ -161,14 +161,13 @@ var drawTest = (state) => {
   if (state.isLocked) ctx.strokeStyle = colors.tertiary;
   ctx.lineWidth = .005 * mindim;
   for (plant of state.plants) {
-    if (plant.t != "lock") continue;
+    if (plant.t != "lock" && !state.active.includes(plant)) continue;
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
     if (hypot > .05 * mindim && !state.isLocked) continue;
-    // state.isLocked = true;
     if (!plant.n) continue;
     // console.log(plant.n.length);
     for (neighbor of plant.n) {
-      if (neighbor.t != "grass") continue;
+      if (neighbor.t != "grass" || !state.active.includes(neighbor)) continue;
       ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
       ctx.lineTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
     }
@@ -187,11 +186,10 @@ var drawTest = (state) => {
     if (hypot > .05 * mindim) { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim); }
     else {
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r - .01) * mindim);
-      if (state.isLocked &&
-        plant.t == "grass" &&
-        plant.n.includes(state.activeLock) && 
-        !state.active.includes(plant)) {
-        state.active.push(plant);
+      if (state.isLocked && plant.t == "grass" && plant.n.includes(state.activeLock)) {
+        if (!state.active.includes(plant)) {
+          state.active.push(plant);
+        }
         state.activeLock = plant;
       }
     }
@@ -204,7 +202,7 @@ var drawTest = (state) => {
   ctx.stroke();
   ctx.fill();
 
-  // draw plum dots
+  // draw lock dots
   ctx.beginPath();
   ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.primary;
@@ -214,7 +212,13 @@ var drawTest = (state) => {
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
     if (hypot > .05 * mindim) continue;
     state.isLocked = true;
+    if (!state.active.includes(plant)) {
+      state.active.push(plant);
+    }
+    // if (state.activeLock != plant) {
     state.activeLock = plant;
+    console.log("new active lock: ", plant);
+    // }
     if (!plant.n) continue;
     for (neighbor of plant.n) {
       if (neighbor.t != "grass") continue;
@@ -232,7 +236,7 @@ var drawTest = (state) => {
     ctx.strokeStyle = colors.secondary;
     ctx.lineWidth = .005 * mindim;
     for (plant of state.plants) {
-      if (plant.t == "lock" || plant.t == "grass") continue;
+      if (plant.t == "lock" || plant.t == "grass" || !state.activeLock.n.includes(plant)) continue;
       const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
       if (hypot > (.5 * plant.r + .05) * mindim) continue;
       for (neighbor of plant.n) {
@@ -252,7 +256,7 @@ var drawTest = (state) => {
       if (plant.t != "lock") continue;
       if (!plant.n) continue;
       for (neighbor of plant.n) {
-        if (neighbor.t == "grass") continue;
+        if (neighbor.t == "grass" || state.activeLock.n.includes(plant)) continue;
         const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
         if (hypot > (.05) * mindim) drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, .005 * mindim);
         else { drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, (neighbor.r - .01) * mindim); }
@@ -271,8 +275,8 @@ var drawTest = (state) => {
       const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
       if (hypot > .05 * mindim) {
         drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim);
-      } else {
-        drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r - .01) * mindim);
+      } else if (plant.t != "lock") {
+        drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r-.01) * mindim);
       }
 
     }
