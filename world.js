@@ -123,22 +123,26 @@ var resize = (state) => {
   window.focus();
   // console.log("once");
 }
+
 // TODO Foliage.create
 var createPatches = (state) => {
 
   // essentially i'm going to pull in the patches from display.js
-  // whether we randomize them or not, we get to sort them as crop or weed
-  // we want ~15 large circles (about 60cm~2.4m in diameter)
+  // whether we randomize them or not, we get to color them as crop or weed
+  // we want several large circles (about 50cm~1m in diameter)
   // circle packing? cellular automata? somehow both?
   // just create, sort, place, check (collisions)
   const random = Random.seed(state.seed);
   const plants = state.plants;
-  var num = 125;
-  // const max = 2.4;
-  // const min = .6;
+  var num = 10;
+  const rMax = .1;
+  const rMin = .1;
+  const hMax = .5;
+  const hMin = .05;
+  const hBleed = .25;
   while (num--) {
-    let r = random() * (.09 - .06) + .03;
-    let hypot = random() * (.5 - .05 - 1.5 * r) + .05 + r
+    let r = random() * (rMax - rMin) + rMin;
+    let hypot = random() * (hMax - hMin - (2 - hBleed) * r) + hMin + r
     let theta = random() * Math.PI * 2;
 
     let x = hypot * Math.cos(theta); // (random() * max * 2 - max);
@@ -147,8 +151,12 @@ var createPatches = (state) => {
     let c = colors.primary;//(random() < .2) ? colors.primary : colors.tertiary;
     let t = colors.emergent;//"grass";//(random() < .2) ? "clover" : "grass";
     const plant = { x: x, y: y, r: r, t: t, c: c };
+    // TODO: extract the above as a function to create rings of objects
+    // TODO: offer num, max, min, etc but try adding density
+
     // if collision: separate
     // otherwise: continue
+    
     // patches can overlap up to 50%
     // even less so soil layer is visible
     // iteratively condense, if desired
