@@ -155,7 +155,7 @@ var drawTest = (state) => {
   }
   ctx.stroke();
 
-  // draw lock lines
+  // draw plum lines
   ctx.beginPath();
   ctx.strokeStyle = colors.emergent;
   if (state.isLocked) ctx.strokeStyle = colors.tertiary;
@@ -165,7 +165,6 @@ var drawTest = (state) => {
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
     if (hypot > .05 * mindim && !state.isLocked) continue;
     // state.isLocked = true;
-    state.active.push(plant);
     if (!plant.n) continue;
     // console.log(plant.n.length);
     for (neighbor of plant.n) {
@@ -185,18 +184,27 @@ var drawTest = (state) => {
     if (plant.t == "lock") continue;
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
     if (hypot > (plant.r + .05) * mindim) continue;
-    if (hypot > (.05) * mindim) { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim); }
-    else { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r - .01) * mindim); }
+    if (hypot > .05 * mindim) { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim); }
+    else {
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r - .01) * mindim);
+      if (state.isLocked &&
+        plant.t == "grass" &&
+        plant.n.includes(state.activeLock) && 
+        !state.active.includes(plant)) {
+        state.active.push(plant);
+        state.activeLock = plant;
+      }
+    }
     if (!plant.n) continue;
     for (neighbor of plant.n) {
-      if (hypot > (.05) * mindim) continue;
+      if (hypot > .05 * mindim) continue;
       drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, .005 * mindim);
     }
   }
   ctx.stroke();
   ctx.fill();
 
-  // draw lock dots
+  // draw plum dots
   ctx.beginPath();
   ctx.strokeStyle = colors.emergent;
   ctx.fillStyle = colors.primary;
@@ -253,15 +261,20 @@ var drawTest = (state) => {
     ctx.stroke();
     ctx.fill();
 
-    // draw plum arcs at nearby grass
+    // draw plum arcs at active grass
     ctx.beginPath();
+    console.log(state.active.length);
     ctx.strokeStyle = colors.tertiary;
     ctx.fillStyle = colors.primary;
     ctx.lineWidth = .01 * mindim;
-    for (plant of state.plants) {
-      if (!state.activeLock.n.includes(plant) || plant.t != "grass") continue;
+    for (plant of state.active) {
       const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
-      if (hypot <= .05 * mindim) { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r - .01) * mindim); }
+      if (hypot > .05 * mindim) {
+        drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim);
+      } else {
+        drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r - .01) * mindim);
+      }
+
     }
     ctx.stroke();
     ctx.fill();

@@ -82,8 +82,8 @@ const World = (function (/*api*/) {
 
     // TODO all of these are services, too
     updatePlayer(state);// Player.update
-    updatePlants(state);// Foliage.update
-    updateNearby(state);// included in Foliage.update
+    // updatePlants(state);// Foliage.update
+    // updateNearby(state);// included in Foliage.update
 
   };
 
@@ -261,7 +261,7 @@ var updatePlayer = (state) => {
 var updatePlants = (state) => {
   if (state.frame % 6 !== 0) return;
 
-  state.active = [];
+  // state.active = [];
 
   for (plant of state.nearby) {
     const hypot = Math.hypot(plant.x + state.dx, plant.y + state.dy);
@@ -269,7 +269,7 @@ var updatePlants = (state) => {
     const isActive = checkActive(plant, state.frame - 150);
 
     if (isActive) {
-      state.active.push(plant);
+      // state.active.push(plant);
     } else if (hypot < .025 || (((!state.events.isDragged && state.events.isPressed) || state.events.isKeyboard) && hypot < .1)) {
       if (plant.frame == undefined) {
         const lp = Math.random() * 0.1;
