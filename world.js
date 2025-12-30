@@ -134,6 +134,8 @@ var createPatches = (state) => {
   // just create, sort, place, check (collisions)
   const random = Random.seed(state.seed);
   const plants = state.plants;
+  plants.push({ x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent});
+
   var num = 100;
   const rMax = .1;
   const rMin = .05;

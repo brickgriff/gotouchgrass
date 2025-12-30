@@ -99,7 +99,7 @@ var drawTest = (state) => {
   ctx.beginPath();
   ctx.fillStyle = colors.emergent;
   ctx.strokeStyle = colors.tertiary;
-  ctx.lineWidth = mindim * .01; // 5cm
+  ctx.lineWidth = mindim * .05; // 5cm
 
   const roomX = state.dx * mindim;
   const roomY = state.dy * mindim;
@@ -114,6 +114,7 @@ var drawTest = (state) => {
   // [in world] each room spawns its set of patches
   // [in world] each patch spawns its set of plants
   // get this list from state.clumps
+
   ctx.beginPath();
   ctx.fillStyle = colors.primary;
   for (plant of state.plants) {
@@ -129,7 +130,39 @@ var drawTest = (state) => {
     const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
     if (hypot > (plant.r+.025) * mindim) continue;
     drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,(plant.r-.01)*mindim);
+
+    ctx.moveTo(roomX+.25*mindim,roomY-.25*mindim);
+    ctx.lineTo(roomX+plant.x*mindim,roomY+plant.y*mindim);
   }
+  ctx.stroke();
+
+  // lock pad
+  ctx.beginPath();
+  ctx.strokeStyle = colors.tertiary;
+  ctx.lineWidth = .01 * mindim;
+  ctx.fillStyle = colors.emergent;
+  for (plant of state.plants) {
+    if (plant.c !== ctx.fillStyle) continue;
+    drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,plant.r*mindim);
+  }
+  ctx.stroke();
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.fillStyle = colors.primary;
+  for (plant of state.plants) {
+    if (plant.t !== "lock") continue;
+    drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,.05*mindim);
+  }
+  ctx.fill();
+
+  ctx.beginPath();
+  for (plant of state.plants) {
+    if (plant.t !== "lock") continue;
+    drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,.04*mindim);
+  }
+  ctx.lineWidth = .005 * mindim;
+  ctx.strokeStyle = colors.emergent;
   ctx.stroke();
 
   ctx.beginPath();
@@ -137,7 +170,7 @@ var drawTest = (state) => {
   ctx.lineWidth = .005 * mindim;
   for (plant of state.plants) {
     const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
-    if (plant.t !== ctx.strokeStyle || hypot > (plant.r+.025) * mindim) continue;
+    if (plant.t !== "lock") continue;
     drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,(plant.r-.01)*mindim);
   }
   ctx.stroke();
