@@ -199,7 +199,6 @@ var drawTest = (state) => {
   // draw lock dots
   ctx.beginPath();
   ctx.strokeStyle = colors.emergent;
-  // if (state.isLocked) ctx.strokeStyle = colors.tertiary;
   ctx.fillStyle = colors.primary;
   ctx.lineWidth = .01 * mindim;
   for (plant of state.plants) {
@@ -207,6 +206,7 @@ var drawTest = (state) => {
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
     if (hypot > .05 * mindim) continue;
     state.isLocked = true;
+    state.activeLock = plant;
     if (!plant.n) continue;
     for (neighbor of plant.n) {
       if (neighbor.t != "grass") continue;
@@ -219,14 +219,14 @@ var drawTest = (state) => {
   // when locked
   if (state.isLocked) {
 
-    // draw red lines from nearby weeds to non-grass neighbors
+    // draw rose lines from nearby weeds to non-grass neighbors
     ctx.beginPath();
     ctx.strokeStyle = colors.secondary;
     ctx.lineWidth = .005 * mindim;
     for (plant of state.plants) {
       if (plant.t == "lock" || plant.t == "grass") continue;
       const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
-      if (hypot > (.5*plant.r+.05) * mindim) continue;
+      if (hypot > (.5 * plant.r + .05) * mindim) continue;
       for (neighbor of plant.n) {
         if (neighbor.t == "grass") continue;
         ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
@@ -235,7 +235,7 @@ var drawTest = (state) => {
     }
     ctx.stroke();
 
-    // draw red arcs at non-grass neighbors when near locks
+    // draw rose arcs at non-grass neighbors when near locks
     ctx.beginPath();
     ctx.strokeStyle = colors.secondary;
     ctx.fillStyle = colors.primary;
@@ -247,8 +247,21 @@ var drawTest = (state) => {
         if (neighbor.t == "grass") continue;
         const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
         if (hypot > (.05) * mindim) drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, .005 * mindim);
-        else {drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, (neighbor.r-.01) * mindim);}  
+        else { drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, (neighbor.r - .01) * mindim); }
       }
+    }
+    ctx.stroke();
+    ctx.fill();
+
+    // draw plum arcs at nearby grass
+    ctx.beginPath();
+    ctx.strokeStyle = colors.tertiary;
+    ctx.fillStyle = colors.primary;
+    ctx.lineWidth = .01 * mindim;
+    for (plant of state.plants) {
+      if (!state.activeLock.n.includes(plant) || plant.t != "grass") continue;
+      const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
+      if (hypot <= .05 * mindim) { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r - .01) * mindim); }
     }
     ctx.stroke();
     ctx.fill();
