@@ -156,6 +156,42 @@ var drawTest = (state) => {
   ctx.fill();
 
   ctx.beginPath();
+  ctx.strokeStyle = colors.secondary;
+  ctx.lineWidth = .005 * mindim;
+  for (plant of state.plants) {
+    if (plant.t == "lock") continue;
+    const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
+    if (hypot > (plant.r+.025) * mindim) continue;
+    if (!plant.n) continue;
+    // console.log(plant.n.length);
+    for (neighbor of plant.n) {
+      if (neighbor.t == "grass") continue;
+      ctx.moveTo(roomX+neighbor.x*mindim,roomY+neighbor.y*mindim);
+      ctx.lineTo(roomX+plant.x*mindim,roomY+plant.y*mindim);
+    }
+  }
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.strokeStyle = colors.secondary;
+  ctx.fillStyle = colors.primary;
+  ctx.lineWidth = .01 * mindim;
+  for (plant of state.plants) {
+    if (plant.t == "lock") continue;
+    const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
+    if (hypot > (plant.r+.025) * mindim) continue;
+    if (!plant.n) continue;
+    for (neighbor of plant.n) {
+      if (neighbor.t == "grass") continue;
+      drawArc(ctx,roomX+neighbor.x*mindim,roomY+neighbor.y*mindim,.005*mindim);
+    }
+  }
+  ctx.stroke();
+  ctx.fill();
+
+
+
+  ctx.beginPath();
   ctx.strokeStyle = colors.tertiary;
   ctx.lineWidth = .005 * mindim;
   for (plant of state.plants) {
@@ -194,7 +230,7 @@ var drawTest = (state) => {
   ctx.fillStyle = colors.primary;
   ctx.lineWidth = .005 * mindim;
   for (plant of state.plants) {
-    if (plant.t != "grass") continue;
+    // if (plant.t != "grass") continue;
     const hypot = Math.hypot(roomX+plant.x*mindim,roomY+plant.y*mindim);
     if (hypot > (plant.r+.025) * mindim) continue;
     drawArc(ctx,roomX+plant.x*mindim,roomY+plant.y*mindim,(plant.r-.01)*mindim);
