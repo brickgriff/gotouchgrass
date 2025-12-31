@@ -140,23 +140,6 @@ var drawTest = (state) => {
   // ctx.fill();
   ctx.setLineDash([]);
 
-  // draw neighbor lines
-  ctx.beginPath();
-  ctx.strokeStyle = colors.emergent;
-  ctx.lineWidth = .005 * mindim;
-  for (plant of state.plants) {
-    if (plant.t == "lock" || state.isLocked) continue;
-    const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
-    if (hypot > (.5 * plant.r + .05) * mindim) continue;
-    if (!plant.n) continue;
-    for (neighbor of plant.n) {
-      if (neighbor.t != plant.t && neighbor.t != "lock") continue;
-      ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
-      ctx.lineTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
-    }
-  }
-  ctx.stroke();
-
   // draw plum lines
   ctx.beginPath();
   ctx.strokeStyle = colors.emergent;
