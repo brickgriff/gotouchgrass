@@ -322,19 +322,28 @@ var drawTest = (state) => {
     ctx.fillStyle = colors.emergent;
     if (state.activeLock.t != "lock") ctx.fillStyle = colors.primary;
     ctx.lineWidth = .01 * mindim;
-    const isActiveLock = (state.activeLock.t == "lock");
+    // const isActiveLock = (state.activeLock.t == "lock");
     const lHypot = Math.hypot(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
     const isNearbyLock = (lHypot <= .05 * mindim);
 
-    if (isActiveLock || isNearbyLock) ctx.setLineDash([.025 * mindim, .025 * mindim]);
+    if ( isNearbyLock) ctx.setLineDash([.025 * mindim, .025 * mindim]);
     drawArc(ctx, roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim,
-      (isActiveLock ? .05 :
-        isNearbyLock ? (state.activeLock.r - .01) :
-          .005) * mindim)
+        (isNearbyLock ? (state.activeLock.r - .01) :
+          .005) * mindim);
 
     ctx.stroke();
     ctx.fill();
     ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = .005 * mindim;
+    for (plant of state.active) {
+      if (plant.t != "lock") continue;
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .05 * mindim);
+    }
+    ctx.stroke();
+
   }
 
   // each clump is a spawner for plant mobs
