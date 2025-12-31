@@ -259,7 +259,7 @@ var updatePlayer = (state) => {
 
   // prevent distance from reaching past the weed barrier
   const dist = Math.hypot(temp.dx, temp.dy);
-  if (dist > .4) {
+  if (dist > .47) {
     // console.log("turn around");
   } else {
     state.dx = temp.dx;
