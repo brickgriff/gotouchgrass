@@ -178,20 +178,11 @@ var drawTest = (state) => {
         state.activeLock = plant;
       }
     }
-    if (!plant.n) continue;
-    for (neighbor of plant.n) {
-      if (hypot > .05 * mindim) continue;
-      drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, .005 * mindim);
-    }
   }
   ctx.stroke();
   ctx.fill();
 
   // draw lock dots
-  ctx.beginPath();
-  ctx.strokeStyle = colors.emergent;
-  ctx.fillStyle = colors.primary;
-  ctx.lineWidth = .01 * mindim;
   for (plant of state.plants) {
     if (plant.t != "lock") continue;
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
@@ -205,14 +196,7 @@ var drawTest = (state) => {
       state.active.push(plant);
     }
     state.activeLock = plant;
-    if (!plant.n) continue;
-    for (neighbor of plant.n) {
-      if (neighbor.t != "grass") continue;
-      drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, .005 * mindim);
-    }
   }
-  ctx.stroke();
-  ctx.fill();
 
   // draw active lock dots
   ctx.beginPath();
@@ -220,7 +204,8 @@ var drawTest = (state) => {
   ctx.fillStyle = colors.primary;
   ctx.lineWidth = .01 * mindim;
   for (neighbor of state.activeLock.n) {
-    if (neighbor.t != "grass") continue;
+    const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
+    if (neighbor.t != "grass" || hypot < .05 * mindim) continue;
     drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, .005 * mindim);
   }
   ctx.stroke();
