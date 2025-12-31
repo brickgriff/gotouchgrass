@@ -135,7 +135,8 @@ var createPatches = (state) => {
   // just create, sort, place, check (collisions)
   const random = Random.seed(state.seed);
   const plants = state.plants;
-  plants.push({ x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [] });
+  plants.push({ x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [], v: 5 });
+  plants.push({ x: -.25, y: .10, r: .1, t: "lock", c: colors.emergent, n: [], v: 10 });
 
   var num = 100;
   const rMax = .1;
@@ -267,6 +268,7 @@ var updatePlayer = (state) => {
     state.dy = temp.dy;
   }
 }
+
 
 // TODO Foliage.update
 var updatePlants = (state) => {

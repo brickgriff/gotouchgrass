@@ -126,20 +126,6 @@ var drawTest = (state) => {
   }
   ctx.fill();
 
-  // lock pad
-  ctx.beginPath();
-  ctx.setLineDash([.05 * mindim, .05 * mindim]);
-  ctx.strokeStyle = colors.tertiary;
-  ctx.lineWidth = .005 * mindim;
-  ctx.fillStyle = colors.emergent;
-  for (plant of state.plants) {
-    if (plant.c !== ctx.fillStyle) continue;
-    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r + .0025) * mindim);
-  }
-  ctx.stroke();
-  // ctx.fill();
-  ctx.setLineDash([]);
-
   // draw plum lines
   ctx.beginPath();
   ctx.strokeStyle = colors.emergent;
@@ -181,6 +167,29 @@ var drawTest = (state) => {
   }
   ctx.stroke();
   ctx.fill();
+
+  // lock pad
+  ctx.beginPath();
+  ctx.fillStyle = colors.emergent;
+  for (plant of state.plants) {
+    if (plant.t !== "lock") continue;
+    if (!state.active.includes(plant) || plant.v > state.active.length) continue;
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r + .0025) * mindim);
+  }
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.setLineDash([.05 * mindim, .05 * mindim]);
+  ctx.strokeStyle = colors.tertiary;
+  ctx.lineWidth = .005 * mindim;
+  ctx.fillStyle = colors.emergent;
+  for (plant of state.plants) {
+    if (plant.t != "lock") continue;
+    if (plant.v <= state.active.length) ctx.setLineDash([]);
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r + .0025) * mindim);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
 
   // draw lock dots
   for (plant of state.plants) {
