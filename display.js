@@ -222,7 +222,7 @@ var drawTest = (state) => {
       state.active.push(plant);
     }
     state.activeLock = plant;
-    console.log("new active lock: ", plant);
+    // console.log("new active lock: ", plant);
     // }
     if (!plant.n) continue;
     for (neighbor of plant.n) {
@@ -279,7 +279,7 @@ var drawTest = (state) => {
 
     // draw plum arcs at active grass
     ctx.beginPath();
-    console.log(state.active.length);
+    // console.log(state.active.length);
     ctx.strokeStyle = colors.tertiary;
     ctx.fillStyle = colors.primary;
     ctx.lineWidth = .01 * mindim;
@@ -306,7 +306,7 @@ var drawTest = (state) => {
   for (plant of state.plants) {
     if (plant.c !== ctx.fillStyle) continue;
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
-    if (hypot > (.05) * mindim && !state.isLocked) {
+    if (hypot > (.05) * mindim) {
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim);
     } else {
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .05 * mindim);

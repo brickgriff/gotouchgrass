@@ -253,9 +253,20 @@ var createPlants = (state) => {
 var updatePlayer = (state) => {
   const vector = state.vector;
   state.events.isDragged = (vector.x != 0 || vector.y != 0);
-  state.dx -= vector.x * state.speed;
-  state.dy -= vector.y * state.speed;
+  const temp = {dx:state.dx,dy:state.dy};
+  temp.dx -= vector.x * state.speed;
+  temp.dy -= vector.y * state.speed;
+
+  // prevent distance from reaching past the weed barrier
+  const dist = Math.hypot(temp.dx, temp.dy);
+  if (dist > .4) {
+    // console.log("turn around");
+  } else {
+    state.dx = temp.dx;
+    state.dy = temp.dy;
+  }
 }
+
 // TODO Foliage.update
 var updatePlants = (state) => {
   if (state.frame % 6 !== 0) return;
