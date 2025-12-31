@@ -314,6 +314,38 @@ var drawTest = (state) => {
     ctx.setLineDash([]);
 
     ctx.beginPath();
+    ctx.strokeStyle = colors.secondary;
+    ctx.fillStyle = colors.primary;
+    ctx.lineWidth = .01 * mindim;
+    for (plant of state.activeLock.n) {
+      if (plant.t == "lock") continue;
+      const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
+      const isNearby = (hypot <= .05 * mindim);
+
+      if (isNearby) ctx.setLineDash([.025 * mindim, .025 * mindim]);
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim,
+        (isNearby ? (plant.r - .01) :
+          .005) * mindim);
+
+    }
+    ctx.stroke();
+    ctx.fill();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.strokeStyle = colors.secondary;
+    ctx.fillStyle = colors.emergent;
+    ctx.lineWidth = .01 * mindim;
+    for (plant of state.activeLock.n) {
+      if (plant.t != "lock") continue;
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim);
+    }
+    ctx.stroke();
+    ctx.fill();
+
+
+
+    ctx.beginPath();
     ctx.strokeStyle = colors.tertiary;
     ctx.lineWidth = .005 * mindim;
     for (plant of state.active) {
