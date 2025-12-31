@@ -11,8 +11,12 @@ const Display = (function (/*api*/) {
     // FIXME: these functions do not need the entire state
     // for most, ctx, mindim, and various screen params should work
     clear(state);
-    drawPark(state);
     drawBackground(state);
+
+    drawTest(state);
+
+    // drawRoom(state);
+    // drawPark(state);
 
     if (!state.terrain) {
       // console.log("once");
@@ -87,6 +91,299 @@ const Display = (function (/*api*/) {
 
 }());
 
+var drawTest = (state) => {
+  const ctx = state.ctx;
+  const mindim = state.mindim;
+
+  // draw a large round base for soil
+  ctx.beginPath();
+  ctx.fillStyle = colors.emergent;
+  ctx.strokeStyle = colors.tertiary;
+  ctx.lineWidth = mindim * .05; // 5cm
+  const roomX = state.dx * mindim;
+  const roomY = state.dy * mindim;
+  const roomRadius = mindim * .5; // 5m
+  drawArc(ctx, roomX, roomY, roomRadius);
+  ctx.stroke();
+  ctx.fill();
+
+  // maybe draw a larger round base
+  // and then break up the soil
+
+  // draw like 100 green dots in the local area
+  // rectilinear? circumpolar?
+
+  // [in world] each room spawns its set of patches
+  // [in world] each patch spawns its set of plants
+
+
+  // all plants
+  ctx.beginPath();
+  ctx.fillStyle = colors.primary;
+  for (plant of state.plants) {
+    if (plant.c !== ctx.fillStyle) continue;
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, plant.r * mindim);
+  }
+  ctx.fill();
+
+  // lock pad
+  ctx.beginPath();
+  ctx.setLineDash([.05 * mindim, .05 * mindim]);
+  ctx.strokeStyle = colors.tertiary;
+  ctx.lineWidth = .005 * mindim;
+  ctx.fillStyle = colors.emergent;
+  for (plant of state.plants) {
+    if (plant.c !== ctx.fillStyle) continue;
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r + .0025) * mindim);
+  }
+  ctx.stroke();
+  // ctx.fill();
+  ctx.setLineDash([]);
+
+  // draw plum lines
+  ctx.beginPath();
+  ctx.strokeStyle = colors.emergent;
+  if (state.isLocked) ctx.strokeStyle = colors.tertiary;
+  ctx.lineWidth = .005 * mindim;
+  for (plant of state.plants) {
+    if (plant.t != "lock" && !state.active.includes(plant)) continue;
+    const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
+    if (hypot > .05 * mindim && !state.isLocked) continue;
+    if (!plant.n) continue;
+    // console.log(plant.n.length);
+    for (neighbor of plant.n) {
+      if (neighbor.t != "grass" && !state.active.includes(neighbor)) continue;
+      ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
+      ctx.lineTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
+    }
+  }
+  ctx.stroke();
+
+  // draw neighbor dots
+  ctx.beginPath();
+  ctx.strokeStyle = colors.emergent;
+  ctx.fillStyle = colors.primary;
+  ctx.lineWidth = .01 * mindim;
+  for (plant of state.plants) {
+    if (plant.t == "lock") continue;
+    const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
+    if (hypot > (plant.r + .05) * mindim) continue;
+    if (hypot > .05 * mindim) { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim); }
+    else {
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r - .01) * mindim);
+      if (!state.isBroken && state.isLocked && plant.t == "grass" && plant.n.includes(state.activeLock)) {
+        if (!state.active.includes(plant)) {
+          state.active.push(plant);
+        }
+        state.activeLock = plant;
+      }
+    }
+  }
+  ctx.stroke();
+  ctx.fill();
+
+  // draw lock dots
+  for (plant of state.plants) {
+    if (plant.t != "lock") continue;
+    const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
+    if (hypot > .05 * mindim) continue;
+    state.isLocked = true;
+    if (state.isBroken) {
+      state.active = [];
+      state.isBroken = false;
+    }
+    if (!state.active.includes(plant)) {
+      state.active.push(plant);
+    }
+    state.activeLock = plant;
+  }
+
+  // draw active lock dots
+  ctx.beginPath();
+  ctx.strokeStyle = colors.emergent;
+  ctx.fillStyle = colors.primary;
+  ctx.lineWidth = .01 * mindim;
+  for (neighbor of state.activeLock.n) {
+    const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
+    if (neighbor.t != "grass" || hypot < .05 * mindim) continue;
+    drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, .005 * mindim);
+  }
+  ctx.stroke();
+  ctx.fill();
+
+
+
+  // when locked
+  if (state.isLocked) {
+
+    // draw rose lines from nearby weeds to non-grass neighbors
+    ctx.beginPath();
+    ctx.strokeStyle = colors.secondary;
+    ctx.lineWidth = .005 * mindim;
+    for (plant of state.plants) {
+      if (plant.t == "lock" || plant.t == "grass" || !state.activeLock.n.includes(plant)) continue;
+      const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
+      if (hypot > (.5 * plant.r + .05) * mindim) continue;
+      for (neighbor of plant.n) {
+        if (neighbor != state.activeLock) continue;
+        ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
+        ctx.lineTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
+      }
+    }
+    ctx.stroke();
+
+    // draw rose arcs at non-grass neighbors when near locks
+    ctx.beginPath();
+    ctx.strokeStyle = colors.secondary;
+    ctx.fillStyle = colors.primary;
+    ctx.lineWidth = .01 * mindim;
+    //for (plant of state.plants) {
+    // if (plant!=state.activeLock) continue;
+    // if (!plant.n) ;
+    for (neighbor of state.activeLock.n) {
+      if (neighbor.t == "grass" || neighbor.t == "lock") continue;
+      const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
+      if (hypot > (.05) * mindim) drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, .005 * mindim);
+      else {
+        if (!state.isBroken) {
+          state.isBroken = true;
+        }
+        drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, (neighbor.r - .01) * mindim);
+      }
+    }
+    // }
+    ctx.stroke();
+    ctx.fill();
+
+    // draw plum arcs at active grass
+    ctx.beginPath();
+    // console.log(state.active.length);
+    ctx.strokeStyle = colors.tertiary;
+    ctx.fillStyle = colors.primary;
+    ctx.lineWidth = .01 * mindim;
+    for (plant of state.active) {
+      const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
+      if (hypot > .05 * mindim && plant.t !== "lock") {
+        drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim);
+      } else if (plant.t != "lock") {
+        if (state.activeLock != plant) state.activeLock = plant;
+        drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r - .01) * mindim);
+      }
+
+    }
+    ctx.stroke();
+    ctx.fill();
+
+  }
+
+  // lock center
+  ctx.beginPath();
+  ctx.strokeStyle = colors.tertiary;
+  ctx.lineWidth = .01 * mindim;
+  ctx.fillStyle = colors.emergent;
+  for (plant of state.plants) {
+    if (plant.c !== ctx.fillStyle) continue;
+    const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
+    if (hypot > (.05) * mindim) {
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim);
+    } else {
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .05 * mindim);
+    }
+  }
+  ctx.stroke();
+  ctx.fill();
+
+
+  if (state.isBroken) {
+    ctx.beginPath();
+    ctx.strokeStyle = colors.secondary;
+    ctx.fillStyle = colors.emergent;
+    if (state.activeLock.t != "lock") ctx.fillStyle = colors.primary;
+    ctx.lineWidth = .01 * mindim;
+    // const isActiveLock = (state.activeLock.t == "lock");
+    const lHypot = Math.hypot(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
+    const isNearbyLock = (lHypot <= .05 * mindim);
+
+    if (isNearbyLock) ctx.setLineDash([.025 * mindim, .025 * mindim]);
+    drawArc(ctx, roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim,
+      (isNearbyLock ? (state.activeLock.r - .01) :
+        .005) * mindim);
+
+    ctx.stroke();
+    ctx.fill();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = .005 * mindim;
+    for (plant of state.active) {
+      if (plant.t != "lock") continue;
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .05 * mindim);
+    }
+    ctx.stroke();
+
+  }
+
+  // each clump is a spawner for plant mobs
+  // spawned plant type is based on percentages
+  // spawned plant max distance based on radius
+
+
+  // // claimed crop
+  // ctx.beginPath();
+  // ctx.strokeStyle = colors.tertiary;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .00 * mindim, roomY - .44 * mindim, .09 * mindim);
+  // ctx.stroke();
+
+  // // enabled crop
+  // ctx.beginPath();
+  // ctx.strokeStyle = colors.emergent;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .11 * mindim, roomY + .11 * mindim, .09 * mindim);
+  // ctx.stroke();
+
+  // // disabled crop
+  // ctx.beginPath();
+  // ctx.setLineDash([.025 * mindim, .025 * mindim]);
+  // ctx.strokeStyle = colors.emergent;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .11 * mindim, roomY - .22 * mindim, .09 * mindim);
+  // ctx.stroke();
+  // ctx.setLineDash([]);
+
+  // // enabled weed
+  // ctx.beginPath();
+  // ctx.strokeStyle = colors.secondary;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX + .44 * mindim, roomY + .00 * mindim, .09 * mindim);
+  // ctx.stroke();
+
+
+  // // disabled weed
+  // ctx.beginPath();
+  // ctx.setLineDash([.025 * mindim, .025 * mindim]);
+  // ctx.strokeStyle = colors.secondary;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .00 * mindim, roomY + .44 * mindim, .09 * mindim);
+  // ctx.stroke();
+  // ctx.setLineDash([]);
+
+  // // locked crop
+  // ctx.beginPath();
+  // ctx.strokeStyle = colors.emergent;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 * mindim);
+  // ctx.stroke();
+  // ctx.beginPath();
+  // ctx.setLineDash([.025 * mindim, .025 * mindim]);
+  // ctx.strokeStyle = colors.secondary;
+  // ctx.lineWidth = .01 * mindim;
+  // drawArc(ctx, roomX - .44 * mindim, roomY + .00 * mindim, .09 * mindim);
+  // ctx.stroke();
+  // ctx.setLineDash([]);
+
+}
 
 var drawNav = (state) => {
 
@@ -96,18 +393,30 @@ var drawNav = (state) => {
 
   if (!state.events.isPressed && !state.events.isKeyboard) return;
 
-  ctx.strokeStyle = colors.emergent;
-  ctx.fillStyle = colors.emergent;
 
-  ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
+  // if (!state.events.isDragged) {
+  //   ctx.strokeStyle = colors.tertiary;
+  //   // ctx.fillStyle = colors.emergent;  
+  //   ctx.lineWidth = .001 * mindim; // ~ 5mm, i think
 
-  if (!state.events.isDragged) {
-    ctx.beginPath();
-    drawArc(ctx, 0, 0, mindim * .1);
-    ctx.stroke();
-  }
+  //     ctx.beginPath();
+  //   drawArc(ctx, 0, 0, mindim * .1);
+  //   ctx.stroke();
+
+  //   ctx.strokeStyle = colors.tertiary;
+  //   // ctx.fillStyle = colors.emergent;  
+  //   // ctx.lineWidth = .005 * mindim; // ~ 5mm, i think
+  //   // ctx.setLineDash([.005 * mindim, .005 * mindim]);
+
+  //   //   ctx.beginPath();
+  //   // drawArc(ctx, 0, 0, mindim * .1);
+  //   // ctx.stroke();
+  //   // ctx.setLineDash([]);
+  // }
 
   var r = mindim * .1;
+  ctx.lineWidth = .005 * mindim;
+
   if (state.events.isKeyboard) {
     mouse.x_ = mouse._x; // state.inputs.keyboard.x_;
     mouse.y_ = mouse._y; // state.inputs.keyboard.y_;
@@ -119,16 +428,18 @@ var drawNav = (state) => {
     state.isClicked = false;
   }
 
-  ctx.strokeStyle = colors.emergent;
+  ctx.strokeStyle = colors.tertiary;
   ctx.fillStyle = colors.emergent;
   ctx.beginPath();
-  drawArc(ctx, mouse.x_, mouse.y_, r);
+  drawArc(ctx, mouse.x_, mouse.y_, r + mindim * .0025);
   ctx.stroke();
+  // ctx.fill();
   // ctx.save();
   // ctx.beginPath();
   // drawArc(ctx, mouse.x_, mouse.y_, mindim * .1);
   // ctx.clip();
   if (!state.events.isDragged) return;
+  ctx.fillStyle = colors.tertiary;
   ctx.beginPath();
   const hypot = Math.min(mindim * .1, Math.hypot(mouse._x - mouse.x_, mouse._y - mouse.y_));
   const angle = Math.atan2(mouse._y - mouse.y_, mouse._x - mouse.x_);
@@ -136,6 +447,12 @@ var drawNav = (state) => {
   const x = hypot * Math.cos(angle);
   const y = hypot * Math.sin(angle);
   drawArc(ctx, x + mouse.x_, y + mouse.y_, mindim * .05);
+  ctx.fill();
+  ctx.lineWidth = mindim * .05;
+  ctx.moveTo(mouse.x_, mouse.y_);
+  ctx.lineTo(x + mouse.x_, y + mouse.y_);
+  ctx.stroke()
+  drawArc(ctx, mouse.x_, mouse.y_, mindim * .025);
   ctx.fill();
   // ctx.restore();
 }
@@ -171,7 +488,7 @@ var drawPark = (state) => {
   ctx.lineWidth = .01 * mindim;
   ctx.strokeStyle = colors.emergent;
   ctx.setLineDash([.1 * mindim, .1 * mindim]);
-  ctx.rect(-.3 * w - .6 * x + dx - (.5 * ctx.lineWidth), -.3 * h - .6 * y + dy - (.5 * ctx.lineWidth), .85*w + ctx.lineWidth, .85 * h + ctx.lineWidth);
+  ctx.rect(-.3 * w - .6 * x + dx - (.5 * ctx.lineWidth), -.3 * h - .6 * y + dy - (.5 * ctx.lineWidth), .85 * w + ctx.lineWidth, .85 * h + ctx.lineWidth);
   ctx.stroke();
 
   ctx.setLineDash([]);
@@ -344,31 +661,37 @@ var drawBackground = (state) => {
 
 
     ctx.fillStyle = colors.secondary;
+    ctx.strokeStyle = colors.primary;
+    ctx.lineWidth = mindim * .01;
     ctx.beginPath();
     drawArc(ctx, offsetX, -r * 2.5 + offsetY, r); // ~ 1
+    ctx.stroke();
     ctx.fill();
 
     // draw clover
     drawClover(state, offsetX, offsetY - 2.5 * r, .05 * r);
-    drawClover(state, offsetX+.3*r, offsetY - 2.5 * r-.2*r, .03 * r, {offset: .6});
-    drawClover(state, offsetX+.1*r, offsetY - 2.5 * r+.3*r, .05 * r, {offset: .9});
-    drawClover(state, offsetX-.4*r, offsetY - 2.5 * r-.2*r, .07 * r, {offset: 1.2, stage:2});
-    drawClover(state, offsetX-.3*r, offsetY - 2.5 * r+.4*r, .03 * r, {offset: 1.7});
-    drawClover(state, offsetX+.4*r, offsetY - 2.5 * r-.5*r, .05 * r, {offset: .9});
-    drawClover(state, offsetX-.3*r, offsetY - 2.5 * r+.6*r, .07 * r, {offset: 1.2, stage:2});
-    drawClover(state, offsetX-.5*r, offsetY - 2.5 * r-.4*r, .03 * r, {offset: 1.7});
+    drawClover(state, offsetX + .3 * r, offsetY - 2.5 * r - .2 * r, .03 * r, { offset: .6 });
+    drawClover(state, offsetX + .1 * r, offsetY - 2.5 * r + .3 * r, .05 * r, { offset: .9 });
+    drawClover(state, offsetX - .4 * r, offsetY - 2.5 * r - .2 * r, .07 * r, { offset: 1.2, stage: 2 });
+    drawClover(state, offsetX - .3 * r, offsetY - 2.5 * r + .4 * r, .03 * r, { offset: 1.7 });
+    drawClover(state, offsetX + .4 * r, offsetY - 2.5 * r - .5 * r, .05 * r, { offset: .9 });
+    drawClover(state, offsetX - .3 * r, offsetY - 2.5 * r + .6 * r, .07 * r, { offset: 1.2, stage: 2 });
+    drawClover(state, offsetX - .5 * r, offsetY - 2.5 * r - .4 * r, .03 * r, { offset: 1.7 });
 
     ctx.fillStyle = colors.emergent;
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = mindim * .01;
     ctx.beginPath();
     drawArc(ctx, offsetX, r * 2.5 + offsetY, r); // ~ 1
+    ctx.stroke();
     ctx.fill();
 
     // draw grass
     drawGrass(state, offsetX, offsetY + 2.5 * r, .1 * r);
-    drawGrass(state, offsetX + .2 * r, offsetY + 2.5 * r + .3 * r, .12 * r, {offset: .8});
-    drawGrass(state, offsetX - .3 * r, offsetY + 2.5 * r - .2 * r, .14 * r, {offset: 1.3});
-    drawGrass(state, offsetX + .2 * r, offsetY + 2.5 * r - .3 * r, .12 * r, {offset: .4});
-    drawGrass(state, offsetX - .4 * r, offsetY + 2.5 * r + .2 * r, .1 * r, {offset: 1.5});
+    drawGrass(state, offsetX + .2 * r, offsetY + 2.5 * r + .3 * r, .12 * r, { offset: .8 });
+    drawGrass(state, offsetX - .3 * r, offsetY + 2.5 * r - .2 * r, .14 * r, { offset: 1.3 });
+    drawGrass(state, offsetX + .2 * r, offsetY + 2.5 * r - .3 * r, .12 * r, { offset: .4 });
+    drawGrass(state, offsetX - .4 * r, offsetY + 2.5 * r + .2 * r, .1 * r, { offset: 1.5 });
 
     // const hypot = Math.hypot(offsetX, r * 2.5 + offsetY);
 
@@ -379,7 +702,7 @@ var drawBackground = (state) => {
     // }
   }
 }
-var drawDandelion = (state, x, y, r, options={}) => {
+var drawDandelion = (state, x, y, r, options = {}) => {
   ctx.fillStyle = colors.secondary;
   ctx.strokeStyle = colors.primary;
   ctx.setLineDash([.05 * r, .05 * r]);
@@ -402,7 +725,7 @@ var drawDandelion = (state, x, y, r, options={}) => {
 
 }
 
-var drawClover = (state, x, y, r, options={offset:0, stage:false}) => {
+var drawClover = (state, x, y, r, options = { offset: 0, stage: false }) => {
   const ctx = state.ctx;
   ctx.fillStyle = colors.primary;
   const offset = options.offset ? options.offset : 0;
@@ -410,7 +733,7 @@ var drawClover = (state, x, y, r, options={offset:0, stage:false}) => {
   const angle2 = Math.PI * ((5 / 6) + offset);
   const angle3 = Math.PI * ((1 / 6) + offset);
 
-  ctx.beginPath();  
+  ctx.beginPath();
   drawArc(ctx, x + Math.cos(angle1) * r, y + Math.sin(angle1) * r, r);
   drawArc(ctx, x + Math.cos(angle2) * r, y + Math.sin(angle2) * r, r);
   drawArc(ctx, x + Math.cos(angle3) * r, y + Math.sin(angle3) * r, r);
@@ -432,14 +755,14 @@ var drawClover = (state, x, y, r, options={offset:0, stage:false}) => {
 
 }
 
-var drawGrass = (state, x, y, r, options={offset:0}) => {
+var drawGrass = (state, x, y, r, options = { offset: 0 }) => {
   const ctx = state.ctx;
   ctx.strokeStyle = colors.primary;
   const offset = options.offset ? options.offset : 0;
   ctx.setLineDash([.2 * r, .2 * r]);
   ctx.lineWidth = r;
   ctx.beginPath();
-  drawArc(ctx, x, y, r, {start:Math.PI*offset, end:Math.PI*(2+offset)});
+  drawArc(ctx, x, y, r, { start: Math.PI * offset, end: Math.PI * (2 + offset) });
   ctx.stroke();
   ctx.setLineDash([]);
 
@@ -475,13 +798,31 @@ var drawPlayer = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
   const r = .05 * mindim;
-  ctx.beginPath();
+  const height = .05 * mindim;
   ctx.fillStyle = colors.tertiary;
-  ctx.strokeStyle = colors.secondary;
-  ctx.lineWidth = .001 * mindim;
+  ctx.strokeStyle = colors.tertiary;
+  // ctx.save();
+  // ctx.scale(1,1.5);
+  ctx.beginPath();
   drawArc(ctx, 0, 0, r);
+  // drawArc(ctx, 0, -height, r);
   ctx.fill();
+  // ctx.lineCap = "round";
+  // ctx.lineWidth = (r*2);
+  // const offsetY = -.033 * mindim
+  // ctx.moveTo(0,offsetY);
+  // ctx.lineTo(0,-height-offsetY);
   // ctx.stroke();
+  // ctx.restore();
+
+  // ctx.beginPath();
+  // ctx.lineWidth = .005 * mindim;
+  // drawArc(ctx,0,0,r*1.5);
+  // ctx.stroke();
+  // use an ellipse 
+  // with a checkerboard pattern 
+  // for drop shadow
+
 }
 
 var drawRing = (state) => {
@@ -490,7 +831,7 @@ var drawRing = (state) => {
 
   const ctx = state.ctx;
   const mindim = state.mindim; // mindim ~ 10m
-  ctx.setLineDash([10,20]);
+  ctx.setLineDash([10, 20]);
   ctx.lineWidth = .002 * mindim; // ~ 1mm, i think
   ctx.strokeStyle = colors.secondary;
   ctx.beginPath();
