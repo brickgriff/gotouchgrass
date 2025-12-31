@@ -21,6 +21,7 @@ const World = (function (/*api*/) {
       seed: 42,
       // experience (leaves & flowers)
       plants: [],
+      activeLock:{n:[]},
       leaves: 0,
       flowers: 0,
       stamina: 0,

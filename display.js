@@ -222,13 +222,23 @@ var drawTest = (state) => {
       state.active.push(plant);
     }
     state.activeLock = plant;
-    // console.log("new active lock: ", plant);
-    // }
     if (!plant.n) continue;
     for (neighbor of plant.n) {
       if (neighbor.t != "grass") continue;
       drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, .005 * mindim);
     }
+  }
+  ctx.stroke();
+  ctx.fill();
+
+  // draw active lock dots
+  ctx.beginPath();
+  ctx.strokeStyle = colors.emergent;
+  ctx.fillStyle = colors.primary;
+  ctx.lineWidth = .01 * mindim;
+  for (neighbor of state.activeLock.n) {
+    if (neighbor.t != "grass") continue;
+    drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, .005 * mindim);
   }
   ctx.stroke();
   ctx.fill();
@@ -326,10 +336,10 @@ var drawTest = (state) => {
     const lHypot = Math.hypot(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
     const isNearbyLock = (lHypot <= .05 * mindim);
 
-    if ( isNearbyLock) ctx.setLineDash([.025 * mindim, .025 * mindim]);
+    if (isNearbyLock) ctx.setLineDash([.025 * mindim, .025 * mindim]);
     drawArc(ctx, roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim,
-        (isNearbyLock ? (state.activeLock.r - .01) :
-          .005) * mindim);
+      (isNearbyLock ? (state.activeLock.r - .01) :
+        .005) * mindim);
 
     ctx.stroke();
     ctx.fill();
