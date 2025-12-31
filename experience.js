@@ -19,65 +19,59 @@ const Experience = (function (/*api*/) {
     const mindim = state.mindim;
     const radius = .1 * mindim; // ~ 1m
 
-    const offsetX = state.cx - radius * 2;
-    const offsetY = state.cy - radius * 2;
+    // half the screen minus radius
+    // may need additional indenting
+    const offsetX = state.cx - radius;
+    const offsetY = state.cy - radius;
 
-    ctx.lineWidth = .02 * radius; // ~ 5cm
-    ctx.lineCap = "round";
+    ctx.save();
 
-    // ctx.beginPath();
-    // drawArrowAt(state, "flowers", mindim, mindim);
-    // ctx.fill();
-    // ctx.stroke();
-
-    // ctx.beginPath();
-    // drawArrowAt(state, "leaves", -mindim / 2, mindim / 2);
-    // ctx.fill();
-    // ctx.stroke();
-
-    // ctx.beginPath();
-    // for (plant of state.nearby) {
-    //   const hypot = Math.hypot((plant.x + state.dx) * mindim, (plant.y + state.dy) * mindim);
-    //   if (hypot > .1 * mindim) continue;
-    //   drawArrowAt(state, "leaves", plant.x, plant.y, plant.r);
-    // }
-    // ctx.fill();
-    // ctx.stroke();
-
+    // thick lines besides lineart
+    // ctx.lineWidth = .05 * radius; // ~ 5cm
+    ctx.lineCap = "round"; // friendly vibe
     ctx.fillStyle = colors.emergent; // common
 
     // // "Area of plant matter, in cm^2"
-    drawObservation(state, "leaves", offsetX, offsetY);
-    drawObservation(state, "flowers", -offsetX, offsetY);
-    // console.log(state.leaves, state.flowers);
+    drawLeaves(state, offsetX, offsetY);
+    drawFlowers(state, -offsetX, offsetY);
 
-    ctx.lineWidth = 1;
-    ctx.lineCap = "butt";
+    ctx.restore();
   }
+  const testVal = (val) => {
+    if (val !== undefined) {
+      return .01 * (10 ** Math.floor(Math.log(val) / Math.log(10)) + 1);
+    }
+    return true ? 1 / 60 : 0;
+  };
 
   return api;
 
+  function drawLeaves(state, offsetX, offsetY) {
+    drawExperience(state, state.leaves += testVal(state.leaves), ICON_FUNCTION.leaves, ICON_COLOR.leaves, offsetX, offsetY);
 
-  function drawObservation(state, name, offsetX, offsetY) {
-    if (!Math.floor(state[name])) state[name] = 123;
-    // state[name] += .01 * (10 ** Math.floor(Math.log(state[name]) / Math.log(10)) + 1);
+  }
+  function drawFlowers(state, offsetX, offsetY) {
+    drawExperience(state, state.flowers += testVal(state.flowers / 10), ICON_FUNCTION.flowers, ICON_COLOR.flowers, offsetX, offsetY);
+  }
+
+  function drawExperience(state, value, iconFunction, iconColor, offsetX, offsetY) {
+    // if (!Math.floor(value)) value = 1234;
+    // value += .01 * (10 ** Math.floor(Math.log(value) / Math.log(10)) + 1);
 
     const ctx = state.ctx;
     const mindim = state.mindim;
     const radius = .1 * mindim; // ~ 1m
 
-    const value = Math.floor(state[name]);
-    ctx.strokeStyle = ICON_COLOR[name];
-    ctx.lineWidth = .005 * mindim;
-
     ctx.save();
+    ctx.lineWidth = .05 * radius; // 5mm
+    ctx.strokeStyle = iconColor;
 
-    if (value < 10) {
+    if (Math.floor(value) < 10) {
       makeTransparent(ctx, "strokeStyle", value / 10);
       makeTransparent(ctx, "fillStyle", value / 10);
     }
 
-    ICON_FUNCTION[name](ctx, -offsetX, -offsetY, radius);
+    iconFunction(ctx, -offsetX, -offsetY, radius);
 
     if (value > 0) {
       drawLevelRings(ctx, value, -offsetX, -offsetY, radius);
@@ -87,9 +81,9 @@ const Experience = (function (/*api*/) {
   }
 
   function drawLevelRings(ctx, value, offsetX, offsetY, radius, offsetA = .5) {
-    // I want 10 to count as level 0, 100 as level 1, and so on
-    // but I also want 0 to count as level 0, not level -1!
-    const level = Math.max(0, Math.floor(Math.max(0, Math.log(value - 1)) / Math.log(10)));
+    // TODO level 0 : 0.0-0.9, level 1 : 1-9, level 2 : 10-99, etc
+    const level = Math.floor(Math.log(value - 0.1) / Math.log(10));
+    // const level = Math.max(0, Math.floor(Math.max(0, Math.log(value - 0.1)) / Math.log(10)));
     const remainder = (value - (10 ** level)) % (10 ** (level + 1));
     const angle = remainder / (9 * 10 ** (level));
     // const angle = .01;
@@ -123,8 +117,9 @@ const Experience = (function (/*api*/) {
 
   function drawLeavesIcon(ctx, offsetX, offsetY, radius) {
     ctx.beginPath();
-    drawArc(ctx, offsetX, offsetY, radius - (ctx.lineWidth * .5 + .1 * radius));
+    drawArc(ctx, offsetX, offsetY, radius);// - (ctx.lineWidth * .5 + .1 * radius));
     ctx.fill();
+    ctx.stroke();
 
     ctx.beginPath();
     ctx.save();
@@ -139,19 +134,20 @@ const Experience = (function (/*api*/) {
 
   function drawFlowersIcon(ctx, offsetX, offsetY, radius) {
     ctx.beginPath();
-    drawArc(ctx, offsetX, offsetY, radius - (ctx.lineWidth * .5 + .1 * radius));
+    drawArc(ctx, offsetX, offsetY, radius);// - (ctx.lineWidth * .5 + .1 * radius));
     ctx.fill();
+    ctx.stroke();
 
     ctx.beginPath();
     ctx.save();
     ctx.lineWidth = .02 * radius;
     // const foffset = 2 / 12;
     for (let i = 0; i < 6; i++) {
-      let fLogoAngle = i * 1 / 6;
+      let fLogoAngle = i * 1 / 3;
 
-      let fLogoX = .35 * radius * Math.cos(fLogoAngle * Math.PI * 2);
-      let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI * 2);
-      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .35, { start: (fLogoAngle * 2 - 1 / 3) * Math.PI, end: (fLogoAngle * 2 + 1 / 3) * Math.PI });
+      let fLogoX = .35 * radius * Math.cos(fLogoAngle * Math.PI);
+      let fLogoY = .35 * radius * Math.sin(fLogoAngle * Math.PI);
+      drawArc(ctx, offsetX + fLogoX, offsetY + fLogoY, radius * .25, { start: (fLogoAngle - 1 / 3 - 1 / 12) * Math.PI, end: (fLogoAngle + 1 / 3 + 1 / 12) * Math.PI });
     }
     ctx.stroke();
 
@@ -200,21 +196,42 @@ const Experience = (function (/*api*/) {
     // ctx.stroke();
   }
 
-  // ctx.lineWidth = 5;
-  // const alevel = Math.log(state.active.length) / Math.log(10);
-  // //const aremainder = state.active.length % (10 ** (alevel + 1));
-  // const aangle = alevel / 10;
-  // ctx.strokeStyle = "lightgray";
-  // ctx.beginPath();
-  // drawArc(ctx, 0, 0, state.mindim / 2);
-  // ctx.stroke();
-
-  // ctx.strokeStyle = "gold";
-  // ctx.beginPath();
-  // drawArc(ctx, 0, 0, state.mindim / 2, {
-  //   start: (offset + aangle) * Math.PI,
-  //   end: (offset - aangle) * Math.PI,
-  //   acw: aangle < 1
-  // });
-  // ctx.stroke();
 }());
+
+// ctx.beginPath();
+// drawArrowAt(state, "flowers", mindim, mindim);
+// ctx.fill();
+// ctx.stroke();
+
+// ctx.beginPath();
+// drawArrowAt(state, "leaves", -mindim / 2, mindim / 2);
+// ctx.fill();
+// ctx.stroke();
+
+// ctx.beginPath();
+// for (plant of state.nearby) {
+//   const hypot = Math.hypot((plant.x + state.dx) * mindim, (plant.y + state.dy) * mindim);
+//   if (hypot > .1 * mindim) continue;
+//   drawArrowAt(state, "leaves", plant.x, plant.y, plant.r);
+// }
+// ctx.fill();
+// ctx.stroke();
+
+
+// ctx.lineWidth = 5;
+// const alevel = Math.log(state.active.length) / Math.log(10);
+// //const aremainder = state.active.length % (10 ** (alevel + 1));
+// const aangle = alevel / 10;
+// ctx.strokeStyle = "lightgray";
+// ctx.beginPath();
+// drawArc(ctx, 0, 0, state.mindim / 2);
+// ctx.stroke();
+
+// ctx.strokeStyle = "gold";
+// ctx.beginPath();
+// drawArc(ctx, 0, 0, state.mindim / 2, {
+//   start: (offset + aangle) * Math.PI,
+//   end: (offset - aangle) * Math.PI,
+//   acw: aangle < 1
+// });
+// ctx.stroke();
