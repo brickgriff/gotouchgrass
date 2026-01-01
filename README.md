@@ -160,3 +160,58 @@ Go Touch Grass is designed to have minimalistic and intuitive play. All interact
 ### Map
 The map consists of the immediate area around a large park with a grass field, walking paths, trees, fences, and other features. The player will start outside the gate at the information desk. If the player does not receive a key from the desk, their observations will not grant new skills. With the key, individual plants can be distinguished, not just patches.
 There is a walking path leading from the gate to a jogging track around the center of the park. There are several small trees around the track and larger trees near the fence. There are natural paths throughout the wooded areas.
+
+---
+# PATCH v0.1.5
+
+- setup
+  - Canvas helpers and other utils
+  - screen resize event handling
+  - limited color palatte theme
+  - 
+- world: key stats and classes
+  - state
+    - canvas,ctx
+    - width,height,mindim
+    - dx,dy
+    - speed
+  - entities
+    - player
+    - foliage
+      - grass
+      - clover
+    - artifice
+      - pad-lock
+      - pay-gate
+    - items
+      - plastic bag
+      - kick ball
+- display: systemic simulation simplified
+  - violet (interactable)
+    - typically top visual priority
+    - should guide the player's eye
+    - serves as the theme's black value
+    - represents agency
+  - mint (client)
+    - typically low visual priority
+    - should allow the player's eyes relax
+    - serves as background or contrast to violet
+    - you're here to help the plants, they're your "clients"
+    - represents grace
+  - rose (rival)
+    - typically average-to-high visual priority
+    - serves as a caution to the player
+    - gives visual scale to stakes
+    - represents passion
+  - dandelion (partner)
+    - typically average-to-low visual priortiy
+    - serves as incentive to the player
+    - gives visual space for action
+    - represents sense
+  - common concepts
+    - colors are linked to status, "like cures like"
+    - broken lines represent incomplete, untapped, or otherwise unavailable resources
+    - I'm lazy so "animations" will be staged
+- events: intuitive integrated interface
+
+
