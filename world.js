@@ -34,6 +34,7 @@ const World = (function (/*api*/) {
       staminaLimit: 0, // can be an update function
       nearby: [],
       active: [],
+      skills: [], // ["sees-edges"],
       inputs: inputs, // from events.js
       events: {},
       touchCount: 0,
@@ -125,7 +126,7 @@ const World = (function (/*api*/) {
     //   }
 
     state.score = state.active.length;
-    console.log(state.activeLock, state.goal <= 0 ? 0 : (state.score / state.goal));
+    // console.log(state.activeLock, state.goal <= 0 ? 0 : (state.score / state.goal));
 
     //   if (state.status == lockedState && state.active.length >= state.goal) {
     //     console.log("gate unlocked! return to lock to open gate");

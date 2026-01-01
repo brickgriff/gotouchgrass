@@ -120,7 +120,7 @@ var drawTest = (state) => {
   // - classifying by main color 
   //
   const plantTypes = ["grass", "clover"];
-  const weedTypes = ["clover"];
+  const noxiousTypes = ["clover"];
 
   ctx.beginPath();
   ctx.fillStyle = colors.primary;
@@ -133,27 +133,28 @@ var drawTest = (state) => {
     drawArc(ctx, plantX, plantY, plantR);
   }
   ctx.fill();
+
+
   // TODO: save to offscreen canvas or image data then crop and load
 
   // info layer
-  // draw pale lines or dark if locked
-  // for active node connections
+
+  // draw pale lines
+  // for nearby active node connections
   ctx.strokeStyle = colors.emergent;
-  // if (state.status == state.lockedState) ctx.strokeStyle = colors.tertiary;
   ctx.lineWidth = fineLine;
 
   ctx.beginPath();
-  // for (plant of state.plant) {
-  for (plant of state.active) {
+  for (plant of state.skills.includes("sees-edges") ? state.plants : state.active) {
+    // for (plant of state.active) {
     // only active plants (includes Structures, for now)
 
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
-    if (hypot > .05 * mindim && !plant.isLocked) continue;
-    // only closer than 50cm or locked status
+    if (hypot > .05 * mindim) continue;
+    // only closer than 50cm
 
     if (!plant.n) continue;
     for (neighbor of plant.n) {
-      if (plant.isLocked && !state.active.includes(neighbor)) continue;
       // only other active neighbors (if locked)
       ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
       ctx.lineTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
@@ -164,8 +165,7 @@ var drawTest = (state) => {
   // draw pale rings
   // for various neutral objects
   ctx.strokeStyle = colors.emergent;
-  ctx.fillStyle = colors.primary;
-  ctx.lineWidth = boldLine;
+  ctx.lineWidth = fineLine;
   ctx.beginPath();
 
   var isTouching = false;
@@ -180,15 +180,15 @@ var drawTest = (state) => {
     if (hypot > (plant.r + .05) * mindim) continue;
     // only closer than radius + 50cm
 
-    if (hypot > .05 * mindim) { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, fineLine); }
+    if (hypot > .05 * mindim) { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, fineLine * 1.5); }
     // only closer than 50cm
 
     else {
       isTouching = true;
       if (!touching.includes(plant)) touching.push(plant);
-      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim - boldLine));
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim - 1.5 * fineLine));
       // assuming the following:
-      if (!weedTypes.includes(plant.t) && state.activeLock && state.activeLock.n.includes(plant)) {
+      if (!noxiousTypes.includes(plant.t) && state.activeLock && state.activeLock.n.includes(plant)) {
         // add to active list, if not already update latest active node
         if (!state.active.includes(plant)) state.active.push(plant);
         state.activeLock = plant;
@@ -200,7 +200,7 @@ var drawTest = (state) => {
     // console.log(touching.length);
   }
   ctx.stroke();
-  ctx.fill();
+  // ctx.fill();
   /*
     // // managing state in display lol
     // for (plant of state.plants) {
@@ -226,24 +226,21 @@ var drawTest = (state) => {
     //   }
     // }
   */
-  // draw pale dots
-  // for each neighbor of the latest active node
-  if (state.activeLock != null) {
-    ctx.beginPath();
-    ctx.strokeStyle = colors.emergent;
-    ctx.fillStyle = colors.primary;
-    ctx.lineWidth = boldLine;
-    for (neighbor of state.activeLock.n) {
-      const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
-      if (hypot < .05 * mindim) continue;
-      drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, fineLine);
-    }
-    ctx.stroke();
-    ctx.fill();
-  }
 
   // when lock status
   if (state.activeLock) {
+
+    // draw pale dots
+    // for each neighbor of the latest active node
+    ctx.beginPath();
+    ctx.strokeStyle = colors.emergent;
+    ctx.lineWidth = fineLine;
+    for (neighbor of state.activeLock.n) {
+      const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
+      if (hypot < .05 * mindim) continue;
+      drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, 1.5*fineLine);
+    }
+    ctx.stroke();
 
     // draw rose lines from nearby weeds to non-grass neighbors
     ctx.beginPath();
