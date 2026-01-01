@@ -222,8 +222,9 @@ var createPatches = (state) => {
   const random = Random.seed(state.seed);
   const plants = state.plants;
   const gate = { x: .00, y: .50, r: .1, t: "gate", c: colors.emergent, n: [], v: 10, l: null };
-  const lock = { x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [], v: 5, g: gate };
-  gate.l = lock;
+  const lock = { x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [], v: 5, g: null };
+  lock.g = gate;
+  //gate.l = lock;
   plants.push(lock);
 
   var num = 100;
@@ -287,7 +288,6 @@ var createPatches = (state) => {
 
     const p = { x: x, y: y, r: r, t: t, c: c, n: [] };
     plants.push(p);
-    plants.push(gate);
     // add the gate last for consistent map generation
   }
 

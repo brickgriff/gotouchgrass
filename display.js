@@ -245,7 +245,7 @@ var drawTest = (state) => {
     ctx.stroke();
     ctx.fill();
 
-  /*
+  
     // when lock status
     if (state.status == state.lockedState) {
   
@@ -265,7 +265,8 @@ var drawTest = (state) => {
         }
       }
       ctx.stroke();
-  
+    }
+  /*
       // draw rose arcs at non-grass neighbors when near locks
       ctx.beginPath();
       ctx.strokeStyle = colors.secondary;
