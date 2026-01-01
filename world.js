@@ -27,7 +27,8 @@ const World = (function (/*api*/) {
       // experience (leaves & flowers)
       plants: [],
       // activeLock: { n: [] },
-      goal: -1,
+      goal: 0,
+      score: 0,
       leaves: 0,
       flowers: 0,
       stamina: 0,
@@ -126,7 +127,8 @@ const World = (function (/*api*/) {
     //   }
 
     state.score = state.active.length;
-    // console.log(state.activeLock, state.goal <= 0 ? 0 : (state.score / state.goal));
+    // console.log(state.activeLock, ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal)));
+    if (state.goal > state.score) state.activeLock.l.isSolved = true;
 
     //   if (state.status == lockedState && state.active.length >= state.goal) {
     //     console.log("gate unlocked! return to lock to open gate");
@@ -224,8 +226,9 @@ var createPatches = (state) => {
   const random = Random.seed(state.seed);
   const plants = state.plants;
   const gate = { x: .00, y: .50, r: .1, t: "gate", c: colors.emergent, n: [], v: 10, l: null };
-  const lock = { x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [], v: 5, g: null };
+  const lock = { x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [], v: 5, l: null, g: null };
   lock.g = gate;
+  lock.l = lock;
   //gate.l = lock;
   plants.push(lock);
 
