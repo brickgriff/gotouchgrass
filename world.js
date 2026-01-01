@@ -19,14 +19,14 @@ const World = (function (/*api*/) {
       frame: 0,
       time: 0,
       status: null,
-      defaultState: "DEFAULT",
-      lockedState: "LOCKED",
-      brokenState: "BROKEN",
-      unlockedState: "UNLOCKED",
+      // defaultState: "DEFAULT",
+      // lockedState: "LOCKED",
+      // brokenState: "BROKEN",
+      // unlockedState: "UNLOCKED",
       seed: 42,
       // experience (leaves & flowers)
       plants: [],
-      activeLock: { n: [] },
+      // activeLock: { n: [] },
       goal: -1,
       leaves: 0,
       flowers: 0,
@@ -109,69 +109,70 @@ const World = (function (/*api*/) {
     // - broken -> default @ lock x
     // - reveal -> default @ lock o
 
-  //   const defaultState = state.defaultState = "DEFAULT";
-  //   const lockedState = state.lockedState = "LOCKED";
-  //   const brokenState = state.brokenState = "BROKEN";
-  //   const unlockedState = state.unlockedState = "UNLOCKED";
-  //   // const revealState = "REVEAL";
+    //   const defaultState = state.defaultState = "DEFAULT";
+    //   const lockedState = state.lockedState = "LOCKED";
+    //   const brokenState = state.brokenState = "BROKEN";
+    //   const unlockedState = state.unlockedState = "UNLOCKED";
+    //   // const revealState = "REVEAL";
 
-  //   const mindim = state.mindim;
+    //   const mindim = state.mindim;
 
-  //   if (state.status == null) {
-  //     state.status = defaultState;
-  //     state.activeLock = { n: [] };
-  //     state.goal = -1;
-  //     state.active = [];
-  //   }
+    //   if (state.status == null) {
+    //     state.status = defaultState;
+    //     state.activeLock = { n: [] };
+    //     state.goal = -1;
+    //     state.active = [];
+    //   }
 
-  //   console.log(state.status, (state.active.length / state.goal));
+    state.score = state.active.length;
+    console.log(state.activeLock, state.goal <= 0 ? 0 : (state.score / state.goal));
 
-  //   if (state.status == lockedState && state.active.length >= state.goal) {
-  //     console.log("gate unlocked! return to lock to open gate");
-  //     state.status == unlockedState;
-  //   }
+    //   if (state.status == lockedState && state.active.length >= state.goal) {
+    //     console.log("gate unlocked! return to lock to open gate");
+    //     state.status == unlockedState;
+    //   }
 
-  //   for (plant of state.plants) {
-  //     const hypot = Math.hypot(state.dx + plant.x, state.dy + plant.y);
+    //   for (plant of state.plants) {
+    //     const hypot = Math.hypot(state.dx + plant.x, state.dy + plant.y);
 
-  //     if (hypot > .05) continue;
-  //     // if (state.status == lockedState && !state.activeLock.n.includes(plant)) continue;
+    //     if (hypot > .05) continue;
+    //     // if (state.status == lockedState && !state.activeLock.n.includes(plant)) continue;
 
-  //     // close to a lock
-  //     if (plant.t == "lock") {
-  //       if (state.status == defaultState) {
-  //         console.log("lock found! connect foliage to unlock it!");
-  //         state.status = lockedState;
-  //         state.activeLock = plant;
-  //         if (!state.active.includes(plant)) state.active.push(plant);
-  //         state.goal = plant.v;
-  //       } else if (state.status == brokenState) {
-  //         console.log("lock restored! take a break and try again!");
-  //         state.status = defaultState;
-  //         state.active = [];
-  //         state.activeLock = { n: [] };
-  //         state.goal = -1; // void
-  //       }
-  //     } else if (plant.t == "grass") {
-  //       if (state.status == lockedState) {
-  //         console.log("lock activated! touch the grass!");
-  //         if (!state.active.includes(plant)) state.active.push(plant);
-  //         state.activeLock = plant;
-  //       } else if (state.status == brokenState) {
-  //         console.log("lock broken! go to a lock!");
-  //         state.activeLock = plant;
-  //       }
-  //     } else if (plant.t == "clover") {
-  //       if (state.status == lockedState || state.status == unlockedState) {
-  //         console.log("lock broken! avoid the clover!");
-  //         state.status = brokenState;
-  //       }
-  //     }
-  //     // close to a gate
-  //     if (plant.t == "gate" && hypot < .05 && state.status == defaultState) {
-  //       // how do we modify state? do we modify the entity itself?
-  //     }
-  //   }
+    //     // close to a lock
+    //     if (plant.t == "lock") {
+    //       if (state.status == defaultState) {
+    //         console.log("lock found! connect foliage to unlock it!");
+    //         state.status = lockedState;
+    //         state.activeLock = plant;
+    //         if (!state.active.includes(plant)) state.active.push(plant);
+    //         state.goal = plant.v;
+    //       } else if (state.status == brokenState) {
+    //         console.log("lock restored! take a break and try again!");
+    //         state.status = defaultState;
+    //         state.active = [];
+    //         state.activeLock = { n: [] };
+    //         state.goal = -1; // void
+    //       }
+    //     } else if (plant.t == "grass") {
+    //       if (state.status == lockedState) {
+    //         console.log("lock activated! touch the grass!");
+    //         if (!state.active.includes(plant)) state.active.push(plant);
+    //         state.activeLock = plant;
+    //       } else if (state.status == brokenState) {
+    //         console.log("lock broken! go to a lock!");
+    //         state.activeLock = plant;
+    //       }
+    //     } else if (plant.t == "clover") {
+    //       if (state.status == lockedState || state.status == unlockedState) {
+    //         console.log("lock broken! avoid the clover!");
+    //         state.status = brokenState;
+    //       }
+    //     }
+    //     // close to a gate
+    //     if (plant.t == "gate" && hypot < .05 && state.status == defaultState) {
+    //       // how do we modify state? do we modify the entity itself?
+    //     }
+    //   }
   };
 
   // return the public api
