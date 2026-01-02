@@ -234,7 +234,7 @@ var drawTest = (state) => {
     else {
       isTouching = true;
       if (!touching.includes(plant)) touching.push(plant);
-      console.log("touching", plant.t, "@", plant.x, plant.y, state.score);
+      // console.log("touching", plant.t, "@", plant.x, plant.y, state.score);
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim - 1.5 * fineLine));
       // assuming the following:
       // console.log(state.activeLock)
@@ -429,7 +429,7 @@ ctx.fillStyle = colors.emergent;
           state.goal = plant.v;
           if (state.activeLock && state.activeLock.l != plant) state.active = [];
           if (!state.active.includes(plant)) state.active.push(plant);
-          console.log("touching", plant.t, "@", plant.x, plant.y, state.score);
+          // console.log("touching", plant.t, "@", plant.x, plant.y, state.score);
         }
       }
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, wideLine);
