@@ -292,7 +292,7 @@ var drawTest = (state) => {
     for (neighbor of state.activeLock.n) {
       if (!noxiousTypes.includes(neighbor.t)) continue;
       const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
-      if (hypot > (.5 * neighbor.r + .05) * mindim) continue;
+      if (hypot > (neighbor.r + .05) * mindim) continue;
       ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
       ctx.lineTo(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
     }
@@ -420,7 +420,8 @@ var drawTest = (state) => {
     if (hypot > (.05) * mindim) {
 
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, fineLine * 1.5);
-      plant.wasBroken = false;
+      if (plant.wasBroken) plant.wasBroken = false;
+      else if (plant.wasUnlocked) plant.wasUnlocked=false;
 
     } else {
 
@@ -428,7 +429,16 @@ var drawTest = (state) => {
         if (!state.active.includes(plant.g)) state.active.push(plant.g);
         state.activeLock = null;
         plant.isUnlocked = true;
+        pattern = {active:[...state.active],l:plant.l,g:plant.g};
+        state.patterns.push(pattern);
+        if (!state.highscore) state.highscore = 0;
+        console.log(state.score, state.goal, state.score/state.goal, state.highscore, state.highscore < state.score/state.goal ? "HIGH SCORE":"TRY AGAIN");
+        if (state.highscore<state.score/state.goal) state.highscore=state.score/state.goal;
         state.goal = 0;
+      } else if (plant.isUnlocked) {
+        plant.l.isBroken=true;
+        plant.wasUnlocked = true;
+        plant.isUnlocked = false;
       } else {
         if (plant.l.isBroken) {
           plant.l.isBroken = false;
@@ -452,7 +462,7 @@ var drawTest = (state) => {
   ctx.stroke();
 
   if (state.activeLock && state.activeLock.l.isSolved && !state.activeLock.l.isBroken) {
-    ctx.fillStyle = colors.tertiary;
+    ctx.fillStyle = colors.lockline; // not a mistake
     ctx.beginPath();
     drawArc(ctx, roomX + state.activeLock.l.x * mindim, roomY + state.activeLock.l.y * mindim, boldLine);
     ctx.fill();
@@ -461,7 +471,7 @@ var drawTest = (state) => {
   if (state.activeLock && state.activeLock.l.isBroken) {
 
     ctx.beginPath();
-    ctx.strokeStyle = colors.secondary;
+    ctx.strokeStyle = colors.nullline;
     ctx.lineWidth = boldLine;
     let radius = wideLine;
     let circ = Math.PI * 2 * radius;
@@ -472,8 +482,8 @@ var drawTest = (state) => {
     ctx.setLineDash([]);
 
     ctx.beginPath();
-    ctx.strokeStyle = colors.secondary;
-    ctx.fillStyle = colors.primary;
+    ctx.strokeStyle = colors.nullline;
+    ctx.fillStyle = colors.herbmain;
     ctx.lineWidth = boldLine;
     for (plant of state.activeLock.n) {
       if (plant.t == "lock") continue;
@@ -489,8 +499,8 @@ var drawTest = (state) => {
     ctx.fill();
 
     ctx.beginPath();
-    ctx.strokeStyle = colors.secondary;
-    ctx.fillStyle = colors.emergent;
+    ctx.strokeStyle = colors.nullline;
+    ctx.fillStyle = colors.lockmain;
     ctx.lineWidth = boldLine;
     for (plant of state.activeLock.n) {
       if (plant.t != "lock") continue;
@@ -506,7 +516,7 @@ var drawTest = (state) => {
 
     ctx.setLineDash([seg, seg]);
 
-    ctx.strokeStyle = colors.tertiary;
+    ctx.strokeStyle = colors.lockline;
     ctx.lineWidth = fineLine;
     for (plant of state.active) {
       if (plant.t != "lock") continue;
@@ -560,14 +570,14 @@ var drawNav = (state) => {
   var r = .25 * mindim;
 
   ctx.lineWidth = .08 * r;
-  ctx.strokeStyle = colors.primary;
+  ctx.strokeStyle = colors.playline;
   ctx.beginPath();
   drawArc(ctx, mouse.x_, mouse.y_, r);
   drawArc(ctx, mouse.x_, mouse.y_, .25 * r);
   ctx.stroke();
 
   ctx.lineWidth = .05 * r;
-  ctx.strokeStyle = colors.tertiary;
+  ctx.strokeStyle = colors.playmain;
   ctx.beginPath();
   drawArc(ctx, mouse.x_, mouse.y_, r);
   drawArc(ctx, mouse.x_, mouse.y_, .25 * r);
@@ -575,7 +585,7 @@ var drawNav = (state) => {
 
   if (!state.events.isDragged) return;
 
-  ctx.fillStyle = colors.tertiary;
+  ctx.fillStyle = colors.playmain;
   ctx.beginPath();
   drawArc(ctx, mouse.x_, mouse.y_, .25 * r/*, { start: .5*Math.PI, end: 1.5 * Math.PI, offset: angle }*/);
   ctx.fill();
@@ -587,14 +597,14 @@ var drawNav = (state) => {
   const y = hypot * Math.sin(angle);
 
   ctx.lineWidth = 0.28 * r;
-  ctx.strokeStyle = colors.primary;
+  ctx.strokeStyle = colors.playline;
   ctx.beginPath();
   ctx.moveTo(mouse.x_, mouse.y_);
   ctx.lineTo(x + mouse.x_, y + mouse.y_);
   ctx.stroke();
 
   ctx.lineWidth = 0.25 * r;
-  ctx.strokeStyle = colors.tertiary;
+  ctx.strokeStyle = colors.playmain;
   ctx.beginPath();
   ctx.moveTo(x + mouse.x_, y + mouse.y_);
   const newx = hypot * 1.01 * Math.cos(angle);
@@ -604,7 +614,7 @@ var drawNav = (state) => {
   ctx.stroke();
 
   ctx.lineWidth = .03 * r;
-  ctx.strokeStyle = colors.primary;
+  ctx.strokeStyle = colors.playline;
   ctx.beginPath();
   drawArc(ctx, x + mouse.x_, y + mouse.y_, .5 * r);
   ctx.stroke()
@@ -954,8 +964,8 @@ var drawPlayer = (state) => {
   const mindim = state.mindim;
   const r = .05 * mindim;
   const height = .05 * mindim;
-  ctx.fillStyle = colors.tertiary;
-  ctx.strokeStyle = colors.primary;
+  ctx.fillStyle = colors.playmain;
+  ctx.strokeStyle = colors.playfline;
   ctx.lineWidth = .01 * mindim;
   // ctx.save();
   // ctx.scale(1,1.5);

@@ -38,6 +38,7 @@ const World = (function (/*api*/) {
       nearby: [],
       active: [],
       skills: [], // ["sees-edges"],
+      patterns:[], // twice means activelock
       inputs: inputs, // from events.js
       events: {},
       touchCount: 0,
