@@ -124,7 +124,7 @@ var drawTest = (state) => {
 
 
   ctx.lineWidth = fineLine;
-  ctx.strokeStyle = colors.tertiary;
+  // ctx.strokeStyle = colors.tertiary;
   ctx.fillStyle = colors.primary;
   ctx.beginPath();
   for (plant of state.plants) {
@@ -135,7 +135,7 @@ var drawTest = (state) => {
     const plantR = plant.r * mindim;
     drawArc(ctx, plantX, plantY, plantR);
   }
-  ctx.stroke();
+  // ctx.stroke();
   ctx.fill();
 
 
