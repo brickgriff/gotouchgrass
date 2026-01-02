@@ -335,6 +335,13 @@ var drawTest = (state) => {
     ctx.stroke();
     ctx.setLineDash([]);
 
+    if (!(state.activeLock && state.activeLock.l == plant)) continue;
+    ctx.beginPath();
+    ctx.strokeStyle = colors.primary;
+    ctx.lineWidth = .25*fineLine;
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
+    ctx.stroke();
+
     if (!plant.l.isSolved) continue;
     ctx.beginPath();
     ctx.strokeStyle = colors.primary;
