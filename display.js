@@ -323,15 +323,15 @@ var drawTest = (state) => {
     ctx.setLineDash([seg, seg]);
     ctx.strokeStyle = colors.tertiary;
     ctx.lineWidth = boldLine;
-    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, {offset:0});
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
     ctx.stroke();
 
     ctx.beginPath();
     const percent = ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal));
-    ctx.setLineDash([seg, seg]);
+    ctx.setLineDash([seg - .25 * seg, seg + .25 * seg]);
     ctx.strokeStyle = colors.primary;
     ctx.lineWidth = fineLine;
-    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius,  {end: percent*2*Math.PI});
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, { end: percent * 2 * Math.PI, offset: .125 * seg / radius });
     ctx.stroke();
     ctx.setLineDash([]);
 
@@ -555,8 +555,11 @@ var drawNav = (state) => {
   ctx.lineWidth = 0.25 * r;
   ctx.strokeStyle = colors.tertiary;
   ctx.beginPath();
-  ctx.moveTo(mouse.x_, mouse.y_);
-  ctx.lineTo(x + mouse.x_, y + mouse.y_);
+  ctx.moveTo(x + mouse.x_, y + mouse.y_);
+  const newx = hypot * 1.01 * Math.cos(angle);
+  const newy = hypot * 1.01 * Math.sin(angle);
+
+  ctx.lineTo(x + mouse.x_ - newx, y + mouse.y_ - newy);
   ctx.stroke();
 
   ctx.lineWidth = .03 * r;
