@@ -126,9 +126,20 @@ const World = (function (/*api*/) {
     //     state.active = [];
     //   }
 
-    state.score = state.active.length;
+    let score = 0;
+    const plantTypes = ["grass", "clover"];
+
+    for (plant of state.active) {
+      if (plantTypes.includes(plant.t) && state.activeLock && state.activeLock.l != plant && !state.activeLock.l.isSolved && state.activeLock.l==plant.l) score += plant.v;
+    }
+
+    state.score = score;
+    
     // console.log(state.activeLock, ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal)));
-    if (state.goal > state.score) state.activeLock.l.isSolved = true;
+    if (state.goal > 0 && state.goal <= state.score) {
+      state.goal=0;
+      state.activeLock.l.isSolved = true;
+    }
 
     //   if (state.status == lockedState && state.active.length >= state.goal) {
     //     console.log("gate unlocked! return to lock to open gate");
@@ -229,7 +240,7 @@ var createPatches = (state) => {
   const lock = { x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [], v: 5, l: null, g: null };
   lock.g = gate;
   lock.l = lock;
-  //gate.l = lock;
+  gate.l = lock;
   plants.push(lock);
 
   var num = 100;
@@ -291,7 +302,7 @@ var createPatches = (state) => {
     // even less so soil layer is visible
     // iteratively condense, if desired
 
-    const p = { x: x, y: y, r: r, t: t, c: c, n: [] };
+    const p = { x: x, y: y, r: r, t: t, c: c, n: [], v: 1 };
     plants.push(p);
     // add the gate last for consistent map generation
   }

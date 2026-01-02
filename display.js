@@ -173,7 +173,7 @@ var drawTest = (state) => {
   touching = [];
 
   for (plant of state.plants) {
-    if (plant.t == "lock") continue;
+    if (!plantTypes.includes(plant.t)) continue;
     // FIXME keep a separate lock list
 
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
@@ -186,6 +186,7 @@ var drawTest = (state) => {
     else {
       isTouching = true;
       if (!touching.includes(plant)) touching.push(plant);
+      console.log("touching", plant.t, "@", plant.x, plant.y, state.score);
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim - 1.5 * fineLine));
       // assuming the following:
       // console.log(state.activeLock)
@@ -324,8 +325,6 @@ var drawTest = (state) => {
   ctx.strokeStyle = colors.tertiary;
   ctx.lineWidth = fineLine;
 
-  // if (plant.isSolved) ctx.fillStyle = colors.tertiary;
-
   for (plant of state.plants) {
     if (plant.t != "lock") continue;
 
@@ -337,8 +336,9 @@ var drawTest = (state) => {
 
     } else {
 
-      if (plant.isSolved) {
+      if (state.activeLock && state.activeLock.l == plant && plant.isSolved) {
         if (!state.active.includes(plant.g)) state.active.push(plant.g);
+        state.activeLock = null;
       } else {
         if (plant.isBroken) {
           plant.isBroken = false;
@@ -346,17 +346,26 @@ var drawTest = (state) => {
           state.goal = 0;
           state.active = [];
           plant.wasBroken = true;
-        } else if (!plant.wasBroken) {
-          if (state.activeLock && state.activeLock.l != plant) state.active = [];
+        } else if (!plant.wasBroken && !plant.isSolved) {
           state.activeLock = plant;
           state.goal = plant.v;
+          if (state.activeLock && state.activeLock.l != plant) state.active = [];
+          if (!state.active.includes(plant)) state.active.push(plant);
+          console.log("touching", plant.t, "@", plant.x, plant.y, state.score);
         }
       }
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, wideLine);
     }
   }
   ctx.stroke();
-  // if (plant.isSolved) ctx.fill();
+
+
+  if (state.activeLock && state.activeLock.l.isSolved) {
+    ctx.fillStyle = colors.tertiary;
+    ctx.beginPath();
+    drawArc(ctx, roomX + state.activeLock.l.x * mindim, roomY + state.activeLock.l.y * mindim, boldLine);
+    ctx.fill();
+  }
 
   /*
     if (state.isBroken) {
