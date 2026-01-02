@@ -250,7 +250,7 @@ var drawTest = (state) => {
     }
     ctx.stroke();
 
-    // draw plum arcs at active grass
+    // draw dark arcs at active grass
     ctx.beginPath();
     ctx.strokeStyle = colors.tertiary;
     ctx.lineWidth = fineLine;
@@ -268,6 +268,24 @@ var drawTest = (state) => {
       // }
     }
     ctx.stroke();
+
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = fineLine;
+
+    ctx.beginPath();
+    for (plant of state.active) {
+      const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
+
+      if (!plant.n) continue;
+      for (neighbor of plant.n) {
+        // only other active neighbors (if locked)
+        if (!state.active.includes(neighbor)) continue;
+        ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
+        ctx.lineTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
+      }
+    }
+    ctx.stroke();
+
 
     ctx.beginPath();
     ctx.strokeStyle = colors.tertiary;
@@ -299,26 +317,6 @@ var drawTest = (state) => {
   }
   ctx.stroke();
   ctx.setLineDash([]);
-
-  // lock pad
-  // ctx.beginPath();
-  // ctx.fillStyle = colors.emergent;
-  // for (plant of state.plants) {
-  //   if (plant.t !== "lock") continue;
-  //   if (!state.active.includes(plant) || plant.v > state.score) continue;
-  //   plant.isSolved = true;
-  //   drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r + .0025) * mindim);
-  // }
-  // ctx.fill();
-
-  // ctx.beginPath();
-  // ctx.fillStyle = colors.tertiary;
-  // for (plant of state.plants) {
-  //   if (plant.t !== "lock") continue;
-  //   if (!plant.isSolved) continue;
-  //   drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .01 * mindim);
-  // }
-  // ctx.fill();
 
   // lock center
   ctx.beginPath();
@@ -359,7 +357,6 @@ var drawTest = (state) => {
   }
   ctx.stroke();
 
-
   if (state.activeLock && state.activeLock.l.isSolved) {
     ctx.fillStyle = colors.tertiary;
     ctx.beginPath();
@@ -367,67 +364,87 @@ var drawTest = (state) => {
     ctx.fill();
   }
 
-  /*
-    if (state.isBroken) {
-      ctx.beginPath();
-      ctx.strokeStyle = colors.secondary;
-      ctx.fillStyle = colors.emergent;
-      if (state.activeLock.t != "lock") ctx.fillStyle = colors.primary;
-      ctx.lineWidth = .01 * mindim;
-      // const isActiveLock = (state.activeLock.t == "lock");
-      const lHypot = Math.hypot(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
-      const isNearbyLock = (lHypot <= .05 * mindim);
-  
-      if (isNearbyLock) ctx.setLineDash([.025 * mindim, .025 * mindim]);
-      drawArc(ctx, roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim,
-        (isNearbyLock ? (state.activeLock.r - .01) :
+  if (state.isBroken) {
+
+    // lock pad
+    // ctx.beginPath();
+    // ctx.fillStyle = colors.emergent;
+    // for (plant of state.plants) {
+    //   if (plant.t !== "lock") continue;
+    //   if (!state.active.includes(plant) || plant.v > state.score) continue;
+    //   plant.isSolved = true;
+    //   drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r + .0025) * mindim);
+    // }
+    // ctx.fill();
+
+    // ctx.beginPath();
+    // ctx.fillStyle = colors.tertiary;
+    // for (plant of state.plants) {
+    //   if (plant.t !== "lock") continue;
+    //   if (!plant.isSolved) continue;
+    //   drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .01 * mindim);
+    // }
+    // ctx.fill();
+
+    ctx.beginPath();
+    ctx.strokeStyle = colors.secondary;
+    ctx.fillStyle = colors.emergent;
+    if (state.activeLock.t != "lock") ctx.fillStyle = colors.primary;
+    ctx.lineWidth = .01 * mindim;
+    // const isActiveLock = (state.activeLock.t == "lock");
+    const lHypot = Math.hypot(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
+    const isNearbyLock = (lHypot <= .05 * mindim);
+
+    if (isNearbyLock) ctx.setLineDash([.025 * mindim, .025 * mindim]);
+    drawArc(ctx, roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim,
+      (isNearbyLock ? (state.activeLock.r - .01) :
+        .005) * mindim);
+
+    ctx.stroke();
+    ctx.fill();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.strokeStyle = colors.secondary;
+    ctx.fillStyle = colors.primary;
+    ctx.lineWidth = .01 * mindim;
+    for (plant of state.activeLock.n) {
+      if (plant.t == "lock") continue;
+      const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
+      const isNearby = (hypot <= .05 * mindim);
+
+      if (isNearby) ctx.setLineDash([.025 * mindim, .025 * mindim]);
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim,
+        (isNearby ? (plant.r - .01) :
           .005) * mindim);
-  
-      ctx.stroke();
-      ctx.fill();
-      ctx.setLineDash([]);
-  
-      ctx.beginPath();
-      ctx.strokeStyle = colors.secondary;
-      ctx.fillStyle = colors.primary;
-      ctx.lineWidth = .01 * mindim;
-      for (plant of state.activeLock.n) {
-        if (plant.t == "lock") continue;
-        const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
-        const isNearby = (hypot <= .05 * mindim);
-  
-        if (isNearby) ctx.setLineDash([.025 * mindim, .025 * mindim]);
-        drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim,
-          (isNearby ? (plant.r - .01) :
-            .005) * mindim);
-  
-      }
-      ctx.stroke();
-      ctx.fill();
-      ctx.setLineDash([]);
-  
-      ctx.beginPath();
-      ctx.strokeStyle = colors.secondary;
-      ctx.fillStyle = colors.emergent;
-      ctx.lineWidth = .01 * mindim;
-      for (plant of state.activeLock.n) {
-        if (plant.t != "lock") continue;
-        drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim);
-      }
-      ctx.stroke();
-      ctx.fill();
-  
-      ctx.beginPath();
-      ctx.strokeStyle = colors.tertiary;
-      ctx.lineWidth = .005 * mindim;
-      for (plant of state.active) {
-        if (plant.t != "lock") continue;
-        drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .05 * mindim);
-      }
-      ctx.stroke();
-  
+
     }
-  */
+    ctx.stroke();
+    ctx.fill();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.strokeStyle = colors.secondary;
+    ctx.fillStyle = colors.emergent;
+    ctx.lineWidth = .01 * mindim;
+    for (plant of state.activeLock.n) {
+      if (plant.t != "lock") continue;
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .005 * mindim);
+    }
+    ctx.stroke();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = .005 * mindim;
+    for (plant of state.active) {
+      if (plant.t != "lock") continue;
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .05 * mindim);
+    }
+    ctx.stroke();
+
+  }
+
   // each clump is a spawner for plant mobs
   // spawned plant type is based on percentages
   // spawned plant max distance based on radius
