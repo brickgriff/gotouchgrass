@@ -122,8 +122,11 @@ var drawTest = (state) => {
   const plantTypes = ["grass", "clover"];
   const noxiousTypes = ["clover"];
 
-  ctx.beginPath();
+
+  ctx.lineWidth = fineLine;
+  ctx.strokeStyle = colors.tertiary;
   ctx.fillStyle = colors.primary;
+  ctx.beginPath();
   for (plant of state.plants) {
     // TODO stop using state.plants list for Structures (locks and gates)
     if (!plantTypes.includes(plant.t)) continue;
@@ -132,6 +135,7 @@ var drawTest = (state) => {
     const plantR = plant.r * mindim;
     drawArc(ctx, plantX, plantY, plantR);
   }
+  ctx.stroke();
   ctx.fill();
 
 
@@ -156,6 +160,7 @@ var drawTest = (state) => {
     if (!plant.n) continue;
     for (neighbor of plant.n) {
       // only other active neighbors (if locked)
+      if (plant.l.isBroken || plant.l.wasBroken) continue;
       ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
       ctx.lineTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
     }
@@ -165,6 +170,7 @@ var drawTest = (state) => {
   // draw pale rings
   // for various neutral objects
   ctx.strokeStyle = colors.emergent;
+  if (state.activeLock && (state.activeLock.l.isBroken || state.activeLock.l.wasBroken)) ctx.strokeStyle = colors.secondary;
   ctx.lineWidth = fineLine;
   ctx.beginPath();
 
@@ -190,7 +196,7 @@ var drawTest = (state) => {
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim - 1.5 * fineLine));
       // assuming the following:
       // console.log(state.activeLock)
-      if (!noxiousTypes.includes(plant.t) && state.activeLock && state.activeLock.n.includes(plant)) {
+      if (!noxiousTypes.includes(plant.t) && state.activeLock && !(state.activeLock.l.isBroken || state.activeLock.l.wasBroken) && state.activeLock.n.includes(plant)) {
         // add to active list, if not already update latest active node
         if (!state.active.includes(plant)) state.active.push(plant);
         plant.l = state.activeLock.l;
@@ -211,6 +217,7 @@ var drawTest = (state) => {
     // for each neighbor of the latest active node
     ctx.beginPath();
     ctx.strokeStyle = colors.emergent;
+    if (state.activeLock && (state.activeLock.l.isBroken || state.activeLock.l.wasBroken)) ctx.strokeStyle = colors.secondary;
     ctx.lineWidth = fineLine;
 
     for (neighbor of state.activeLock.n) {
@@ -334,18 +341,19 @@ var drawTest = (state) => {
 
     } else {
 
-      if (state.activeLock && state.activeLock.l == plant && plant.isSolved) {
+      if (state.activeLock && state.activeLock.l == plant && plant.l.isSolved && !(plant.l.isBroken || plant.l.wasBroken)) {
         if (!state.active.includes(plant.g)) state.active.push(plant.g);
         state.activeLock = null;
-        plant.isUnlocked=true;
+        plant.isUnlocked = true;
       } else {
-        if (plant.isBroken) {
-          plant.isBroken = false;
+        if (plant.l.isBroken) {
+          plant.l.isBroken = false;
+          plant.l.isSolved = false;
           state.activeLock = null;
           state.goal = 0;
           state.active = [];
-          plant.wasBroken = true;
-        } else if (!plant.wasBroken && !plant.isSolved && !plant.isUnlocked) {
+          plant.l.wasBroken = true;
+        } else if (!plant.wasBroken && !plant.isUnlocked) {
           state.activeLock = plant;
           state.goal = plant.v;
           if (state.activeLock && state.activeLock.l != plant) state.active = [];
@@ -366,38 +374,38 @@ var drawTest = (state) => {
     ctx.fill();
   } else {
 
-  // lock pad
-  ctx.beginPath();
-  ctx.fillStyle = colors.emergent;
-  ctx.strokeStyle = colors.tertiary;
-  ctx.lineWidth = boldLine;
-  for (plant of state.plants) {
-    if (!plant.isUnlocked) continue;
-    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim));
-  }
-  ctx.stroke();
-  ctx.fill();
+    // lock pad
+    ctx.beginPath();
+    ctx.fillStyle = colors.emergent;
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = boldLine;
+    for (plant of state.plants) {
+      if (!plant.isUnlocked) continue;
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim));
+    }
+    ctx.stroke();
+    ctx.fill();
   }
 
   if (state.activeLock && state.activeLock.l.isBroken) {
 
     ctx.beginPath();
     ctx.strokeStyle = colors.secondary;
-    ctx.fillStyle = colors.emergent;
-    if (state.activeLock.t != "lock") ctx.fillStyle = colors.primary;
-    ctx.lineWidth = .01 * mindim;
-    // const isActiveLock = (state.activeLock.t == "lock");
-    const lHypot = Math.hypot(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
-    const isNearbyLock = (lHypot <= .05 * mindim);
+    ctx.lineWidth = boldLine;
+    // const lHypot = Math.hypot(roomX + state.activeLock.l.x * mindim, roomY + state.activeLock.l.y * mindim);
+    // const isNearbyLock = (lHypot <= .05 * mindim);
 
-    if (isNearbyLock) ctx.setLineDash([.025 * mindim, .025 * mindim]);
-    drawArc(ctx, roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim,
-      (isNearbyLock ? (state.activeLock.r - .01) :
-        .005) * mindim);
+    // if (isNearbyLock) 
+    const circ = Math.PI * 2 * .01 * mindim;
+    ctx.setLineDash([.025 * mindim, .025 * mindim]);
+    drawArc(ctx, roomX + state.activeLock.l.x * mindim, roomY + state.activeLock.l.y * mindim, (wideLine));
+    //   (isNearbyLock ? (state.activeLock.r * mindim - fineLine) :
+    // fineLine));
 
     ctx.stroke();
-    ctx.fill();
     ctx.setLineDash([]);
+
+    /*
 
     ctx.beginPath();
     ctx.strokeStyle = colors.secondary;
@@ -437,6 +445,7 @@ var drawTest = (state) => {
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .05 * mindim);
     }
     ctx.stroke();
+    */
   }
 }
 
