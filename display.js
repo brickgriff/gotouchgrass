@@ -138,18 +138,18 @@ var drawTest = (state) => {
   // ctx.stroke(); // outline
   ctx.fill();
 
-    // lock pad
-    ctx.beginPath();
-    ctx.fillStyle = colors.emergent;
-    ctx.strokeStyle = colors.tertiary;
-    ctx.lineWidth = boldLine;
-    for (plant of state.plants) {
-      if (!plant.isUnlocked) continue;
-      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim));
-    }
-    ctx.stroke();
-    ctx.fill();
-  
+  // lock pad
+  ctx.beginPath();
+  ctx.fillStyle = colors.emergent;
+  ctx.strokeStyle = colors.tertiary;
+  ctx.lineWidth = boldLine;
+  for (plant of state.plants) {
+    if (!plant.isUnlocked) continue;
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim));
+  }
+  ctx.stroke();
+  ctx.fill();
+
   // TODO: save to offscreen canvas or image data then crop and load
 
   // info layer
@@ -186,7 +186,7 @@ var drawTest = (state) => {
     let circ = Math.PI * radius;
     let seg = circ / plant.v;
     if (!plant.l.isSolved) ctx.setLineDash([seg, seg]);;
-    
+
     ctx.strokeStyle = colors.tertiary;
     ctx.lineWidth = wideLine * (state.activeLock && state.activeLock.l == plant ? 1 : .5);
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
@@ -197,7 +197,7 @@ var drawTest = (state) => {
     const percent = ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal));
     ctx.setLineDash([seg - .25 * seg, seg + .25 * seg]);
     ctx.strokeStyle = colors.primary;
-    ctx.lineWidth = 2*boldLine;
+    ctx.lineWidth = 2 * boldLine;
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, { end: percent * 2 * Math.PI, offset: .125 * seg / radius });
     ctx.stroke();
     ctx.setLineDash([]);
@@ -214,7 +214,7 @@ var drawTest = (state) => {
     if (!plant.l.isSolved) continue;
     ctx.beginPath();
     ctx.strokeStyle = colors.primary;
-    ctx.lineWidth = 3*boldLine;
+    ctx.lineWidth = 3 * boldLine;
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
     ctx.stroke();
 
@@ -421,7 +421,7 @@ var drawTest = (state) => {
 
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, fineLine * 1.5);
       if (plant.wasBroken) plant.wasBroken = false;
-      else if (plant.wasUnlocked) plant.wasUnlocked=false;
+      else if (plant.wasUnlocked) plant.wasUnlocked = false;
 
     } else {
 
@@ -429,14 +429,14 @@ var drawTest = (state) => {
         if (!state.active.includes(plant.g)) state.active.push(plant.g);
         state.activeLock = null;
         plant.isUnlocked = true;
-        pattern = {active:[...state.active],l:plant.l,g:plant.l.g};
+        pattern = { active: [...state.active], l: plant.l, g: plant.l.g };
         state.patterns.push(pattern);
         if (!state.highscore) state.highscore = 0;
-        console.log(state.patterns.length, state.score, state.goal, state.score/state.goal, state.highscore, state.highscore < state.score/state.goal ? "HIGH SCORE":"TRY AGAIN");
-        if (state.highscore<state.score/state.goal) state.highscore=state.score/state.goal;
+        console.log(state.patterns.length, state.score, state.goal, state.score / state.goal, state.highscore, state.highscore < state.score / state.goal ? "HIGH SCORE" : "TRY AGAIN");
+        if (state.highscore < state.score / state.goal) state.highscore = state.score / state.goal;
         state.goal = 0;
       } else if (plant.isUnlocked) {
-        plant.l.isBroken=true;
+        plant.l.isBroken = true;
         plant.wasUnlocked = true;
         plant.isUnlocked = false;
       } else {
@@ -493,6 +493,11 @@ var drawTest = (state) => {
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim,
         (isNearby ? (plant.r * mindim) :
           fineLine));
+
+      if (!(isNearby && state.activeLock.n.includes(plant))) continue;
+      plant.r -= .0005 * plant.r;
+      console.log("shrank by ", .0005 * plant.r);
+
 
     }
     ctx.stroke();
