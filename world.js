@@ -383,7 +383,7 @@ var updatePlayer = (state) => {
 
   if (ddist == 0 && newhypot > 0) {
     // FIXME make camera glide back to player
-    const decayhypot = newhypot - (.0005 * state.mindim);
+    const decayhypot = newhypot - (.001 * state.mindim);
     state.vx = decayhypot * Math.cos(newtheta);
     state.vy = decayhypot * Math.sin(newtheta);
   } else {

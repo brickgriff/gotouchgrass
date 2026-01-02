@@ -124,7 +124,7 @@ var drawTest = (state) => {
 
 
   ctx.lineWidth = fineLine;
-  // ctx.strokeStyle = colors.tertiary;
+  ctx.strokeStyle = colors.tertiary;
   ctx.fillStyle = colors.primary;
   ctx.beginPath();
   for (plant of state.plants) {
@@ -135,10 +135,21 @@ var drawTest = (state) => {
     const plantR = plant.r * mindim;
     drawArc(ctx, plantX, plantY, plantR);
   }
-  // ctx.stroke();
+  // ctx.stroke(); // outline
   ctx.fill();
 
-
+    // lock pad
+    ctx.beginPath();
+    ctx.fillStyle = colors.emergent;
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = boldLine;
+    for (plant of state.plants) {
+      if (!plant.isUnlocked) continue;
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim));
+    }
+    ctx.stroke();
+    ctx.fill();
+  
   // TODO: save to offscreen canvas or image data then crop and load
 
   // info layer
@@ -174,9 +185,10 @@ var drawTest = (state) => {
     let radius = (plant.r + .0025) * mindim;
     let circ = Math.PI * radius;
     let seg = circ / plant.v;
-    ctx.setLineDash([seg, seg]);
+    if (!plant.l.isSolved) ctx.setLineDash([seg, seg]);;
+    
     ctx.strokeStyle = colors.tertiary;
-    ctx.lineWidth = boldLine;
+    ctx.lineWidth = wideLine;
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
     ctx.stroke();
     ctx.setLineDash([]);
@@ -185,7 +197,7 @@ var drawTest = (state) => {
     const percent = ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal));
     ctx.setLineDash([seg - .25 * seg, seg + .25 * seg]);
     ctx.strokeStyle = colors.primary;
-    ctx.lineWidth = fineLine;
+    ctx.lineWidth = 2*boldLine;
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, { end: percent * 2 * Math.PI, offset: .125 * seg / radius });
     ctx.stroke();
     ctx.setLineDash([]);
@@ -194,7 +206,7 @@ var drawTest = (state) => {
     ctx.beginPath();
     ctx.setLineDash([seg - .25 * seg, seg + .25 * seg]);
     ctx.strokeStyle = colors.primary;
-    ctx.lineWidth = .25 * fineLine;
+    ctx.lineWidth = boldLine;
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, { offset: .125 * seg / radius });
     ctx.stroke();
     ctx.setLineDash([]);
@@ -202,7 +214,7 @@ var drawTest = (state) => {
     if (!plant.l.isSolved) continue;
     ctx.beginPath();
     ctx.strokeStyle = colors.primary;
-    ctx.lineWidth = fineLine;
+    ctx.lineWidth = 3*boldLine;
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
     ctx.stroke();
 
@@ -442,20 +454,6 @@ var drawTest = (state) => {
     ctx.fillStyle = colors.tertiary;
     ctx.beginPath();
     drawArc(ctx, roomX + state.activeLock.l.x * mindim, roomY + state.activeLock.l.y * mindim, boldLine);
-    ctx.stroke();
-    ctx.fill();
-  } else {
-
-    // lock pad
-    ctx.beginPath();
-    ctx.fillStyle = colors.emergent;
-    ctx.strokeStyle = colors.tertiary;
-    ctx.lineWidth = boldLine;
-    for (plant of state.plants) {
-      if (!plant.isUnlocked) continue;
-      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim));
-    }
-    ctx.stroke();
     ctx.fill();
   }
 
