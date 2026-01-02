@@ -188,7 +188,7 @@ var drawTest = (state) => {
     if (!plant.l.isSolved) ctx.setLineDash([seg, seg]);;
     
     ctx.strokeStyle = colors.tertiary;
-    ctx.lineWidth = wideLine;
+    ctx.lineWidth = wideLine * (state.activeLock && state.activeLock.l == plant ? 1 : .5);
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
     ctx.stroke();
     ctx.setLineDash([]);
