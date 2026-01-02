@@ -170,6 +170,7 @@ var drawTest = (state) => {
   // draw pale rings
   // for various neutral objects
   ctx.strokeStyle = colors.emergent;
+  ctx.fillStyle = colors.primary;
   if (state.activeLock && (state.activeLock.l.isBroken || state.activeLock.l.wasBroken)) ctx.strokeStyle = colors.secondary;
   ctx.lineWidth = fineLine;
   ctx.beginPath();
@@ -208,6 +209,7 @@ var drawTest = (state) => {
     state.touching = touching;
     // console.log(touching.length);
   }
+  ctx.fill();
   ctx.stroke();
 
   // when lock status
@@ -216,6 +218,7 @@ var drawTest = (state) => {
     // draw pale dots
     // for each neighbor of the latest active node
     ctx.beginPath();
+    ctx.fillStyle = colors.primary;
     ctx.strokeStyle = colors.emergent;
     if (state.activeLock && (state.activeLock.l.isBroken || state.activeLock.l.wasBroken)) ctx.strokeStyle = colors.secondary;
     ctx.lineWidth = fineLine;
@@ -225,6 +228,7 @@ var drawTest = (state) => {
       if (hypot < .05 * mindim) continue;
       drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, 1.5 * fineLine);
     }
+    ctx.fill();
     ctx.stroke();
 
     // draw rose lines from nearby weeds to non-grass neighbors
@@ -240,9 +244,10 @@ var drawTest = (state) => {
       ctx.lineTo(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
     }
     ctx.stroke();
-
+    
     // draw rose arcs at non-grass neighbors when near locks
     ctx.beginPath();
+    ctx.fill();
     ctx.strokeStyle = colors.secondary;
     ctx.lineWidth = fineLine;
 
@@ -255,6 +260,44 @@ var drawTest = (state) => {
         drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, (neighbor.r * mindim - 1.5 * fineLine));
       }
     }
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = fineLine;
+
+    ctx.beginPath();
+    for (plant of state.active) {
+
+      if (!plant.n) continue;
+      for (neighbor of plant.n) {
+        // only other active neighbors (if locked)
+        if (!state.active.includes(neighbor)) continue;
+        ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
+        ctx.lineTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
+      }
+    }
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.strokeStyle = colors.tertiary;
+    ctx.fillStyle = colors.primary;
+    ctx.lineWidth = fineLine;
+
+    const active = state.activeLock;
+    const hypot = Math.hypot(roomX + active.x * mindim, roomY + active.y * mindim);
+
+    if (hypot > .05 * mindim) {
+      drawArc(ctx, roomX + active.x * mindim, roomY + active.y * mindim, fineLine * 3);
+    } else if (active.t == "lock") {
+      drawArc(ctx, roomX + active.x * mindim, roomY + active.y * mindim, wideLine + 1.5 * fineLine);
+      // } else if (plant.t == "gate") {
+      //   ctx.moveTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
+      //   ctx.lineTo(roomX + plant.l.x * mindim, roomY + plant.l.y * mindim);
+    } else {
+      drawArc(ctx, roomX + active.x * mindim, roomY + active.y * mindim, (active.r * mindim));
+    }
+    ctx.fill();
     ctx.stroke();
 
     // draw dark arcs at active grass
@@ -276,41 +319,6 @@ var drawTest = (state) => {
     }
     ctx.stroke();
 
-    ctx.strokeStyle = colors.tertiary;
-    ctx.lineWidth = fineLine;
-
-    ctx.beginPath();
-    for (plant of state.active) {
-
-      if (!plant.n) continue;
-      for (neighbor of plant.n) {
-        // only other active neighbors (if locked)
-        if (!state.active.includes(neighbor)) continue;
-        ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
-        ctx.lineTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
-      }
-    }
-    ctx.stroke();
-
-
-    ctx.beginPath();
-    ctx.strokeStyle = colors.tertiary;
-    ctx.lineWidth = fineLine;
-
-    const active = state.activeLock;
-    const hypot = Math.hypot(roomX + active.x * mindim, roomY + active.y * mindim);
-
-    if (hypot > .05 * mindim) {
-      drawArc(ctx, roomX + active.x * mindim, roomY + active.y * mindim, fineLine * 3);
-    } else if (active.t == "lock") {
-      drawArc(ctx, roomX + active.x * mindim, roomY + active.y * mindim, wideLine + 1.5 * fineLine);
-      // } else if (plant.t == "gate") {
-      //   ctx.moveTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
-      //   ctx.lineTo(roomX + plant.l.x * mindim, roomY + plant.l.y * mindim);
-    } else {
-      drawArc(ctx, roomX + active.x * mindim, roomY + active.y * mindim, (active.r * mindim));
-    }
-    ctx.stroke();
   }
 
   for (plant of state.plants) {
