@@ -281,7 +281,6 @@ var drawTest = (state) => {
 
     ctx.beginPath();
     for (plant of state.active) {
-      const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
 
       if (!plant.n) continue;
       for (neighbor of plant.n) {
@@ -314,16 +313,36 @@ var drawTest = (state) => {
     ctx.stroke();
   }
 
-  ctx.beginPath();
-  ctx.setLineDash([.05 * mindim, .05 * mindim]);
-  ctx.strokeStyle = colors.tertiary;
-  ctx.lineWidth = boldLine;
   for (plant of state.plants) {
     if (plant.t != "lock") continue;
-    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r + .0025) * mindim);
+
+    ctx.beginPath();
+    let radius = (plant.r + .0025) * mindim;
+    let circ = Math.PI * radius;
+    let seg = circ / plant.v;
+    ctx.setLineDash([seg, seg]);
+    ctx.strokeStyle = colors.tertiary;
+    ctx.lineWidth = boldLine;
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, {offset:0});
+    ctx.stroke();
+
+    ctx.beginPath();
+    const percent = ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal));
+    ctx.setLineDash([seg, seg]);
+    ctx.strokeStyle = colors.primary;
+    ctx.lineWidth = fineLine;
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius,  {end: percent*2*Math.PI});
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    if (!plant.l.isSolved) continue;
+    ctx.beginPath();
+    ctx.strokeStyle = colors.primary;
+    ctx.lineWidth = fineLine;
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
+    ctx.stroke();
+
   }
-  ctx.stroke();
-  ctx.setLineDash([]);
 
   // lock center
   ctx.beginPath();
@@ -396,16 +415,18 @@ var drawTest = (state) => {
     // const isNearbyLock = (lHypot <= .05 * mindim);
 
     // if (isNearbyLock) 
-    const circ = Math.PI * 2 * .01 * mindim;
-    ctx.setLineDash([.025 * mindim, .025 * mindim]);
-    drawArc(ctx, roomX + state.activeLock.l.x * mindim, roomY + state.activeLock.l.y * mindim, (wideLine));
+    let radius = wideLine;
+    let circ = Math.PI * 2 * radius;
+    let seg = circ / 12;
+    ctx.setLineDash([seg + .25 * seg, seg - .25 * seg]);
+    drawArc(ctx, roomX + state.activeLock.l.x * mindim, roomY + state.activeLock.l.y * mindim, radius, { offset: -.125 * seg / radius });
     //   (isNearbyLock ? (state.activeLock.r * mindim - fineLine) :
     // fineLine));
 
     ctx.stroke();
-    ctx.setLineDash([]);
+    // ctx.setLineDash([]);
 
-    /*
+
 
     ctx.beginPath();
     ctx.strokeStyle = colors.secondary;
@@ -438,14 +459,21 @@ var drawTest = (state) => {
     ctx.fill();
 
     ctx.beginPath();
+    radius = wideLine - .5 * fineLine
+    circ = Math.PI * 2 * radius;
+    seg = circ / 12;
+
+    ctx.setLineDash([seg, seg]);
+
     ctx.strokeStyle = colors.tertiary;
-    ctx.lineWidth = .005 * mindim;
+    ctx.lineWidth = fineLine;
     for (plant of state.active) {
       if (plant.t != "lock") continue;
-      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, .05 * mindim);
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
     }
     ctx.stroke();
-    */
+    ctx.setLineDash([]);
+
   }
 }
 
