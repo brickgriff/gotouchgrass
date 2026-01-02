@@ -127,13 +127,15 @@ const World = (function (/*api*/) {
     //   }
 
     let score = 0;
+    let value = 0;
     const plantTypes = ["grass", "clover"];
 
-    for (plant of state.active) {
-      if (plantTypes.includes(plant.t) && state.activeLock && state.activeLock.l != plant && !state.activeLock.l.isSolved && state.activeLock.l==plant.l) score += plant.v;
+    for (plant of state.plants) {
+      if (plantTypes.includes(plant.t) && state.activeLock && state.activeLock.l != plant && state.activeLock.l==plant.l) score += plant.v;
+      else if (plant.isUnlocked) value += plant.v;
     }
 
-    state.score = score;
+    state.score = score-value;
     
     // console.log(state.activeLock, ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal)));
     if (state.goal > 0 && state.goal <= state.score) {
