@@ -10,8 +10,8 @@ const inputs = {
     _y: 0,
     // to help normalize positions
     // TODO: should these be in terms of mindim units?
-    dragMin: .01, // mindim
-    dragMax: .05, // mindim
+    dragMin: .25 * .25, // mindim
+    dragMax: .25, // mindim
   },
 };
 
@@ -43,6 +43,7 @@ function isPressing(vector, range) {
 // this should return [-1,1] for vector x and y
 function getVector() {
   const mouse = getMouse(); //inputs.mouse;
+  let dMin = mouse.dragMin * document.state.mindim;
   let dMax = mouse.dragMax * document.state.mindim;
 
   const vector = {};
@@ -53,10 +54,11 @@ function getVector() {
   } else { // keyboard movement have "pointy" diagonals
     vector.x = (findInput(keybinds.right) - findInput(keybinds.left));
     vector.y = (findInput(keybinds.down) - findInput(keybinds.up));
+    dMin = 0;
     dMax = 1;
   }
 
-  normalize(vector, dMax);
+  normalize(vector, dMin, dMax);
 
   return vector;
 }
@@ -68,16 +70,16 @@ function getNewVector(vector, length, angle) {
   return _vector;
 }
 
-function normalize(vector, max) {
+function normalize(vector, min, max) {
   // direct length is useful for detecting input
   const hypot = Math.hypot(vector.x, vector.y); // can be as much as 1.4!
   const theta = Math.atan2(vector.y, vector.x); // can be a weird number (~0)
 
   // we need to normalize diagonals with the angle
-  vector.x = Math.min(hypot / max, 1) * Math.cos(theta);
-  vector.y = Math.min(hypot / max, 1) * Math.sin(theta);
+  const newhypot = Math.max(0, Math.min((hypot - min) / max, 1))
+  vector.x = newhypot * Math.cos(theta);
+  vector.y = newhypot * Math.sin(theta);
 }
-
 
 // CHECK BROWSER FEATURES //
 // TODO: practice with offscreen canvas
@@ -159,9 +161,8 @@ window.addEventListener("mousemove", (e) => {
   if (findInput(keybinds.mouseL)) {
 
     const dist = Math.hypot(inputs.mouse._x - inputs.mouse.x_, inputs.mouse._y - inputs.mouse.y_);
-    if ((dist >= inputs.mouse.dragMin * state.mindim)) {
-      state.events.isDragged = true;
-    }
+    state.events.isDragged = (dist > inputs.mouse.dragMin * state.mindim);
+    // console.log(dist, inputs.mouse.dragMin *state.mindim, state.events.isDragged);
   }
 });
 
