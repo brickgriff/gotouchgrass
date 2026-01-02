@@ -383,10 +383,11 @@ var updatePlayer = (state) => {
 
   if (ddist == 0 && newhypot > 0) {
     // FIXME make camera glide back to player
-    const decayhypot = newhypot-(.0005 * state.mindim);
+    const decayhypot = newhypot - (.0005 * state.mindim);
     state.vx = decayhypot * Math.cos(newtheta);
     state.vy = decayhypot * Math.sin(newtheta);
   } else {
+    // FIXME make camera slide ahead of player
     state.vx = newhypot * Math.cos(newtheta);
     state.vy = newhypot * Math.sin(newtheta);
   }
@@ -397,8 +398,6 @@ var updatePlayer = (state) => {
   }
 
   // lock inside the pad?
-
-
 }
 
 

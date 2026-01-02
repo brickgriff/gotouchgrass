@@ -398,7 +398,7 @@ var drawTest = (state) => {
     ctx.strokeStyle = colors.secondary;
     ctx.setLineDash([boldLine, boldLine, fineLine, boldLine, wideLine, boldLine]);
   }
-ctx.fillStyle = colors.emergent;
+  ctx.fillStyle = colors.emergent;
   ctx.lineWidth = fineLine;
 
   for (plant of state.plants) {
@@ -957,7 +957,7 @@ var drawPlayer = (state) => {
   const height = .05 * mindim;
   ctx.fillStyle = colors.tertiary;
   ctx.strokeStyle = colors.primary;
-  ctx.lineWidth=.01*mindim;
+  ctx.lineWidth = .01 * mindim;
   // ctx.save();
   // ctx.scale(1,1.5);
   ctx.beginPath();
