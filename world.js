@@ -14,7 +14,7 @@ const World = (function (/*api*/) {
       dy: 0,
       vx: 0,
       vy: 0,
-      speed: 0.002,// ><
+      speed: 0.001,// ><
       // zoom: .2, // [0, 1] // ><
       //pitch: 1, // [0, 1]
       //yaw: 0, // [-1, 1]
