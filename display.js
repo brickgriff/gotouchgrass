@@ -429,10 +429,10 @@ var drawTest = (state) => {
         if (!state.active.includes(plant.g)) state.active.push(plant.g);
         state.activeLock = null;
         plant.isUnlocked = true;
-        pattern = {active:[...state.active],l:plant.l,g:plant.g};
+        pattern = {active:[...state.active],l:plant.l,g:plant.l.g};
         state.patterns.push(pattern);
         if (!state.highscore) state.highscore = 0;
-        console.log(state.active, state.score, state.goal, state.score/state.goal, state.highscore, state.highscore < state.score/state.goal ? "HIGH SCORE":"TRY AGAIN");
+        console.log(state.active.length, state.score, state.goal, state.score/state.goal, state.highscore, state.highscore < state.score/state.goal ? "HIGH SCORE":"TRY AGAIN");
         if (state.highscore<state.score/state.goal) state.highscore=state.score/state.goal;
         state.goal = 0;
       } else if (plant.isUnlocked) {
