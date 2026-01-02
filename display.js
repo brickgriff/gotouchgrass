@@ -428,6 +428,7 @@ var drawTest = (state) => {
         if (!state.active.includes(plant.g)) state.active.push(plant.g);
         state.activeLock = null;
         plant.isUnlocked = true;
+        state.goal = 0;
       } else {
         if (plant.l.isBroken) {
           plant.l.isBroken = false;
@@ -450,7 +451,7 @@ var drawTest = (state) => {
   ctx.fill();
   ctx.stroke();
 
-  if (state.activeLock && state.activeLock.l.isSolved) {
+  if (state.activeLock && state.activeLock.l.isSolved && !state.activeLock.l.isBroken) {
     ctx.fillStyle = colors.tertiary;
     ctx.beginPath();
     drawArc(ctx, roomX + state.activeLock.l.x * mindim, roomY + state.activeLock.l.y * mindim, boldLine);

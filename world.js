@@ -141,7 +141,7 @@ const World = (function (/*api*/) {
 
     // console.log(state.activeLock, ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal)));
     if (state.goal > 0 && state.goal <= state.score) {
-      state.goal = 0;
+      // state.goal = 0;
       state.activeLock.l.isSolved = true;
     }
 
