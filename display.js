@@ -94,8 +94,8 @@ const Display = (function (/*api*/) {
 var drawTest = (state) => {
   const ctx = state.ctx;
   const mindim = state.mindim;
-  const roomX = state.dx * mindim;
-  const roomY = state.dy * mindim;
+  const roomX = state.dx * mindim + state.vx;
+  const roomY = state.dy * mindim + state.vy;
   const roomR = mindim * .5; // 5m radius; TODO set on state
   const fineLine = .005 * mindim;
   const boldLine = .01 * mindim;
@@ -775,8 +775,8 @@ var drawBackground = (state) => {
   state.dotTest = true;
   if (state.dotTest) {
     const r = 0.1 * mindim;
-    const offsetX = state.dx * mindim;
-    const offsetY = state.dy * mindim;
+    const offsetX = state.dx * mindim + state.vx;
+    const offsetY = state.dy * mindim + state.vy;
 
     ctx.fillStyle = colors.primary;
     ctx.beginPath();
@@ -956,12 +956,14 @@ var drawPlayer = (state) => {
   const r = .05 * mindim;
   const height = .05 * mindim;
   ctx.fillStyle = colors.tertiary;
-  ctx.strokeStyle = colors.tertiary;
+  ctx.strokeStyle = colors.primary;
+  ctx.lineWidth=.01*mindim;
   // ctx.save();
   // ctx.scale(1,1.5);
   ctx.beginPath();
-  drawArc(ctx, 0, 0, r);
+  drawArc(ctx, state.vx, state.vy, r);
   // drawArc(ctx, 0, -height, r);
+  ctx.stroke();
   ctx.fill();
   // ctx.lineCap = "round";
   // ctx.lineWidth = (r*2);

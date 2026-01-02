@@ -12,6 +12,8 @@ const World = (function (/*api*/) {
       // NOTE: how _much_ , not how _fast_
       dx: 0,
       dy: 0,
+      vx: 0,
+      vy: 0,
       speed: 0.002,// ><
       // zoom: .2, // [0, 1] // ><
       //pitch: 1, // [0, 1]
@@ -131,15 +133,15 @@ const World = (function (/*api*/) {
     const plantTypes = ["grass", "clover"];
 
     for (plant of state.active) {
-      if (plantTypes.includes(plant.t) && state.activeLock && state.activeLock.l != plant && state.activeLock.l==plant.l) score += plant.v;
+      if (plantTypes.includes(plant.t) && state.activeLock && state.activeLock.l != plant && state.activeLock.l == plant.l) score += plant.v;
       // else if (!plant.isUnlocked) value += plant.v;
     }
 
-    state.score = Math.max(0,score-value);
-    
+    state.score = Math.max(0, score - value);
+
     // console.log(state.activeLock, ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal)));
     if (state.goal > 0 && state.goal <= state.score) {
-      state.goal=0;
+      state.goal = 0;
       state.activeLock.l.isSolved = true;
     }
 
@@ -363,19 +365,40 @@ var createPlants = (state) => {
 // TODO Player.update
 var updatePlayer = (state) => {
   const vector = state.vector;
-  state.events.isDragged = (vector.x != 0 || vector.y != 0);
+  // state.events.isDragged = (vector.x != 0 || vector.y != 0);
   const temp = { dx: state.dx, dy: state.dy };
-  temp.dx -= vector.x * state.speed;
-  temp.dy -= vector.y * state.speed;
+  const ddx = vector.x;
+  const ddy = vector.y;
+  temp.dx -= ddx * state.speed;
+  temp.dy -= ddy * state.speed;
 
   // prevent distance from reaching past the weed barrier
   const dist = Math.hypot(temp.dx, temp.dy);
-  if (dist > .47) {
-    // console.log("turn around");
+  const ddist = Math.hypot(ddx, ddy)
+  state.vx -= ddx;
+  state.vy -= ddy;
+  const maxSlide = .01 * state.mindim;
+  const newhypot = Math.min(maxSlide, Math.hypot(state.vx, state.vy));
+  const newtheta = Math.atan2(state.vy, state.vx);
+
+  if (ddist == 0 && newhypot > 0) {
+    // FIXME make camera glide back to player
+    const decayhypot = newhypot-(.0005 * state.mindim);
+    state.vx = decayhypot * Math.cos(newtheta);
+    state.vy = decayhypot * Math.sin(newtheta);
   } else {
+    state.vx = newhypot * Math.cos(newtheta);
+    state.vy = newhypot * Math.sin(newtheta);
+  }
+
+  if (dist < .47) {
     state.dx = temp.dx;
     state.dy = temp.dy;
   }
+
+  // lock inside the pad?
+
+
 }
 
 
