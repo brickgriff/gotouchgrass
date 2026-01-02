@@ -12,22 +12,32 @@ const World = (function (/*api*/) {
       // NOTE: how _much_ , not how _fast_
       dx: 0,
       dy: 0,
+      vx: 0,
+      vy: 0,
       speed: 0.001,// ><
-      zoom: .2, // [0, 1] // ><
+      // zoom: .2, // [0, 1] // ><
       //pitch: 1, // [0, 1]
       //yaw: 0, // [-1, 1]
       frame: 0,
       time: 0,
+      status: null,
+      // defaultState: "DEFAULT",
+      // lockedState: "LOCKED",
+      // brokenState: "BROKEN",
+      // unlockedState: "UNLOCKED",
       seed: 42,
       // experience (leaves & flowers)
       plants: [],
-      activeLock:{n:[]},
+      // activeLock: { n: [] },
+      goal: 0,
+      score: 0,
       leaves: 0,
       flowers: 0,
       stamina: 0,
       staminaLimit: 0, // can be an update function
       nearby: [],
       active: [],
+      skills: [], // ["sees-edges"],
       inputs: inputs, // from events.js
       events: {},
       touchCount: 0,
@@ -86,6 +96,101 @@ const World = (function (/*api*/) {
     // updatePlants(state);// Foliage.update
     // updateNearby(state);// included in Foliage.update
 
+    // maybe draw a larger round base
+    // and then break up the soil?
+
+    // draw like 100 green dots in the local area
+    // rectilinear? circumpolar?
+
+    // [in world] each room spawns its set of patches
+    // [in world] each patch spawns its set of plants
+
+    // - default -> locked(0) @ lock x
+    // - default -> reveal @ gate o
+    // - locked(n) -> broken @ weed x
+    // - locked(n) -> locked(n+1) @ grass o
+    // - locked(v) -> unlocked @ any x
+    // - broken -> default @ lock x
+    // - reveal -> default @ lock o
+
+    //   const defaultState = state.defaultState = "DEFAULT";
+    //   const lockedState = state.lockedState = "LOCKED";
+    //   const brokenState = state.brokenState = "BROKEN";
+    //   const unlockedState = state.unlockedState = "UNLOCKED";
+    //   // const revealState = "REVEAL";
+
+    //   const mindim = state.mindim;
+
+    //   if (state.status == null) {
+    //     state.status = defaultState;
+    //     state.activeLock = { n: [] };
+    //     state.goal = -1;
+    //     state.active = [];
+    //   }
+
+    let score = 0;
+    let value = 0;
+    const plantTypes = ["grass", "clover"];
+
+    for (plant of state.active) {
+      if (plantTypes.includes(plant.t) && state.activeLock && state.activeLock.l != plant && state.activeLock.l == plant.l) score += plant.v;
+      // else if (!plant.isUnlocked) value += plant.v;
+    }
+
+    state.score = Math.max(0, score - value);
+
+    // console.log(state.activeLock, ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal)));
+    if (state.goal > 0 && state.goal <= state.score) {
+      state.goal = 0;
+      state.activeLock.l.isSolved = true;
+    }
+
+    //   if (state.status == lockedState && state.active.length >= state.goal) {
+    //     console.log("gate unlocked! return to lock to open gate");
+    //     state.status == unlockedState;
+    //   }
+
+    //   for (plant of state.plants) {
+    //     const hypot = Math.hypot(state.dx + plant.x, state.dy + plant.y);
+
+    //     if (hypot > .05) continue;
+    //     // if (state.status == lockedState && !state.activeLock.n.includes(plant)) continue;
+
+    //     // close to a lock
+    //     if (plant.t == "lock") {
+    //       if (state.status == defaultState) {
+    //         console.log("lock found! connect foliage to unlock it!");
+    //         state.status = lockedState;
+    //         state.activeLock = plant;
+    //         if (!state.active.includes(plant)) state.active.push(plant);
+    //         state.goal = plant.v;
+    //       } else if (state.status == brokenState) {
+    //         console.log("lock restored! take a break and try again!");
+    //         state.status = defaultState;
+    //         state.active = [];
+    //         state.activeLock = { n: [] };
+    //         state.goal = -1; // void
+    //       }
+    //     } else if (plant.t == "grass") {
+    //       if (state.status == lockedState) {
+    //         console.log("lock activated! touch the grass!");
+    //         if (!state.active.includes(plant)) state.active.push(plant);
+    //         state.activeLock = plant;
+    //       } else if (state.status == brokenState) {
+    //         console.log("lock broken! go to a lock!");
+    //         state.activeLock = plant;
+    //       }
+    //     } else if (plant.t == "clover") {
+    //       if (state.status == lockedState || state.status == unlockedState) {
+    //         console.log("lock broken! avoid the clover!");
+    //         state.status = brokenState;
+    //       }
+    //     }
+    //     // close to a gate
+    //     if (plant.t == "gate" && hypot < .05 && state.status == defaultState) {
+    //       // how do we modify state? do we modify the entity itself?
+    //     }
+    //   }
   };
 
   // return the public api
@@ -135,7 +240,12 @@ var createPatches = (state) => {
   // just create, sort, place, check (collisions)
   const random = Random.seed(state.seed);
   const plants = state.plants;
-  plants.push({ x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [] });
+  const gate = { x: .00, y: .50, r: .1, t: "gate", c: colors.emergent, n: [], v: 10, l: null };
+  const lock = { x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [], v: 5, l: null, g: null };
+  lock.g = gate;
+  lock.l = lock;
+  gate.l = lock;
+  plants.push(lock);
 
   var num = 100;
   const rMax = .1;
@@ -148,7 +258,7 @@ var createPatches = (state) => {
   while (num--) {
     let r = random() * (rMax - rMin) + rMin;
     if (prevR != 0) r = prevR;
-    if (Math.floor(r*100) % 2 != 0) r-=.01;
+    if (Math.floor(r * 100) % 2 != 0) r -= .01;
     let d = random() * (hMax - hMin - (2 - hBleed) * r) + hMin + r;
     let a = random() * Math.PI * 2;
 
@@ -196,8 +306,9 @@ var createPatches = (state) => {
     // even less so soil layer is visible
     // iteratively condense, if desired
 
-    const p = { x: x, y: y, r: r, t: t, c: c, n: [] };
+    const p = { x: x, y: y, r: r, t: t, c: c, n: [], v: 1 };
     plants.push(p);
+    // add the gate last for consistent map generation
   }
 
   for (plant1 of plants) {
@@ -205,7 +316,7 @@ var createPatches = (state) => {
     // if (plant1.t == "lock") continue;
     for (plant2 of plants) {
       // if (plant2.t == "lock") continue;
-      if ((plant1==plant2) || (plant1.t=="lock" && plant2.t=="lock")) continue;
+      if ((plant1 == plant2) || (plant1.t == "lock" && plant2.t == "lock")) continue;
       if (plant1.n && plant2.n && plant1.n.includes(plant2) && plant2.n.includes(plant1)) continue;
 
       const dist = Math.hypot(plant1.x - plant2.x, plant1.y - plant2.y);
@@ -216,6 +327,7 @@ var createPatches = (state) => {
       }
     }
   }
+  plants.push(gate);
 
 }
 
@@ -253,20 +365,41 @@ var createPlants = (state) => {
 // TODO Player.update
 var updatePlayer = (state) => {
   const vector = state.vector;
-  state.events.isDragged = (vector.x != 0 || vector.y != 0);
-  const temp = {dx:state.dx,dy:state.dy};
-  temp.dx -= vector.x * state.speed;
-  temp.dy -= vector.y * state.speed;
+  // state.events.isDragged = (vector.x != 0 || vector.y != 0);
+  const temp = { dx: state.dx, dy: state.dy };
+  const ddx = vector.x;
+  const ddy = vector.y;
+  temp.dx -= ddx * state.speed;
+  temp.dy -= ddy * state.speed;
 
   // prevent distance from reaching past the weed barrier
   const dist = Math.hypot(temp.dx, temp.dy);
-  if (dist > .47) {
-    // console.log("turn around");
+  const ddist = Math.hypot(ddx, ddy)
+  state.vx -= ddx;
+  state.vy -= ddy;
+  const maxSlide = .01 * state.mindim;
+  const newhypot = Math.min(maxSlide, Math.hypot(state.vx, state.vy));
+  const newtheta = Math.atan2(state.vy, state.vx);
+
+  if (ddist == 0 && newhypot > 0) {
+    // FIXME make camera glide back to player
+    const decayhypot = newhypot - (.0005 * state.mindim);
+    state.vx = decayhypot * Math.cos(newtheta);
+    state.vy = decayhypot * Math.sin(newtheta);
   } else {
+    // FIXME make camera slide ahead of player
+    state.vx = newhypot * Math.cos(newtheta);
+    state.vy = newhypot * Math.sin(newtheta);
+  }
+
+  if (dist < .47) {
     state.dx = temp.dx;
     state.dy = temp.dy;
   }
+
+  // lock inside the pad?
 }
+
 
 // TODO Foliage.update
 var updatePlants = (state) => {
