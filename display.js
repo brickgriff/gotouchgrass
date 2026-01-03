@@ -153,7 +153,7 @@ var drawTest = (state) => {
   // draw "pale" or "warm" lines
   // for nearby active node connections
   ctx.strokeStyle = colors.viewline;
-  if (plant.l.isBroken || plant.l.wasBroken) ctx.strokeStyle = colors.nullline;
+  if (state.activeLock && (state.activeLock.l.isBroken || state.activeLock.l.wasBroken)) ctx.strokeStyle = colors.nullline;
   ctx.lineWidth = fineLine;
 
   ctx.beginPath();
@@ -163,8 +163,9 @@ var drawTest = (state) => {
     // only active plants (includes Structures, for now)
 
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
-    if (hypot > .05 * mindim) continue;
+    if (hypot > .025 * mindim && !state.activeLock == plant) continue;
     // only closer than 50cm
+
     if (!plant.n) continue;
     for (neighbor of plant.n) {
       ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
@@ -227,6 +228,7 @@ var drawTest = (state) => {
     ctx.stroke();
   }
 
+
   // draw pale rings
   // for various neutral objects
   ctx.strokeStyle = colors.emergent;
@@ -243,11 +245,11 @@ var drawTest = (state) => {
     if (!plantTypes.includes(plant.t)) continue;
     // FIXME keep a separate lock list
 
-    const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
-    if (hypot > (plant.r + .05) * mindim) continue;
+    const hypot = Math.hypot((state.dx + plant.x) * mindim, (state.dy + plant.y) * mindim);
+    if (hypot > (plant.r + .025) * mindim) continue;
     // only closer than radius + 50cm
 
-    if (hypot > .05 * mindim) { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, fineLine * 1.5); }
+    if (hypot > .025 * mindim) { drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, fineLine * 1.5); }
     // only closer than 50cm
 
     else {
@@ -272,6 +274,7 @@ var drawTest = (state) => {
   ctx.fill();
   ctx.stroke();
 
+
   // when lock status
   if (state.activeLock) {
 
@@ -284,8 +287,6 @@ var drawTest = (state) => {
     ctx.lineWidth = fineLine;
 
     for (neighbor of state.activeLock.n) {
-      const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
-      if (hypot < .05 * mindim) continue;
       drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, 1.5 * fineLine);
     }
     ctx.fill();
@@ -295,11 +296,12 @@ var drawTest = (state) => {
     ctx.beginPath();
     ctx.strokeStyle = colors.secondary;
     ctx.lineWidth = fineLine;
-
+    const alhypot = Math.hypot(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
+    
     for (neighbor of state.activeLock.n) {
       if (!noxiousTypes.includes(neighbor.t)) continue;
       const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
-      if (hypot > (neighbor.r + .05) * mindim) continue;
+      if (hypot > (neighbor.r + .025) && alhypot > 2*boldLine + .025 * mindim) continue;
       ctx.moveTo(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
       ctx.lineTo(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
     }
@@ -314,7 +316,7 @@ var drawTest = (state) => {
     for (neighbor of state.activeLock.n) {
       if (!noxiousTypes.includes(neighbor.t)) continue;
       const hypot = Math.hypot(roomX + neighbor.x * mindim, roomY + neighbor.y * mindim);
-      if (hypot > (.05) * mindim) drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, 1.5 * fineLine);
+      if (hypot > (.025) * mindim) drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, 1.5 * fineLine);
       else {
         state.activeLock.l.isBroken = true;
         state.activeLock.l.isSolved = false;
@@ -324,6 +326,7 @@ var drawTest = (state) => {
     ctx.fill();
     ctx.stroke();
 
+    // draw dark / warm lines between active plants
     ctx.strokeStyle = colors.tertiary;
     if (state.activeLock && state.activeLock.l.isBroken) {
       ctx.strokeStyle = colors.secondary;
@@ -333,7 +336,6 @@ var drawTest = (state) => {
 
     ctx.beginPath();
     for (plant of state.active) {
-
       if (!plant.n) continue;
       for (neighbor of plant.n) {
         // only other active neighbors (if locked)
@@ -429,7 +431,7 @@ var drawTest = (state) => {
     if (plant.t != "lock") continue;
 
     const hypot = Math.hypot(roomX + plant.x * mindim, roomY + plant.y * mindim);
-    if (hypot > (.05) * mindim) {
+    if (hypot > (.025) * mindim) {
 
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, fineLine * 1.5);
       if (plant.wasBroken) plant.wasBroken = false;
