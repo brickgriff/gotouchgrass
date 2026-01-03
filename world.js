@@ -379,7 +379,6 @@ var updatePlayer = (state) => {
   temp.oy -= ddy;
 
   // prevent distance from reaching past the weed barrier
-  // const maxSlide = 1;
   const distlimit = .5 - state.size;
   const dist = Math.min(distlimit, Math.hypot(temp.dx, temp.dy)); // distance from room center
   const angle = Math.atan2(temp.dy, temp.dx);
@@ -402,21 +401,7 @@ var updatePlayer = (state) => {
     const stopoangle = Math.atan2(state.oy, state.ox);
     state.ox = stopodist * Math.cos(stopoangle);
     state.oy = stopodist * Math.sin(stopoangle);
-  // //   // } else {
-  // //   //   // FIXME make camera slide ahead of player
-  // //   //   const movevdist = Math.min(.05 * ddist, vdist - ddist * state.speed);
-  // //   //   // const movevdist = vdist
-  // //   //   state.vx -= movevdist * Math.cos(angle);
-  // //   //   state.vy -= movevdist * Math.sin(angle);
-  }// else if (vdist != 0) {
-  //   // const moveodist = Math.min(100 * vdist, odist + .1 * state.size);
-  //   // console.log(moveodist);
-  // //   // const moveoangle = Math.atan2();
-  //   state.ox -= vdist * Math.cos(angle);
-  //   state.oy -= vdist * Math.sin(angle);
-  // }
-
-  // lock inside the pad?
+  }
 }
 
 
