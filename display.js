@@ -969,25 +969,37 @@ var drawPlayer = (state) => {
   ctx.stroke();
   ctx.fill();
 
+  const offsetY = -.025 * mindim
+
+  ctx.beginPath();
+  ctx.strokeStyle=colors.playmain;
+  ctx.lineWidth = .005 * mindim;
+  drawArc(ctx,state.ox*mindim,state.oy*mindim,r*1.5);
+  ctx.stroke();
+  // use an ellipse 
+  // with a checkerboard pattern 
+  // for drop shadow
+
+  ctx.beginPath();
+  // drawArc(ctx, 0, 0, .1*r);
+  // ctx.stroke();
+  ctx.strokeStyle=colors.playline;
+  ctx.lineCap = "round";
+  ctx.lineWidth = (r*2.5);
+  ctx.moveTo(state.ox*mindim,state.oy*mindim+offsetY);
+  ctx.lineTo(state.ox*mindim,height+offsetY+state.oy*mindim);
+  ctx.stroke();
+
   ctx.beginPath();
   // drawArc(ctx, 0, 0, .1*r);
   // ctx.stroke();
   ctx.strokeStyle=colors.playmain;
   ctx.lineCap = "round";
   ctx.lineWidth = (r*2);
-  const offsetY = -.033 * mindim
   ctx.moveTo(state.ox*mindim,state.oy*mindim+offsetY);
   ctx.lineTo(state.ox*mindim,height+offsetY+state.oy*mindim);
   ctx.stroke();
-  ctx.restore();
 
-  // ctx.beginPath();
-  // ctx.lineWidth = .005 * mindim;
-  // drawArc(ctx,0,0,r*1.5);
-  // ctx.stroke();
-  // use an ellipse 
-  // with a checkerboard pattern 
-  // for drop shadow
 
 }
 
