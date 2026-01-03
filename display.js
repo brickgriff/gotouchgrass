@@ -146,6 +146,7 @@ var drawTest = (state) => {
   ctx.fill();
 
 
+  // TODO: save to offscreen canvas or image data then crop and load
 
 
 
@@ -172,7 +173,6 @@ var drawTest = (state) => {
   ctx.stroke();
   ctx.fill();
 
-  // TODO: save to offscreen canvas or image data then crop and load
 
 
 
@@ -202,8 +202,6 @@ var drawTest = (state) => {
   ctx.beginPath();
   // either active only or all with the sees-edges skill
   for (plant of state.skills.includes("sees-edges") ? state.plants : state.active) {
-    // for (plant of state.active) {
-    // only active plants (includes Structures, for now)
 
     const hypot = Math.hypot((state.dx + plant.x) * mindim, (state.dy + plant.y) * mindim);
     if (hypot > .025 * mindim) continue;
@@ -255,8 +253,6 @@ var drawTest = (state) => {
     if (hypot > .025 * mindim) {
       // only closer than 50cm
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, fineLine * 1.5);
-
-
 
     } else {
       isTouching = true;
