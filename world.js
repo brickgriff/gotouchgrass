@@ -393,7 +393,7 @@ var updatePlayer = (state) => {
   state.ox = odist * Math.cos(oangle);
   state.oy = odist * Math.sin(oangle);
 
-  console.log(vdist, odist);
+  // console.log(vdist, odist);
 
   if (vdist == 0 && odist != 0) {
       // FIXME make camera glide back to player

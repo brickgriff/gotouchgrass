@@ -173,8 +173,6 @@ var drawTest = (state) => {
   }
   ctx.stroke();
 
-  /*
-
   // show "have" and "need" for all locks
   for (plant of state.plants) {
     if (plant.t != "lock") continue;
@@ -519,7 +517,6 @@ var drawTest = (state) => {
     ctx.stroke();
     ctx.fill();
   }
-  */
 }
 
 var drawNav = (state) => {
@@ -529,7 +526,6 @@ var drawNav = (state) => {
   const mouse = getMouse();
 
   if (!state.events.isPressed && !state.events.isKeyboard) return;
-
 
   // if (!state.events.isDragged) {
   //   ctx.strokeStyle = colors.tertiary;
@@ -561,8 +557,8 @@ var drawNav = (state) => {
     state.isClicked = false;
   }
 
-  var r = .25 * mindim;
-  const hypot = Math.min(r*.75, Math.hypot(mouse._x - mouse.x_, mouse._y - mouse.y_));
+  var r = .1 * mindim;
+  const hypot = Math.min(r * .75, Math.hypot(mouse._x - mouse.x_, mouse._y - mouse.y_));
   const angle = Math.atan2(mouse._y - mouse.y_, mouse._x - mouse.x_);
 
   const x = hypot * Math.cos(angle);
@@ -571,14 +567,14 @@ var drawNav = (state) => {
   ctx.lineWidth = .08 * r;
   ctx.strokeStyle = colors.playline;
   ctx.beginPath();
-  drawArc(ctx, mouse.x_, mouse.y_, r*1);
+  drawArc(ctx, mouse.x_, mouse.y_, r * 1);
   drawArc(ctx, x + mouse.x_, y + mouse.y_, .25 * r);
   ctx.stroke();
 
   ctx.lineWidth = .05 * r;
   ctx.strokeStyle = colors.playmain;
   ctx.beginPath();
-  drawArc(ctx, mouse.x_, mouse.y_, r*1);
+  drawArc(ctx, mouse.x_, mouse.y_, r * 1);
   drawArc(ctx, x + mouse.x_, y + mouse.y_, .25 * r);
   ctx.stroke();
 
