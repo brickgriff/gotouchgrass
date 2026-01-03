@@ -197,7 +197,7 @@ var drawTest = (state) => {
     const percent = ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal));
     ctx.setLineDash([seg - .25 * seg, seg + .25 * seg]);
     ctx.strokeStyle = colors.primary;
-    ctx.lineWidth = 2 * boldLine;
+    ctx.lineWidth = 3.5 * boldLine;
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, { end: percent * 2 * Math.PI, offset: .125 * seg / radius });
     ctx.stroke();
     ctx.setLineDash([]);
@@ -375,7 +375,6 @@ var drawTest = (state) => {
     ctx.setLineDash([]);
 
     // draw dark arcs at active grass
-
     ctx.beginPath();
     ctx.fillStyle = colors.primary;
     ctx.strokeStyle = colors.tertiary;
@@ -390,6 +389,12 @@ var drawTest = (state) => {
       if (hypot > .05 * mindim && plantTypes.includes(plant.t)) {
         drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, 1.5 * fineLine);
       } else if (plantTypes.includes(plant.t)) {
+        // for (neighbor of state.activeLock.n) {
+        //   if (neighbor == plant || !plantTypes.includes(neighbor.t)) continue;
+        //   if (!(noxiousTypes.includes(neighbor.t) && neighbor.n.includes(plant))) continue;
+        //   neighbor.t = "grass";
+        //   break;
+        // }
         if (state.activeLock != plant) state.activeLock = plant;
         drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim - 1.5 * fineLine));
       }// else if (plant.t == "gate") {
@@ -495,10 +500,8 @@ var drawTest = (state) => {
           fineLine));
 
       if (!(isNearby && state.activeLock.n.includes(plant))) continue;
-      plant.r -= .0005 * plant.r;
-      console.log("shrank by ", .0005 * plant.r);
-
-
+      plant.r = Math.max(fineLine / mindim, .9995 * plant.r);
+      // console.log("shrank by ", .0005 * plant.r);
     }
     ctx.stroke();
     ctx.fill();
@@ -573,57 +576,55 @@ var drawNav = (state) => {
   }
 
   var r = .25 * mindim;
-
-  ctx.lineWidth = .08 * r;
-  ctx.strokeStyle = colors.playline;
-  ctx.beginPath();
-  drawArc(ctx, mouse.x_, mouse.y_, r);
-  drawArc(ctx, mouse.x_, mouse.y_, .25 * r);
-  ctx.stroke();
-
-  ctx.lineWidth = .05 * r;
-  ctx.strokeStyle = colors.playmain;
-  ctx.beginPath();
-  drawArc(ctx, mouse.x_, mouse.y_, r);
-  drawArc(ctx, mouse.x_, mouse.y_, .25 * r);
-  ctx.stroke();
-
-  if (!state.events.isDragged) return;
-
-  ctx.fillStyle = colors.playmain;
-  ctx.beginPath();
-  drawArc(ctx, mouse.x_, mouse.y_, .25 * r/*, { start: .5*Math.PI, end: 1.5 * Math.PI, offset: angle }*/);
-  ctx.fill();
-
   const hypot = Math.min(r, Math.hypot(mouse._x - mouse.x_, mouse._y - mouse.y_));
   const angle = Math.atan2(mouse._y - mouse.y_, mouse._x - mouse.x_);
 
   const x = hypot * Math.cos(angle);
   const y = hypot * Math.sin(angle);
 
-  ctx.lineWidth = 0.28 * r;
+  ctx.lineWidth = .08 * r;
   ctx.strokeStyle = colors.playline;
   ctx.beginPath();
-  ctx.moveTo(mouse.x_, mouse.y_);
-  ctx.lineTo(x + mouse.x_, y + mouse.y_);
+  drawArc(ctx, mouse.x_, mouse.y_, r);
+  drawArc(ctx, x + mouse.x_, y + mouse.y_, .25 * r);
   ctx.stroke();
 
-  ctx.lineWidth = 0.25 * r;
+  ctx.lineWidth = .05 * r;
   ctx.strokeStyle = colors.playmain;
   ctx.beginPath();
-  ctx.moveTo(x + mouse.x_, y + mouse.y_);
-  const newx = hypot * 1.01 * Math.cos(angle);
-  const newy = hypot * 1.01 * Math.sin(angle);
-
-  ctx.lineTo(x + mouse.x_ - newx, y + mouse.y_ - newy);
+  drawArc(ctx, mouse.x_, mouse.y_, r);
+  drawArc(ctx, x + mouse.x_, y + mouse.y_, .25 * r);
   ctx.stroke();
 
-  ctx.lineWidth = .03 * r;
-  ctx.strokeStyle = colors.playline;
-  ctx.beginPath();
-  drawArc(ctx, x + mouse.x_, y + mouse.y_, .5 * r);
-  ctx.stroke()
-  ctx.fill();
+  // if (!state.events.isDragged) return;
+
+  // ctx.fillStyle = colors.playmain;
+  // ctx.beginPath();
+  // drawArc(ctx, mouse.x_, mouse.y_, .25 * r/*, { start: .5*Math.PI, end: 1.5 * Math.PI, offset: angle }*/);
+  // ctx.fill();
+
+  // ctx.lineWidth = 0.28 * r;
+  // ctx.strokeStyle = colors.playline;
+  // ctx.beginPath();
+  // ctx.moveTo(mouse.x_, mouse.y_);
+  // ctx.lineTo(x + mouse.x_, y + mouse.y_);
+  // ctx.stroke();
+
+  // ctx.lineWidth = 0.25 * r;
+  // ctx.strokeStyle = colors.playmain;
+  // ctx.beginPath();
+  // ctx.moveTo(x + mouse.x_, y + mouse.y_);
+  // const newx = hypot * 1.01 * Math.cos(angle);
+  // const newy = hypot * 1.01 * Math.sin(angle);
+  // ctx.lineTo(x + mouse.x_ - newx, y + mouse.y_ - newy);
+  // ctx.stroke();
+
+  // ctx.lineWidth = .03 * r;
+  // ctx.strokeStyle = colors.playline;
+  // ctx.beginPath();
+  // drawArc(ctx, x + mouse.x_, y + mouse.y_, .5 * r);
+  // ctx.stroke()
+  // ctx.fill();
   // ctx.restore();
 }
 
