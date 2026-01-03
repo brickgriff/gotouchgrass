@@ -965,9 +965,12 @@ var drawPlayer = (state) => {
   ctx.beginPath();
   // console.log(state.dx,state.dy);
   drawArc(ctx, (state.ox) * mindim, (state.oy) * mindim, r);
-  // drawArc(ctx, 0, -height, r);
   ctx.stroke();
   ctx.fill();
+
+  // ctx.beginPath();
+  // drawArc(ctx, 0, 0, .1*r);
+  // ctx.stroke();
 
   // const offsetY = -.025 * mindim
 
