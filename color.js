@@ -23,10 +23,10 @@ const colors = true ? {
     "gatepass" : "#88b24b",
     "gateline" : "#f7cac8",
     "gatemain" : "#f7cac8",
+    "viewline" : "#f7cac8",
     "joinline" : "#5f4c8b",
     "nullline" : "#fe6f61",
-    "soilmain" : "#88b24b",
-    "soilline" : "#fe6f61",
+    "soilmain" : "#f7cac8",
     "herbline" : "#5f4c8b",
     "herbmain" : "#88b24b",
     

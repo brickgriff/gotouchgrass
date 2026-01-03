@@ -76,7 +76,7 @@ function normalize(vector, min, max) {
   const theta = Math.atan2(vector.y, vector.x); // can be a weird number (~0)
 
   // we need to normalize diagonals with the angle
-  const newhypot = Math.max(0, Math.min((hypot - min) / max, 1))
+  const newhypot = Math.max(0, Math.min((hypot - min)/ (.75*max-min), 1))
   vector.x = newhypot * Math.cos(theta);
   vector.y = newhypot * Math.sin(theta);
 }
