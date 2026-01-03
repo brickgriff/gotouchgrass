@@ -970,15 +970,16 @@ var drawPlayer = (state) => {
   ctx.fill();
 
   ctx.beginPath();
-  drawArc(ctx, 0, 0, .1*r);
-  ctx.stroke();
-  // ctx.lineCap = "round";
-  // ctx.lineWidth = (r*2);
-  // const offsetY = -.033 * mindim
-  // ctx.moveTo(0,offsetY);
-  // ctx.lineTo(0,-height-offsetY);
+  // drawArc(ctx, 0, 0, .1*r);
   // ctx.stroke();
-  // ctx.restore();
+  ctx.strokeStyle=colors.playmain;
+  ctx.lineCap = "round";
+  ctx.lineWidth = (r*2);
+  const offsetY = -.033 * mindim
+  ctx.moveTo(state.ox*mindim,state.oy*mindim+offsetY);
+  ctx.lineTo(state.ox*mindim,height+offsetY+state.oy*mindim);
+  ctx.stroke();
+  ctx.restore();
 
   // ctx.beginPath();
   // ctx.lineWidth = .005 * mindim;
