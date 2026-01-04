@@ -188,14 +188,6 @@ var drawTest = (state) => {
 
 
 
-
-
-
-
-
-
-
-
   // info layer
   // draw "pale" or "warm" lines
   // for nearby active node connections
@@ -691,8 +683,8 @@ var drawTest = (state) => {
       console.log(state.patterns.length, state.score, state.goal, state.score / state.goal, state.highscore, state.highscore < state.score / state.goal ? "HIGH SCORE" : "TRY AGAIN");
       if (state.highscore < state.score / state.goal) state.highscore = state.score / state.goal;
 
-      state.activeLock = null;
       state.goal = 0;
+      state.activeLock = plant.g; // plant.g;
       plant.l.wasSolved = true; // solved?
 
     } else if (plant.l.isUnlocked && !plant.l.wasSolved) {
@@ -703,7 +695,7 @@ var drawTest = (state) => {
 
 
     } else if (!plant.wasBroken && !plant.wasSolved && !plant.wasUnlocked) {
-      if (!state.activeLock || state.activeLock.l != plant) {
+      if (!state.activeLock || state.activeLock.l != plant || plant.g == state.activeLock) {
         plant.l = plant;
         state.activeLock = plant;
         state.goal = plant.v;
@@ -778,6 +770,22 @@ var drawTest = (state) => {
     ctx.fill();
   }
 
+
+
+
+  if (state.activeLock) {
+    // console.log(state.activeLock);
+    ctx.beginPath();
+    ctx.strokeStyle =colors.primary;
+    ctx.lineWidth = boldLine;
+    drawArc(ctx, roomX+state.activeLock.l.g.x*mindim, roomY + state.activeLock.l.g.y*mindim, 1.5 * fineLine)
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle =colors.tertiary;
+    ctx.lineWidth = fineLine;
+    drawArc(ctx, roomX+state.activeLock.l.g.x*mindim, roomY + state.activeLock.l.g.y*mindim, 1.5 * fineLine)
+    ctx.stroke();
+  }
 }
 
 var drawNav = (state) => {

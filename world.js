@@ -242,7 +242,7 @@ var createPatches = (state) => {
   // just create, sort, place, check (collisions)
   const random = Random.seed(state.seed);
   const plants = state.plants;
-  const gate = { x: .00, y: .50, r: .1, t: "gate", c: colors.emergent, n: [], v: 10, l: null };
+  const gate = { x: .00, y: .45, r: .1, t: "gate", c: colors.emergent, n: [], v: 10, l: null };
   const lock = { x: .25, y: -.25, r: .1, t: "lock", c: colors.emergent, n: [], v: 5, l: null, g: null };
   lock.g = gate;
   lock.l = lock;
