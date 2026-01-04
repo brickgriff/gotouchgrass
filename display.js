@@ -684,7 +684,7 @@ var drawTest = (state) => {
       pattern = { active: [...state.active], l: plant.l };
 
       state.patterns.push(pattern);
-      if (!state.active.includes(plant.g)) state.active.push(plant.g);
+      state.active.push(plant.g);
 
       if (!state.highscore) state.highscore = 0;
       console.log(state.patterns.length, state.score, state.goal, state.score / state.goal, state.highscore, state.highscore < state.score / state.goal ? "HIGH SCORE" : "TRY AGAIN");
