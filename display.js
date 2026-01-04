@@ -145,46 +145,38 @@ var drawTest = (state) => {
   if (state.outline) ctx.stroke(); // outline
   ctx.fill();
 
-  // show all unlocked locks
-  // maybe should be a lil higher
-  ctx.beginPath();
-  ctx.fillStyle = colors.lockmain;
-  ctx.strokeStyle = colors.lockline;
-  ctx.lineWidth = boldLine;
-  for (plant of state.plants) {
-    if (!plant.isUnlocked) continue;
-    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim));
-  }
-  ctx.stroke();
-  ctx.fill();
 
   // TODO: save to offscreen canvas or image data then crop and load
-
-
-
-
-
-
-
-
-
-
-
-
-
   // show all unlocked locks
   // maybe should be a lil higher
   ctx.beginPath();
-  ctx.fillStyle = colors.lockmain;
-  ctx.strokeStyle = colors.lockline;
-  ctx.lineWidth = boldLine;
-  for (plant of state.plants) {
-    if (!plant.isUnlocked) continue;
-    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim));
+  ctx.strokeStyle = colors.lockmain;
+  ctx.lineWidth = wideLine;
+  for (plant of state.active) {
+
+    if (plant.t == "gate") {
+
+      console.log("hey");
+      ctx.moveTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
+      ctx.lineTo(roomX + plant.l.x * mindim, roomY + plant.l.y * mindim);
+    }
   }
   ctx.stroke();
-  ctx.fill();
 
+  ctx.beginPath();
+  ctx.fillStyle = colors.lockline;
+  ctx.strokeStyle = colors.lockmain;
+  ctx.lineWidth = boldLine;
+
+  for (plant of state.plants) {
+
+    if (!plant.isUnlocked) continue;
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, wideLine);
+
+  }
+
+  ctx.stroke();
+  ctx.fill();
 
 
 
@@ -216,6 +208,7 @@ var drawTest = (state) => {
   for (plant of state.skills.includes("sees-edges") ? state.plants : state.active) {
 
     const hypot = Math.hypot((state.dx + plant.x) * mindim, (state.dy + plant.y) * mindim);
+
     if (hypot > .025 * mindim) continue;
     // only closer than 50cm
 
@@ -226,9 +219,6 @@ var drawTest = (state) => {
     }
   }
   ctx.stroke();
-
-
-
 
 
 
@@ -513,10 +503,7 @@ var drawTest = (state) => {
         // }
         if (state.activeLock != plant) state.activeLock = plant;
         drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim - 1.5 * fineLine));
-      }// else if (plant.t == "gate") {
-      //   ctx.moveTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
-      //   ctx.lineTo(roomX + plant.l.x * mindim, roomY + plant.l.y * mindim);
-      // }
+      }
     }
     ctx.fill();
     ctx.stroke();
@@ -693,12 +680,12 @@ var drawTest = (state) => {
 
     } else if (plant.l.isSolved) {
 
-      if (!state.active.includes(plant.g)) state.active.push(plant.g);
-
       plant.l.isUnlocked = true;
       plant.l.isSolved = false;
       pattern = { active: [...state.active], l: plant.l };
+
       state.patterns.push(pattern);
+      if (!state.active.includes(plant.g)) state.active.push(plant.g);
 
       if (!state.highscore) state.highscore = 0;
       console.log(state.patterns.length, state.score, state.goal, state.score / state.goal, state.highscore, state.highscore < state.score / state.goal ? "HIGH SCORE" : "TRY AGAIN");
@@ -706,14 +693,14 @@ var drawTest = (state) => {
 
       state.activeLock = null;
       state.goal = 0;
-      state.active = [];
       plant.l.wasSolved = true; // solved?
-
 
     } else if (plant.l.isUnlocked && !plant.l.wasSolved) {
 
       plant.l.isUnlocked = false;
       plant.l.wasUnlocked = true;
+      //state.active = [];
+
 
     } else if (!plant.wasBroken && !plant.wasSolved && !plant.wasUnlocked) {
       if (!state.activeLock || state.activeLock.l != plant) {
