@@ -10,8 +10,8 @@ const inputs = {
     _y: 0,
     // to help normalize positions
     // TODO: should these be in terms of mindim units?
-    dragMin: .25 * .25, // mindim
-    dragMax: .25, // mindim
+    dragMin: .025, // mindim
+    dragMax: .1, // mindim
   },
 };
 
@@ -76,7 +76,7 @@ function normalize(vector, min, max) {
   const theta = Math.atan2(vector.y, vector.x); // can be a weird number (~0)
 
   // we need to normalize diagonals with the angle
-  const newhypot = Math.max(0, Math.min((hypot - min) / max, 1))
+  const newhypot = Math.max(0, Math.min((hypot - min)/ (max-min), 1))
   vector.x = newhypot * Math.cos(theta);
   vector.y = newhypot * Math.sin(theta);
 }

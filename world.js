@@ -12,8 +12,9 @@ const World = (function (/*api*/) {
       // NOTE: how _much_ , not how _fast_
       dx: 0,
       dy: 0,
-      vx: 0,
-      vy: 0,
+      ox: 0,
+      oy: 0,
+      size: 0.025,
       speed: 0.001,// ><
       // zoom: .2, // [0, 1] // ><
       //pitch: 1, // [0, 1]
@@ -38,6 +39,7 @@ const World = (function (/*api*/) {
       nearby: [],
       active: [],
       skills: [], // ["sees-edges"],
+      patterns: [], // twice means activelock
       inputs: inputs, // from events.js
       events: {},
       touchCount: 0,
@@ -141,7 +143,7 @@ const World = (function (/*api*/) {
 
     // console.log(state.activeLock, ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal)));
     if (state.goal > 0 && state.goal <= state.score) {
-      state.goal = 0;
+      // state.goal = 0;
       state.activeLock.l.isSolved = true;
     }
 
@@ -217,9 +219,9 @@ var resize = (state) => {
   state.canvas.height = self.innerHeight; // px
   state.cx = state.canvas.width / 2; // px
   state.cy = state.canvas.height / 2; // px
-  // mindim == ~10m
-  state.mindim = Math.min(state.canvas.width, state.canvas.height); // - .1 * state.cx;
-  state.maxdim = Math.max(state.canvas.width, state.canvas.height); // - .1 * state.cx;
+  // mindim == ~5m
+  state.mindim = Math.min(state.canvas.width, state.canvas.height) * 2; // - .1 * state.cx;
+  state.maxdim = Math.max(state.canvas.width, state.canvas.height) * 2; // - .1 * state.cx;
   // const othdim = Math.max(state.canvas.width, state.canvas.height);
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
@@ -366,38 +368,40 @@ var createPlants = (state) => {
 var updatePlayer = (state) => {
   const vector = state.vector;
   // state.events.isDragged = (vector.x != 0 || vector.y != 0);
-  const temp = { dx: state.dx, dy: state.dy };
-  const ddx = vector.x;
-  const ddy = vector.y;
-  temp.dx -= ddx * state.speed;
-  temp.dy -= ddy * state.speed;
+  const temp = { dx: state.dx, dy: state.dy, ox: state.ox, oy: state.oy };
+  // camera responds to change in distance, not distance itself
+  const ddx = vector.x * state.speed;
+  const ddy = vector.y * state.speed;
+  temp.dx -= ddx;
+  temp.dy -= ddy;
+
+  temp.ox -= ddx;
+  temp.oy -= ddy;
 
   // prevent distance from reaching past the weed barrier
-  const dist = Math.hypot(temp.dx, temp.dy);
-  const ddist = Math.hypot(ddx, ddy)
-  state.vx -= ddx;
-  state.vy -= ddy;
-  const maxSlide = .01 * state.mindim;
-  const newhypot = Math.min(maxSlide, Math.hypot(state.vx, state.vy));
-  const newtheta = Math.atan2(state.vy, state.vx);
+  const distlimit = .5 - state.size;
+  const dist = Math.min(distlimit, Math.hypot(temp.dx, temp.dy)); // distance from room center
+  const angle = Math.atan2(temp.dy, temp.dx);
+  state.dx = dist * Math.cos(angle);
+  state.dy = dist * Math.sin(angle);
 
-  if (ddist == 0 && newhypot > 0) {
-    // FIXME make camera glide back to player
-    const decayhypot = newhypot - (.0005 * state.mindim);
-    state.vx = decayhypot * Math.cos(newtheta);
-    state.vy = decayhypot * Math.sin(newtheta);
-  } else {
-    // FIXME make camera slide ahead of player
-    state.vx = newhypot * Math.cos(newtheta);
-    state.vy = newhypot * Math.sin(newtheta);
+  const vdist = Math.hypot(ddx, ddy);
+
+  const offsetlimit = .9 * state.size;
+  const odist = Math.min(offsetlimit, Math.hypot(temp.ox, temp.oy));
+  const oangle = Math.atan2(temp.oy, temp.ox);
+  state.ox = odist * Math.cos(oangle);
+  state.oy = odist * Math.sin(oangle);
+
+  // console.log(vdist, odist);
+
+  if (vdist == 0 && odist != 0) {
+      // FIXME make camera glide back to player
+    const stopodist = Math.max(0, odist - .01 * state.size);
+    const stopoangle = Math.atan2(state.oy, state.ox);
+    state.ox = stopodist * Math.cos(stopoangle);
+    state.oy = stopodist * Math.sin(stopoangle);
   }
-
-  if (dist < .47) {
-    state.dx = temp.dx;
-    state.dy = temp.dy;
-  }
-
-  // lock inside the pad?
 }
 
 
