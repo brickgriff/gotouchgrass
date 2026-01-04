@@ -100,7 +100,6 @@ var drawTest = (state) => {
   const fineLine = .005 * mindim;
   const boldLine = .01 * mindim;
   const wideLine = .05 * mindim;
-  ctx.lineCap = "round";
 
 
 
@@ -161,7 +160,10 @@ var drawTest = (state) => {
       ctx.lineTo(roomX + plant.l.x * mindim, roomY + plant.l.y * mindim);
     }
   }
+  ctx.lineCap = "round";
   ctx.stroke();
+  ctx.lineCap = "butt";
+
   ctx.beginPath();
   ctx.fillStyle = colors.lockline;
   ctx.strokeStyle = colors.lockmain;
@@ -580,8 +582,6 @@ var drawTest = (state) => {
   // show "have" and "need" for all locks
   for (plant of state.plants) {
     if (plant.t != "lock") continue;
-    ctx.lineCap = "butt";
-
     let radius = (plant.r) * mindim - wideLine;
     let circ = Math.PI * radius;
     let seg = circ / plant.v;
@@ -636,7 +636,6 @@ var drawTest = (state) => {
       ctx.stroke();
       ctx.setLineDash([]);
     }
-    ctx.lineCap = "round";
 
   }
 
