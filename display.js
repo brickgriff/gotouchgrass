@@ -345,7 +345,6 @@ var drawTest = (state) => {
     ctx.beginPath();
     ctx.strokeStyle = colors.secondary;
     ctx.lineWidth = fineLine;
-    const alhypot = Math.hypot(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
     
     for (neighbor of state.activeLock.n) {
       if (!noxiousTypes.includes(neighbor.t)) continue;
