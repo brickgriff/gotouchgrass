@@ -354,7 +354,7 @@ var drawTest = (state) => {
     ctx.beginPath();
     ctx.strokeStyle = colors.secondary;
     ctx.lineWidth = fineLine;
-    
+
     for (neighbor of state.activeLock.n) {
       if (!noxiousTypes.includes(neighbor.t)) continue;
       const hypot = Math.hypot((state.dx + neighbor.x) * mindim, (state.dy + neighbor.y) * mindim);
@@ -426,22 +426,14 @@ var drawTest = (state) => {
     ctx.strokeStyle = colors.nullline;
     ctx.lineWidth = fineLine;
 
-    for (neighbor of state.plants) {
-      const hypot = Math.hypot((state.dx + neighbor.x) * mindim, (state.dy + neighbor.y) * mindim);
-      if (!noxiousTypes.includes(neighbor.t) || hypot > (neighbor.r + .025) * mindim || !state.active.includes(neighbor)) continue;
-
-      state.activeLock.l.isBroken = true;
-
-        drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, 1.5 * fineLine);
-    }
-
-
     for (neighbor of state.activeLock.n) {
       if (!noxiousTypes.includes(neighbor.t)) continue;
       const hypot = Math.hypot((state.dx + neighbor.x) * mindim, (state.dy + neighbor.y) * mindim);
       if (hypot > (neighbor.r + .025) * mindim) {
         drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, 1.5 * fineLine);
       } else {
+        if (hypot < .025 * mindim) state.activeLock.l.isBroken = true;
+
         drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, (neighbor.r * mindim - 1.5 * fineLine));
       }
     }
@@ -452,6 +444,8 @@ var drawTest = (state) => {
       if (hypot > (neighbor.r + .025) * mindim) {
         drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, 1.5 * fineLine);
       } else {
+        if (hypot < .025 * mindim) state.activeLock.l.isBroken = true;
+
         drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, (neighbor.r * mindim - 1.5 * fineLine));
       }
     }
@@ -586,57 +580,7 @@ var drawTest = (state) => {
 
 
 
-
-
-
-
-    // draw rose arcs at non-grass neighbors when near the active lock (leader node)
-    // ctx.beginPath();
-    // ctx.strokeStyle = colors.secondary;
-    // ctx.fillStyle = colors.primary;
-    // ctx.lineWidth = fineLine;
-
-    // for (neighbor of state.activeLock.n) {
-    //   if (!noxiousTypes.includes(neighbor.t)) continue;
-    //   const hypot = Math.hypot((state.dx + neighbor.x) * mindim, (state.dy + neighbor.y) * mindim);
-    //   if (hypot > (neighbor.r + .025) * mindim) {
-    //     drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, 1.5 * fineLine);
-    //   } else {
-    //     if (hypot < (.025) * mindim) {
-    //       state.activeLock.l.isBroken = true;
-    //     }
-    //     drawArc(ctx, roomX + neighbor.x * mindim, roomY + neighbor.y * mindim, (neighbor.r * mindim - 1.5 * fineLine));
-    //   }
-    // }
-
-
-
-
-    // ctx.fill();
-    // ctx.stroke();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   }
-
 
 
 
@@ -732,38 +676,52 @@ var drawTest = (state) => {
     if (hypot > (.025) * mindim) {
 
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, fineLine * 1.5);
+
       if (plant.wasBroken) plant.wasBroken = false;
       else if (plant.wasSolved) plant.wasSolved = false;
+      else if (plant.wasUnlocked) plant.wasUnlocked = false;
 
-    } else if (state.activeLock && state.activeLock.l == plant && plant.l.isSolved && !(plant.l.isBroken || plant.l.wasBroken)) {
-      if (!state.active.includes(plant.g)) state.active.push(plant.g);
-      state.activeLock = null;
-      plant.l.isSolved = false; // solved?
-      plant.l.isUnlocked = true;
-      pattern = { active: [...state.active], l: plant.l };
-      state.patterns.push(pattern);
-      if (!state.highscore) state.highscore = 0;
-      console.log(state.patterns.length, state.score, state.goal, state.score / state.goal, state.highscore, state.highscore < state.score / state.goal ? "HIGH SCORE" : "TRY AGAIN");
-      if (state.highscore < state.score / state.goal) state.highscore = state.score / state.goal;
-      state.goal = 0;
-      // } else if (plant.isUnlocked) {
-      // plant.l.isBroken = true;
-      // plant.l.wasSolved = true;
-      // plant.l.isUnlocked = false;
+
     } else if (plant.l.isBroken) {
+
       plant.l.isBroken = false;
       plant.l.isSolved = false;
       state.activeLock = null;
       state.goal = 0;
       state.active = [];
       plant.l.wasBroken = true;
-    } else if (!plant.wasBroken && !plant.isUnlocked) {
+
+    } else if (plant.l.isSolved) {
+
+      if (!state.active.includes(plant.g)) state.active.push(plant.g);
+
+      plant.l.isUnlocked = true;
+      plant.l.isSolved = false;
+      pattern = { active: [...state.active], l: plant.l };
+      state.patterns.push(pattern);
+
+      if (!state.highscore) state.highscore = 0;
+      console.log(state.patterns.length, state.score, state.goal, state.score / state.goal, state.highscore, state.highscore < state.score / state.goal ? "HIGH SCORE" : "TRY AGAIN");
+      if (state.highscore < state.score / state.goal) state.highscore = state.score / state.goal;
+
+      state.activeLock = null;
+      state.goal = 0;
+      state.active = [];
+      plant.l.wasSolved = true; // solved?
+
+
+    } else if (plant.l.isUnlocked && !plant.l.wasSolved) {
+
+      plant.l.isUnlocked = false;
+      plant.l.wasUnlocked = true;
+
+    } else if (!plant.wasBroken && !plant.wasSolved && !plant.wasUnlocked) {
       if (!state.activeLock || state.activeLock.l != plant) {
         plant.l = plant;
         state.activeLock = plant;
+        state.goal = plant.v;
+        state.active = [];
       }
-      state.goal = plant.v;
-      if (state.activeLock && state.activeLock.l != plant) state.active = [];
       if (!state.active.includes(plant)) state.active.push(plant);
       // console.log("touching", plant.t, "@", plant.x, plant.y, state.score);
 
@@ -815,7 +773,7 @@ var drawTest = (state) => {
           fineLine));
 
       if (!(isNearby && state.activeLock.n.includes(plant))) continue;
-      plant.r = Math.max(5*fineLine / mindim, .9995 * plant.r);
+      plant.r = Math.max(5 * fineLine / mindim, .9995 * plant.r);
       // console.log("shrank by ", .0005 * plant.r);
     }
     ctx.stroke();
