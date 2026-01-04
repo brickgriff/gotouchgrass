@@ -145,6 +145,18 @@ var drawTest = (state) => {
   if (state.outline) ctx.stroke(); // outline
   ctx.fill();
 
+  // show all unlocked locks
+  // maybe should be a lil higher
+  ctx.beginPath();
+  ctx.fillStyle = colors.lockmain;
+  ctx.strokeStyle = colors.lockline;
+  ctx.lineWidth = boldLine;
+  for (plant of state.plants) {
+    if (!plant.isUnlocked) continue;
+    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, (plant.r * mindim));
+  }
+  ctx.stroke();
+  ctx.fill();
 
   // TODO: save to offscreen canvas or image data then crop and load
 
@@ -333,7 +345,8 @@ var drawTest = (state) => {
     ctx.beginPath();
     ctx.strokeStyle = colors.secondary;
     ctx.lineWidth = fineLine;
-
+    const alhypot = Math.hypot(roomX + state.activeLock.x * mindim, roomY + state.activeLock.y * mindim);
+    
     for (neighbor of state.activeLock.n) {
       if (!noxiousTypes.includes(neighbor.t)) continue;
       const hypot = Math.hypot((state.dx + neighbor.x) * mindim, (state.dy + neighbor.y) * mindim);
