@@ -154,9 +154,8 @@ var drawTest = (state) => {
   ctx.lineWidth = wideLine;
   for (plant of state.active) {
 
-    if (plant.t == "gate") {
+    if (plant.t == "gate" && plant.l.isUnlocked) {
 
-      console.log("hey");
       ctx.moveTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
       ctx.lineTo(roomX + plant.l.x * mindim, roomY + plant.l.y * mindim);
     }
