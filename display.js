@@ -100,6 +100,7 @@ var drawTest = (state) => {
   const fineLine = .005 * mindim;
   const boldLine = .01 * mindim;
   const wideLine = .05 * mindim;
+  ctx.lineCap = "round";
 
 
 
@@ -149,19 +150,18 @@ var drawTest = (state) => {
   // TODO: save to offscreen canvas or image data then crop and load
   // show all unlocked locks
   // maybe should be a lil higher
+
   ctx.beginPath();
   ctx.strokeStyle = colors.lockmain;
   ctx.lineWidth = wideLine;
   for (plant of state.active) {
 
     if (plant.t == "gate" && plant.l.isUnlocked) {
-
       ctx.moveTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
       ctx.lineTo(roomX + plant.l.x * mindim, roomY + plant.l.y * mindim);
     }
   }
   ctx.stroke();
-
   ctx.beginPath();
   ctx.fillStyle = colors.lockline;
   ctx.strokeStyle = colors.lockmain;
@@ -580,6 +580,7 @@ var drawTest = (state) => {
   // show "have" and "need" for all locks
   for (plant of state.plants) {
     if (plant.t != "lock") continue;
+    ctx.lineCap = "butt";
 
     let radius = (plant.r) * mindim - wideLine;
     let circ = Math.PI * radius;
@@ -635,6 +636,7 @@ var drawTest = (state) => {
       ctx.stroke();
       ctx.setLineDash([]);
     }
+    ctx.lineCap = "round";
 
   }
 
