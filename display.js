@@ -578,29 +578,30 @@ var drawTest = (state) => {
     let radius = (plant.r) * mindim - wideLine;
     let circ = Math.PI * radius;
     let seg = circ / plant.v;
+    let isOnline = state.activeLock && state.activeLock.l == plant;
 
     // show "need" level
     ctx.beginPath();
     if (!plant.l.isSolved) ctx.setLineDash([seg, seg]);
     ctx.strokeStyle = colors.lockline;
-    ctx.lineWidth = wideLine * (state.activeLock && state.activeLock.l == plant ? 1 : .5);
+    ctx.lineWidth = wideLine * (isOnline ? 1 : .5);
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
     ctx.stroke();
     ctx.setLineDash([]);
 
     // show "haves" level
-    ctx.beginPath();
-    const percent = ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal));
-    ctx.setLineDash([seg - .25 * seg, seg + .25 * seg]);
-    ctx.strokeStyle = colors.lockbeam;
-    ctx.lineWidth = 3.5 * boldLine;
-    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, { end: percent * 2 * Math.PI, offset: 2.125 * seg / radius });
-    ctx.stroke();
-    ctx.setLineDash([]);
+    if (!plant.l.isUnlocked) {
+      ctx.beginPath();
+      const percent = ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal));
+      ctx.setLineDash([seg - .25 * seg, seg + .25 * seg]);
+      ctx.strokeStyle = colors.lockbeam;
+      ctx.lineWidth = 3.5 * boldLine;
+      drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, { end: percent * 2 * Math.PI, offset: 2.125 * seg / radius });
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
 
-    
     // show capacity
-    let isOnline = state.activeLock && state.activeLock.l == plant;
     ctx.lineWidth = isOnline ? boldLine : fineLine;
     // modify this to change where the lil light is placed
     // if (!isOnline) {
@@ -614,7 +615,7 @@ var drawTest = (state) => {
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, { offset: .125 * seg / radius });
     ctx.stroke();
     ctx.setLineDash([]);
-  
+
     // solved beam ring
     if (plant.l.isSolved) {
       ctx.beginPath();
@@ -622,10 +623,8 @@ var drawTest = (state) => {
       ctx.lineWidth = 3 * boldLine;
       drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius);
       ctx.stroke();
-
-
     }
-    
+
     // show broken warning
     if (plant.l.isBroken) {
       ctx.beginPath();
@@ -786,14 +785,14 @@ var drawTest = (state) => {
   if (state.activeLock) {
     // console.log(state.activeLock);
     ctx.beginPath();
-    ctx.strokeStyle =colors.primary;
+    ctx.strokeStyle = colors.primary;
     ctx.lineWidth = boldLine;
-    drawArc(ctx, roomX+state.activeLock.l.g.x*mindim, roomY + state.activeLock.l.g.y*mindim, 1.5 * fineLine)
+    drawArc(ctx, roomX + state.activeLock.l.g.x * mindim, roomY + state.activeLock.l.g.y * mindim, 1.5 * fineLine)
     ctx.stroke();
     ctx.beginPath();
-    ctx.strokeStyle =colors.tertiary;
+    ctx.strokeStyle = colors.tertiary;
     ctx.lineWidth = fineLine;
-    drawArc(ctx, roomX+state.activeLock.l.g.x*mindim, roomY + state.activeLock.l.g.y*mindim, 1.5 * fineLine)
+    drawArc(ctx, roomX + state.activeLock.l.g.x * mindim, roomY + state.activeLock.l.g.y * mindim, 1.5 * fineLine)
     ctx.stroke();
   }
 }
