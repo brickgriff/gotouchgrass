@@ -95,6 +95,7 @@ const World = (function (/*api*/) {
 
     // TODO all of these are services, too
     updatePlayer(state);// Player.update
+    updatePatches(state);
     // updatePlants(state);// Foliage.update
     // updateNearby(state);// included in Foliage.update
 
@@ -220,8 +221,8 @@ var resize = (state) => {
   state.cx = state.canvas.width / 2; // px
   state.cy = state.canvas.height / 2; // px
   // mindim == ~5m
-  state.mindim = Math.min(state.canvas.width, state.canvas.height) ; // - .1 * state.cx;
-  state.maxdim = Math.max(state.canvas.width, state.canvas.height) ; // - .1 * state.cx;
+  state.mindim = Math.min(state.canvas.width, state.canvas.height); // - .1 * state.cx;
+  state.maxdim = Math.max(state.canvas.width, state.canvas.height); // - .1 * state.cx;
   // const othdim = Math.max(state.canvas.width, state.canvas.height);
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
@@ -397,7 +398,7 @@ var updatePlayer = (state) => {
   // console.log(vdist, odist);
 
   if (vdist == 0 && odist != 0) {
-      // FIXME make camera glide back to player
+    // FIXME make camera glide back to player
     const stopodist = Math.max(0, odist - .01 * state.size);
     const stopoangle = Math.atan2(state.oy, state.ox);
     state.ox = stopodist * Math.cos(stopoangle);
@@ -405,6 +406,43 @@ var updatePlayer = (state) => {
   }
 }
 
+// is there a need to explicitly create the player object stats
+
+// TODO patches update (it's like plants and nearby combined)
+var updatePatches = (state) => {
+  const activeLock = state.active.length ? state.active[state.active.length - 1] : null;
+  const index = activeLock ? state.active.length-1 : 1;
+
+  for (plant of state.plants) {
+
+    const hypot = Math.hypot((state.dx + plant.x), (state.dy + plant.y));
+    if (hypot > .025) continue;
+
+    // if (["clover","gate","lock"].includes(plant.t) ||
+    //   !activeLock ||
+    //   (activeLock.l.isBroken || activeLock.l.wasBroken) ||
+    //   !(activeLock.n.includes(plant) ||
+    //     activeLock.l.n.includes(plant))) continue;
+    // // add to active list, if not already update latest active node
+
+
+    if (["lock", "gate"].includes(plant.t)) {
+      state.active[0] = plant;
+    } else {
+      // console.log(activeLock);
+
+      if (!state.active.length) state.active.push({name:"placeholder"});
+      if (state.active.includes(plant))
+        state.active.splice(state.active.indexOf(plant), 1);
+      state.active.splice(index, 0, plant);
+      plant.l = state.active[0];
+
+    }
+    // state.activeLock = plant; // may not be needed
+    // move to updatePlants
+
+  }
+}
 
 // TODO Foliage.update
 var updatePlants = (state) => {
@@ -441,7 +479,7 @@ var updatePlants = (state) => {
   }
 
 }
-// TODO Foliage.update
+
 var updateNearby = (state) => {
   if (state.frame % 60 !== 0) return;
 
