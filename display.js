@@ -147,9 +147,8 @@ var drawTest = (state) => {
 
 
   // TODO: save to offscreen canvas or image data then crop and load
-  // show all unlocked locks
-  // maybe should be a lil higher
 
+  // show unlocked gates
   ctx.beginPath();
   ctx.strokeStyle = colors.lockmain;
   ctx.lineWidth = wideLine;
@@ -164,9 +163,11 @@ var drawTest = (state) => {
   ctx.stroke();
   ctx.lineCap = "butt";
 
+  // show all unlocked locks
+  // maybe should be a lil higher
   ctx.beginPath();
   ctx.fillStyle = colors.lockline;
-  ctx.strokeStyle = colors.lockmain;
+  ctx.strokeStyle = colors.lockline;
   ctx.lineWidth = boldLine;
 
   for (plant of state.plants) {
@@ -587,7 +588,7 @@ var drawTest = (state) => {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // show haves
+    // show "haves" level
     ctx.beginPath();
     const percent = ((!state.goal || state.goal <= 0) ? 0 : (state.score / state.goal));
     ctx.setLineDash([seg - .25 * seg, seg + .25 * seg]);
@@ -597,16 +598,23 @@ var drawTest = (state) => {
     ctx.stroke();
     ctx.setLineDash([]);
 
+    
     // show capacity
-    if (!(state.activeLock && state.activeLock.l == plant)) continue;
+    let isOnline = state.activeLock && state.activeLock.l == plant;
+    ctx.lineWidth = isOnline ? boldLine : fineLine;
+    // modify this to change where the lil light is placed
+    // if (!isOnline) {
+    //   radius = (plant.r) * mindim - wideLine;
+    //   circ = Math.PI * radius;
+    //   seg = circ / plant.v;
+    // }
     ctx.beginPath();
     ctx.setLineDash([seg - .25 * seg, seg + .25 * seg]);
     ctx.strokeStyle = colors.lockbeam;
-    ctx.lineWidth = boldLine;
     drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, radius, { offset: .125 * seg / radius });
     ctx.stroke();
     ctx.setLineDash([]);
-
+  
     // solved beam ring
     if (plant.l.isSolved) {
       ctx.beginPath();
@@ -617,7 +625,7 @@ var drawTest = (state) => {
 
 
     }
-
+    
     // show broken warning
     if (plant.l.isBroken) {
       ctx.beginPath();
@@ -628,6 +636,8 @@ var drawTest = (state) => {
       ctx.stroke();
       ctx.setLineDash([]);
     }
+
+
 
   }
 

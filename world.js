@@ -256,6 +256,7 @@ var createPatches = (state) => {
   const hMin = .05;
   const hBleed = .25;
   var retries = 0;
+  var retryLimit = 100;
   var prevR = 0;
   while (num--) {
     let r = random() * (rMax - rMin) + rMin;
@@ -281,7 +282,7 @@ var createPatches = (state) => {
 
       num++;
       retries++;
-      if (retries == 100) {
+      if (retries == retryLimit) {
         if (r > rMin) {
           prevR = r - .02;
         } else {
