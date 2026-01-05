@@ -288,7 +288,7 @@ var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
   for (plant of active) {
 
     const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
-    if (hypot > (plant.r + .025) && activeLock!=plant) continue;
+    if (hypot > (plant.r + .025) && activeLock != plant) continue;
     // only closer than radius + 50cm
 
     if (!plant.n) continue;

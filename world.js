@@ -411,7 +411,7 @@ var updatePlayer = (state) => {
 // TODO patches update (it's like plants and nearby combined)
 var updatePatches = (state) => {
   const activeLock = state.active.length ? state.active[state.active.length - 1] : null;
-  const index = activeLock ? state.active.length-1 : 1;
+  const index = activeLock ? state.active.length - 1 : 1;
 
   for (plant of state.plants) {
 
@@ -431,7 +431,7 @@ var updatePatches = (state) => {
     } else {
       // console.log(activeLock);
 
-      if (!state.active.length) state.active.push({name:"placeholder"});
+      if (!state.active.length) state.active.push({ name: "placeholder" });
       if (state.active.includes(plant))
         state.active.splice(state.active.indexOf(plant), 1);
       state.active.splice(index, 0, plant);
