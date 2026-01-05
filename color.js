@@ -26,6 +26,7 @@ const colors = true ? {
     "viewline" : "#f7cac8",
     "joinline" : "#5f4c8b",
     "ruinline" : "#fe6f61",
+    "dropline" : "#fe6f61",
     "nullline" : "#fe6f61",
     "soilmain" : "#f7cac8",
     "herbline" : "#5f4c8b",

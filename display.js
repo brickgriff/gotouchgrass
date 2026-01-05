@@ -204,9 +204,9 @@ var drawTestViewLayer = (ctx, room, active, mindim = 1000, coords) => {
   ctx.fill();
 }
 
-var drawTestRuinLayer = (ctx, room, active, mindim = 1000, coords) => {
+var drawTestDropLayer = (ctx, room, active, mindim = 1000, coords) => {
   ctx.fillStyle = colors.primary;
-  ctx.strokeStyle = colors.ruinline;
+  ctx.strokeStyle = colors.dropline;
   const activeLock = active.length ? active[active.length - 1] : null;
   ctx.lineWidth = colors.fineLine;
 
@@ -377,7 +377,7 @@ var drawTest = (state) => {
 
 
   drawTestViewLayer(ctx, room, state.plants, mindim, coords);
-  drawTestRuinLayer(ctx, room, state.active, mindim, coords);
+  drawTestDropLayer(ctx, room, state.active, mindim, coords);
   drawTestJoinLayer(ctx, room, state.active, mindim, coords);
 
 
