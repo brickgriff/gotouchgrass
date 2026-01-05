@@ -293,7 +293,7 @@ var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
 
     if (!plant.n) continue;
     for (neighbor of plant.n) {
-      // if (neighbor.t != activeLock.t) continue;
+      if (neighbor.t != activeLock.t) continue;
       if (!active.includes(neighbor)) continue;
       ctx.moveTo(room.x + neighbor.x * mindim, room.y + neighbor.y * mindim);
       ctx.lineTo(room.x + plant.x * mindim, room.y + plant.y * mindim);
