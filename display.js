@@ -286,17 +286,17 @@ var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
   ctx.beginPath();
   // either active only or all with the sees-edges skill
   for (plant of active) {
-    if (neighbor.t != activeLock.t) continue;
 
     const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
-    //if (hypot > (plant.r + .025)) continue;
+    if (hypot > (plant.r + .025) && activeLock!=plant) continue;
     // only closer than radius + 50cm
 
     if (!plant.n) continue;
     for (neighbor of plant.n) {
+      // if (neighbor.t != activeLock.t) continue;
       if (!active.includes(neighbor)) continue;
-      // ctx.moveTo(room.x + neighbor.x * mindim, room.y + neighbor.y * mindim);
-      // ctx.lineTo(room.x + plant.x * mindim, room.y + plant.y * mindim);
+      ctx.moveTo(room.x + neighbor.x * mindim, room.y + neighbor.y * mindim);
+      ctx.lineTo(room.x + plant.x * mindim, room.y + plant.y * mindim);
     }
 
   }
