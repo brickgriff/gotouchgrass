@@ -91,101 +91,152 @@ const Display = (function (/*api*/) {
 
 }());
 
-var drawTest = (state) => {
-  const ctx = state.ctx;
-  const mindim = state.mindim;
-  const roomX = (state.dx + state.ox) * mindim;
-  const roomY = (state.dy + state.oy) * mindim;
-  const roomR = mindim * .5; // 5m radius; TODO set on state
-  const fineLine = .005 * mindim;
-  const boldLine = .01 * mindim;
-  const wideLine = .05 * mindim;
 
-
-
-
-
-
-
-
+var drawTestRoom = (ctx, room) => {
   // terrain layer
   // draw a large round base for soil
   // a large "pale" dot with a "dark" outline
   ctx.beginPath();
   ctx.fillStyle = colors.soilmain;
-  drawArc(ctx, roomX, roomY, roomR);
+  drawArc(ctx, room.x, room.y, room.r);
   ctx.fill();
 
+}
 
-
-
-
-  //
-  const plantTypes = ["grass", "clover"];
-  const noxiousTypes = ["clover"];
-
+var drawTestFoliage = (ctx, room, plants, options = { outline: false }) => {
   // foliage layer
   // all plants as "cool" dots
   // helps segregate plants w/o either:
   // - plant only array
   // - yet another type flag or class
   // - classifying by main color 
-  ctx.lineWidth = fineLine;
+  ctx.lineWidth = colors.fineLine;
   ctx.strokeStyle = colors.herbline;
   ctx.fillStyle = colors.herbmain;
   ctx.beginPath();
-  for (plant of state.plants) {
+  for (plant of plants) {
     // TODO stop using state.plants list for Structures (locks and gates)
-    if (!plantTypes.includes(plant.t)) continue;
-    const plantX = roomX + plant.x * mindim;
-    const plantY = roomY + plant.y * mindim;
-    const plantR = plant.r * mindim;
+    if (["lock", "gate"].includes(plant.t)) continue;
+    // console.log(plant.x,plant.y);
+    const plantX = room.x + plant.x;
+    const plantY = room.y + plant.y;
+    const plantR = plant.r;
     drawArc(ctx, plantX, plantY, plantR);
   }
-  if (state.outline) ctx.stroke(); // outline
+  if (options.outline) ctx.stroke(); // outline
   ctx.fill();
+}
 
-
-  // TODO: save to offscreen canvas or image data then crop and load
-
-  // show unlocked gates
+var drawTestGates = (ctx, room, gates) => {
   ctx.beginPath();
   ctx.strokeStyle = colors.lockmain;
-  ctx.lineWidth = wideLine;
-  for (plant of state.active) {
-
-    if (plant.t == "gate" && plant.l.isUnlocked) {
-      ctx.moveTo(roomX + plant.x * mindim, roomY + plant.y * mindim);
-      ctx.lineTo(roomX + plant.l.x * mindim, roomY + plant.l.y * mindim);
-    }
+  ctx.lineWidth = colors.wideLine;
+  for (gate of gates) {
+    ctx.moveTo(room.x + gate.x, room.y + gate.y);
+    ctx.lineTo(room.x + gate.l.x, room.y + gate.l.y);
   }
   ctx.lineCap = "round";
   ctx.stroke();
   ctx.lineCap = "butt";
 
-  // show all unlocked locks
-  // maybe should be a lil higher
+}
+
+var drawTestLocks = (ctx, room, locks) => {
   ctx.beginPath();
   ctx.fillStyle = colors.lockline;
   ctx.strokeStyle = colors.lockline;
-  ctx.lineWidth = boldLine;
+  ctx.lineWidth = colors.boldLine;
 
-  for (plant of state.plants) {
-
-    if (!plant.isUnlocked) continue;
-    drawArc(ctx, roomX + plant.x * mindim, roomY + plant.y * mindim, wideLine);
-
+  for (lock of locks) {
+    drawArc(ctx, room.x + lock.x, room.y + lock.y, colors.wideLine);
   }
 
   ctx.stroke();
   ctx.fill();
+}
 
 
+var drawTest = (state) => {
+  const ctx = state.ctx;
+  const mindim = state.mindim;
+  const room = {
+    x: (state.dx + state.ox) * mindim,
+    y: (state.dy + state.oy) * mindim,
+    r: mindim * .5,  // 5m radius; TODO set on state
+  };
+  const roomX = room.x;
+  const roomY = room.y;
 
+  const fineLine = colors.fineLine = .005 * mindim;
+  const boldLine = colors.boldLine = .01 * mindim;
+  const wideLine = colors.wideLine = .05 * mindim;
 
+  drawTestRoom(ctx, room);
 
+  const plantTypes = ["grass", "clover"];
+  const noxiousTypes = ["clover"];
 
+  drawTestFoliage(ctx, room, state.plants
+    .filter(p => {
+      return plantTypes.includes(p.t);
+    })
+    .map(p => {
+      return {
+        x: p.x * mindim,
+        y: p.y * mindim,
+        r: p.r * mindim
+      };
+    })
+  );
 
+  // TODO: save to offscreen canvas or image data then crop and load
+
+  drawTestGates(ctx, room, state.plants
+    .filter(p => {
+      return p.t == "gate" && p.l.isUnlocked;
+    })
+    .map(p => {
+      const l = {
+        x: p.l.x * mindim,
+        y: p.l.y * mindim,
+        r: p.l.r * mindim,
+        v: p.l.v * mindim,
+      };
+      l.l = l;
+      const g = {
+        x: p.x * mindim,
+        y: p.y * mindim,
+        r: p.r * mindim,
+        v: p.v * mindim,
+        l: l
+      };
+      l.g = g;
+      return g;
+    })
+  );
+
+  drawTestLocks(ctx, room, state.plants
+    .filter(p => {
+      return p.t == "lock" && p.isUnlocked;
+    })
+    .map(p => {
+      const g = {
+        x: p.g.x * mindim,
+        y: p.g.y * mindim,
+        r: p.g.r * mindim,
+        v: p.g.v * mindim,
+        l: p.g.l
+      };
+      const l = {
+        x: p.x * mindim,
+        y: p.y * mindim,
+        r: p.r * mindim,
+        g: g,
+      };
+      l.l = l;
+      return l;
+    })
+  );
 
 
 
