@@ -204,10 +204,9 @@ var drawTestViewLayer = (ctx, room, active, mindim = 1000, coords) => {
   ctx.fill();
 }
 
-var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
-
+var drawTestRuinLayer = (ctx, room, active, mindim = 1000, coords) => {
   ctx.fillStyle = colors.primary;
-  ctx.strokeStyle = colors.viewline;
+  ctx.strokeStyle = colors.ruinline;
   const activeLock = active.length ? active[active.length - 1] : null;
   ctx.lineWidth = colors.fineLine;
 
@@ -218,6 +217,47 @@ var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
   // if (hypot > (plant.r + .025)) continue;
   // only closer than radius + 50cm
   for (neighbor of activeLock ? activeLock.n : []) {
+    if (neighbor.t == activeLock.t) continue;
+    ctx.moveTo(room.x + neighbor.x * mindim, room.y + neighbor.y * mindim);
+    ctx.lineTo(room.x + activeLock.x * mindim, room.y + activeLock.y * mindim);
+  }
+  ctx.stroke();
+
+  ctx.lineWidth = colors.boldLine;
+  ctx.beginPath();
+  // either active only or all with the sees-edges skill
+  for (plant of activeLock ? activeLock.n : []) {
+    if (plant.t == activeLock.t) continue;
+    const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
+    if (active.includes(plant)) continue;
+    if (hypot > plant.r + .025) {
+      // only closer than 50cm
+      drawArc(ctx, room.x + plant.x * mindim, room.y + plant.y * mindim, colors.fineLine);
+    } else {
+      drawArc(ctx, room.x + plant.x * mindim, room.y + plant.y * mindim, (plant.r * mindim - colors.boldLine));
+    }
+  }
+  ctx.stroke();
+  ctx.fill();
+
+}
+
+
+var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
+
+  ctx.fillStyle = colors.primary;
+  const activeLock = active.length ? active[active.length - 1] : null;
+  ctx.strokeStyle = colors.viewline;
+  ctx.lineWidth = colors.fineLine;
+
+  ctx.beginPath();
+  // either active only or all with the sees-edges skill
+  // for (plant of active) {
+  // const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
+  // if (hypot > (plant.r + .025)) continue;
+  // only closer than radius + 50cm
+  for (neighbor of activeLock ? activeLock.n : []) {
+    if (neighbor.t != activeLock.t) continue;
     ctx.moveTo(room.x + neighbor.x * mindim, room.y + neighbor.y * mindim);
     ctx.lineTo(room.x + activeLock.x * mindim, room.y + activeLock.y * mindim);
   }
@@ -228,6 +268,7 @@ var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
   // either active only or all with the sees-edges skill
   for (plant of activeLock ? activeLock.n : []) {
     const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
+    if (plant.t != activeLock.t) continue;
     if (active.includes(plant)) continue;
     if (hypot > plant.r + .025) {
       // only closer than 50cm
@@ -245,6 +286,8 @@ var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
   ctx.beginPath();
   // either active only or all with the sees-edges skill
   for (plant of active) {
+    if (neighbor.t != activeLock.t) continue;
+
     const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
     //if (hypot > (plant.r + .025)) continue;
     // only closer than radius + 50cm
@@ -252,8 +295,8 @@ var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
     if (!plant.n) continue;
     for (neighbor of plant.n) {
       if (!active.includes(neighbor)) continue;
-      ctx.moveTo(room.x + neighbor.x * mindim, room.y + neighbor.y * mindim);
-      ctx.lineTo(room.x + plant.x * mindim, room.y + plant.y * mindim);
+      // ctx.moveTo(room.x + neighbor.x * mindim, room.y + neighbor.y * mindim);
+      // ctx.lineTo(room.x + plant.x * mindim, room.y + plant.y * mindim);
     }
 
   }
@@ -278,10 +321,10 @@ var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
   // either active only or all with the sees-edges skill
   for (plant of active) {
     const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
-    if (hypot > (plant.r + .025) || (activeLock==plant && hypot > (.025))) {
+    if (hypot > (plant.r + .025) || (activeLock == plant && hypot > (.025))) {
       drawArc(ctx, room.x + plant.x * mindim, room.y + plant.y * mindim, 3 * colors.fineLine);
     } else {
-      drawArc(ctx, room.x + plant.x * mindim, room.y + plant.y * mindim, (plant.r * mindim - (activeLock==plant?3:1.5) * colors.fineLine));
+      drawArc(ctx, room.x + plant.x * mindim, room.y + plant.y * mindim, (plant.r * mindim - (activeLock == plant ? 3 : 1.5) * colors.fineLine));
     }
   }
   ctx.fill();
@@ -290,8 +333,6 @@ var drawTestJoinLayer = (ctx, room, active, mindim = 1000, coords) => {
 
 }
 
-var drawTestRuinLayer = (ctx, room, active, mindim = 1000, coords) => {
-}
 
 var drawTest = (state) => {
   const ctx = state.ctx;
@@ -336,8 +377,8 @@ var drawTest = (state) => {
 
 
   drawTestViewLayer(ctx, room, state.plants, mindim, coords);
-  drawTestJoinLayer(ctx, room, state.active, mindim, coords);
   drawTestRuinLayer(ctx, room, state.active, mindim, coords);
+  drawTestJoinLayer(ctx, room, state.active, mindim, coords);
 
 
 
