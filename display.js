@@ -155,7 +155,11 @@ var drawTestLocks = (ctx, room, locks, mindim = 1000) => {
   ctx.fill();
 }
 
-var drawTestViewLayer = (ctx, room, active, mindim = 1000, coords) => {
+var drawTestViewLayer = (ctx, room, active, options={mindim:1000, coords, memory:1000}) => {
+
+  const mindim = options.mindim;
+  const coords = options.coords;
+  const memory = options.memory; 
 
   ctx.fillStyle = colors.primary;
   ctx.strokeStyle = colors.viewline;
@@ -205,43 +209,70 @@ var drawTestViewLayer = (ctx, room, active, mindim = 1000, coords) => {
   // either active only or all with the sees-edges skill
   for (plant of active) {
     const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
-    if (hypot > (plant.r + .025) && plant.touchedTimestamp + 1000 < Date.now()) continue;
+    if (hypot > (plant.r + .025) && plant.touchedTimestamp + memory < Date.now()) continue;
     // only closer than radius + 50cm
 
 
-    if (hypot > .025 && plant.touchedTimestamp + 1000 < Date.now()) {
+    if (hypot > .025 && plant.touchedTimestamp + memory < Date.now()) {
       // only closer than 50cm
       drawArc(ctx, room.x + plant.x * mindim, room.y + plant.y * mindim, colors.fineLine);
     } else {
       drawArc(ctx, room.x + plant.x * mindim, room.y + plant.y * mindim, (plant.r * mindim - colors.boldLine));
     }
 
-    if (hypot > .025 && plant.touchedTimestamp + 1000 < Date.now()) continue;//(hypot > .025 && Date.now()-plant.touchedTimestamp > 5000) continue;
+  }
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.beginPath();
+  // either active only or all with the sees-edges skill
+  for (plant of active) {
+    const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
+    if (hypot > (plant.r + .025) && plant.touchedTimestamp + memory < Date.now()) continue;
+    // only closer than radius + 50cm
+
+
+    if (hypot > .025 && plant.touchedTimestamp + memory < Date.now()) continue;//(hypot > .025 && Date.now()-plant.touchedTimestamp > 5000) continue;
     if (!plant.n) continue;
     for (neighbor of plant.n) {
       if (neighbor.t != plant.t) continue;
-      if (neighbor.touchedTimestamp + 1000 > Date.now()) continue;
-      drawArc(ctx, room.x + neighbor.x * mindim, room.y + neighbor.y * mindim, colors.fineLine);
+      if (neighbor.touchedTimestamp + memory > Date.now()) continue;
+      const nhypot = Math.hypot((coords.dx + neighbor.x), (coords.dy + neighbor.y));
+
+      if (nhypot > neighbor.r + .025) {
+        // only closer than 50cm
+        drawArc(ctx, room.x + neighbor.x * mindim, room.y + neighbor.y * mindim, colors.fineLine);
+      } else {
+        drawArc(ctx, room.x + neighbor.x * mindim, room.y + neighbor.y * mindim, (neighbor.r * mindim - colors.boldLine));
+      }
     }
 
   }
   ctx.fill();
   ctx.stroke();
 
+
   ctx.strokeStyle = colors.dropline;
   ctx.beginPath();
   // either active only or all with the sees-edges skill
   for (plant of active) {
     const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
-    if (hypot > (plant.r + .025) && plant.touchedTimestamp + 1000 < Date.now()) continue;
+    if (hypot > (plant.r + .025) && plant.touchedTimestamp + memory < Date.now()) continue;
     // only closer than radius + 50cm
 
-    if (hypot > .025 && plant.touchedTimestamp + 1000 < Date.now()) continue;//(hypot > .025 && Date.now()-plant.touchedTimestamp > 5000) continue;
+    if (hypot > .025 && plant.touchedTimestamp + memory < Date.now()) continue;//(hypot > .025 && Date.now()-plant.touchedTimestamp > 5000) continue;
     if (!plant.n) continue;
     for (neighbor of plant.n) {
       if (neighbor.t == plant.t) continue;
-      if (neighbor.touchedTimestamp + 1000 > Date.now()) continue;
-      drawArc(ctx, room.x + neighbor.x * mindim, room.y + neighbor.y * mindim, colors.fineLine);
+      if (neighbor.touchedTimestamp + memory > Date.now()) continue;
+      const nhypot = Math.hypot((coords.dx + neighbor.x), (coords.dy + neighbor.y));
+
+      if (nhypot > neighbor.r + .025) {
+        // only closer than 50cm
+        drawArc(ctx, room.x + neighbor.x * mindim, room.y + neighbor.y * mindim, colors.fineLine);
+      } else {
+        drawArc(ctx, room.x + neighbor.x * mindim, room.y + neighbor.y * mindim, (neighbor.r * mindim - colors.boldLine));
+      }
     }
 
   }
@@ -423,7 +454,7 @@ var drawTest = (state) => {
   //   }), mindim);
 
 
-  drawTestViewLayer(ctx, room, state.plants, mindim, coords);
+  drawTestViewLayer(ctx, room, state.plants, {mindim:mindim, coords:coords, memory:state.memory});
   // drawTestDropLayer(ctx, room, state.active, mindim, coords);
   // drawTestJoinLayer(ctx, room, state.active, mindim, coords);
 

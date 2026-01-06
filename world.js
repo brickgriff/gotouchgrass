@@ -34,6 +34,10 @@ const World = (function (/*api*/) {
       score: 0,
       leaves: 0,
       flowers: 0,
+      memory: 1000,
+      memoryLimit: 10000,
+      memoryGrowth: 1.001,
+      touching: null,
       stamina: 0,
       staminaLimit: 0, // can be an update function
       nearby: [],
@@ -48,6 +52,7 @@ const World = (function (/*api*/) {
         color: "FC", // "FC" for full-color or "BW" for black and white
         nearbyUpdate: 90,
         activeUpdate: 3,
+        memory: 1000,
 
       },
     };
@@ -221,7 +226,8 @@ var resize = (state) => {
   state.cx = state.canvas.width / 2; // px
   state.cy = state.canvas.height / 2; // px
   // mindim == ~5m
-  state.mindim = Math.min(state.canvas.width, state.canvas.height) * 4; // - .1 * state.cx;
+  // const ratio = 1 - (state.memory - state.default.memory) / state.default.memory;
+  state.mindim = state.default.mindim = Math.min(state.canvas.width, state.canvas.height) * 4; // - .1 * state.cx;
   state.maxdim = Math.max(state.canvas.width, state.canvas.height) * 4; // - .1 * state.cx;
   // const othdim = Math.max(state.canvas.width, state.canvas.height);
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
@@ -372,6 +378,12 @@ var updatePlayer = (state) => {
   // state.events.isDragged = (vector.x != 0 || vector.y != 0);
   const temp = { dx: state.dx, dy: state.dy, ox: state.ox, oy: state.oy };
   // camera responds to change in distance, not distance itself
+  // make the speed ramp up slowly (along with zoom level)
+  const ratio = state.memory-state.default.memory / state.memoryLimit-state.default.memory;
+  // console.log(state.mindim);
+  state.speed = Math.min(state.default.speed*3, state.default.speed * (1 + .01 * ratio));
+  state.mindim = Math.max(state.default.mindim*.7, state.default.mindim * (1 - .001 * ratio));
+
   const ddx = vector.x * state.speed;
   const ddy = vector.y * state.speed;
   temp.dx -= ddx;
@@ -412,13 +424,30 @@ var updatePlayer = (state) => {
 var updatePatches = (state) => {
   const activeLock = state.active.length ? state.active[state.active.length - 1] : null;
   const index = activeLock ? state.active.length - 1 : 1;
+  let touching = (state.touching) ? state.touching : null;
 
   for (plant of state.plants) {
 
     const hypot = Math.hypot((state.dx + plant.x), (state.dy + plant.y));
     if (!plant.touchedTimestamp) plant.touchedTimestamp = 0;
     if (hypot > (plant.r + .025)) continue;
-    if (hypot > .025 && plant.touchedTimestamp+1000 < Date.now()) continue;
+    // touching = null;
+    // console.log("clear",touching);
+    if (hypot > .025 && plant.touchedTimestamp + state.memory < Date.now()) continue;
+    if (touching != plant) {
+
+      touching ? console.log("memories", state.memory, "type match? ", touching.t == plant.t) : console.log("new touch! ", plant);
+
+      if (!touching) {
+        touching = plant;
+        state.memory = state.default.memory;
+      } else if (touching.t != plant.t) {
+        touching = null;
+      } else {
+        state.memory = Math.min(state.memoryLimit, state.memory * state.memoryGrowth);
+      }
+
+    }
     plant.touchedTimestamp = Date.now();
 
     // if (["clover","gate","lock"].includes(plant.t) ||
@@ -445,6 +474,8 @@ var updatePatches = (state) => {
     // move to updatePlants
 
   }
+  if (touching && touching.touchedTimestamp + state.memory > Date.now()) { state.touching = touching; } else { state.touching = null; }
+
 }
 
 // TODO Foliage.update
