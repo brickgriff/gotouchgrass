@@ -221,8 +221,8 @@ var resize = (state) => {
   state.cx = state.canvas.width / 2; // px
   state.cy = state.canvas.height / 2; // px
   // mindim == ~5m
-  state.mindim = Math.min(state.canvas.width, state.canvas.height); // - .1 * state.cx;
-  state.maxdim = Math.max(state.canvas.width, state.canvas.height); // - .1 * state.cx;
+  state.mindim = Math.min(state.canvas.width, state.canvas.height) * 4; // - .1 * state.cx;
+  state.maxdim = Math.max(state.canvas.width, state.canvas.height) * 4; // - .1 * state.cx;
   // const othdim = Math.max(state.canvas.width, state.canvas.height);
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
@@ -416,7 +416,10 @@ var updatePatches = (state) => {
   for (plant of state.plants) {
 
     const hypot = Math.hypot((state.dx + plant.x), (state.dy + plant.y));
-    if (hypot > .025) continue;
+    if (!plant.touchedTimestamp) plant.touchedTimestamp = 0;
+    if (hypot > (plant.r + .025)) continue;
+    if (hypot > .025 && plant.touchedTimestamp+1000 < Date.now()) continue;
+    plant.touchedTimestamp = Date.now();
 
     // if (["clover","gate","lock"].includes(plant.t) ||
     //   !activeLock ||
@@ -426,18 +429,18 @@ var updatePatches = (state) => {
     // // add to active list, if not already update latest active node
 
 
-    if (["lock", "gate"].includes(plant.t)) {
-      state.active[0] = plant;
-    } else {
-      // console.log(activeLock);
+    // if (["lock", "gate"].includes(plant.t)) {
+    //   state.active[0] = plant;
+    // } else {
+    //   // console.log(activeLock);
 
-      if (!state.active.length) state.active.push({ name: "placeholder" });
-      if (state.active.includes(plant))
-        state.active.splice(state.active.indexOf(plant), 1);
-      state.active.splice(index, 0, plant);
-      plant.l = state.active[0];
+    //   if (!state.active.length) state.active.push({ name: "placeholder" });
+    //   if (state.active.includes(plant))
+    //     state.active.splice(state.active.indexOf(plant), 1);
+    //   state.active.splice(index, 0, plant);
+    //   plant.l = state.active[0];
 
-    }
+    // }
     // state.activeLock = plant; // may not be needed
     // move to updatePlants
 

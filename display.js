@@ -156,52 +156,99 @@ var drawTestLocks = (ctx, room, locks, mindim = 1000) => {
 }
 
 var drawTestViewLayer = (ctx, room, active, mindim = 1000, coords) => {
-  // info layer
-  // draw "pale" lines (or "warm" for null mode)
-  // to neighboring nodes
-  // shows outbound edges when touching a node
-  // join ability upgrades the default view ability
+
   ctx.fillStyle = colors.primary;
   ctx.strokeStyle = colors.viewline;
-  const activeLock = active.length ? active[active.length - 1] : null;
-  if (activeLock && (activeLock.l.isBroken || activeLock.l.wasBroken)) ctx.strokeStyle = colors.nullline;
+
+  const activeLock = active.length > 1 ? active[active.length - 1] : null;
   ctx.lineWidth = colors.fineLine;
 
-  // ctx.beginPath();
-  // // either active only or all with the sees-edges skill
-  // for (plant of active) {
-  //   const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
-  //   if (hypot > (plant.r + .025)) continue;
-  //   // only closer than radius + 50cm
 
-  //   if (!plant.n) continue;
-  //   for (neighbor of plant.n) {
-  //     ctx.moveTo(room.x + neighbor.x * mindim, room.y + neighbor.y * mindim);
-  //     ctx.lineTo(room.x + plant.x * mindim, room.y + plant.y * mindim);
-  //   }
+  ctx.beginPath();
+  for (plant of active) {
+    const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
+    if (hypot > (.025)) continue;
+    // only closer than radius + 50cm
 
-  // }
+    if (!plant.n) continue;
+    for (neighbor of plant.n) {
+      if (neighbor.t != plant.t) continue;
+      ctx.moveTo(room.x + neighbor.x * mindim, room.y + neighbor.y * mindim);
+      ctx.lineTo(room.x + plant.x * mindim, room.y + plant.y * mindim);
+    }
+  }
 
-  // ctx.stroke();
+  ctx.stroke();
 
-  ctx.lineWidth = colors.boldLine;
+
+  ctx.strokeStyle = colors.dropline;
+  ctx.beginPath();
+  for (plant of active) {
+    const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
+    if (hypot > (.025)) continue;
+    // only closer than radius + 50cm
+
+    if (!plant.n) continue;
+    for (neighbor of plant.n) {
+      if (neighbor.t == plant.t) continue;
+      ctx.moveTo(room.x + neighbor.x * mindim, room.y + neighbor.y * mindim);
+      ctx.lineTo(room.x + plant.x * mindim, room.y + plant.y * mindim);
+    }
+  }
+
+  ctx.stroke();
+
+
+  // ctx.lineWidth = colors.boldLine;
+  ctx.strokeStyle = colors.viewline;
   ctx.beginPath();
   // either active only or all with the sees-edges skill
   for (plant of active) {
     const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
-    if (hypot > (plant.r + .025)) continue;
+    if (hypot > (plant.r + .025) && plant.touchedTimestamp + 1000 < Date.now()) continue;
     // only closer than radius + 50cm
 
 
-    if (hypot > .025) {
+    if (hypot > .025 && plant.touchedTimestamp + 1000 < Date.now()) {
       // only closer than 50cm
       drawArc(ctx, room.x + plant.x * mindim, room.y + plant.y * mindim, colors.fineLine);
     } else {
       drawArc(ctx, room.x + plant.x * mindim, room.y + plant.y * mindim, (plant.r * mindim - colors.boldLine));
     }
+
+    if (hypot > .025 && plant.touchedTimestamp + 1000 < Date.now()) continue;//(hypot > .025 && Date.now()-plant.touchedTimestamp > 5000) continue;
+    if (!plant.n) continue;
+    for (neighbor of plant.n) {
+      if (neighbor.t != plant.t) continue;
+      if (neighbor.touchedTimestamp + 1000 > Date.now()) continue;
+      drawArc(ctx, room.x + neighbor.x * mindim, room.y + neighbor.y * mindim, colors.fineLine);
+    }
+
   }
-  ctx.stroke();
   ctx.fill();
+  ctx.stroke();
+
+  ctx.strokeStyle = colors.dropline;
+  ctx.beginPath();
+  // either active only or all with the sees-edges skill
+  for (plant of active) {
+    const hypot = Math.hypot((coords.dx + plant.x), (coords.dy + plant.y));
+    if (hypot > (plant.r + .025) && plant.touchedTimestamp + 1000 < Date.now()) continue;
+    // only closer than radius + 50cm
+
+    if (hypot > .025 && plant.touchedTimestamp + 1000 < Date.now()) continue;//(hypot > .025 && Date.now()-plant.touchedTimestamp > 5000) continue;
+    if (!plant.n) continue;
+    for (neighbor of plant.n) {
+      if (neighbor.t == plant.t) continue;
+      if (neighbor.touchedTimestamp + 1000 > Date.now()) continue;
+      drawArc(ctx, room.x + neighbor.x * mindim, room.y + neighbor.y * mindim, colors.fineLine);
+    }
+
+  }
+  ctx.fill();
+  ctx.stroke();
+
+
 }
 
 var drawTestDropLayer = (ctx, room, active, mindim = 1000, coords) => {
@@ -365,20 +412,20 @@ var drawTest = (state) => {
 
   // TODO: save to offscreen canvas or image data then crop and load
 
-  drawTestGates(ctx, room, state.plants
-    .filter(p => {
-      return p.t == "gate" && p.l.isUnlocked;
-    }), mindim);
+  // drawTestGates(ctx, room, state.plants
+  //   .filter(p => {
+  //     return p.t == "gate" && p.l.isUnlocked;
+  //   }), mindim);
 
-  drawTestLocks(ctx, room, state.plants
-    .filter(p => {
-      return p.t == "lock";
-    }), mindim);
+  // drawTestLocks(ctx, room, state.plants
+  //   .filter(p => {
+  //     return p.t == "lock";
+  //   }), mindim);
 
 
   drawTestViewLayer(ctx, room, state.plants, mindim, coords);
-  drawTestDropLayer(ctx, room, state.active, mindim, coords);
-  drawTestJoinLayer(ctx, room, state.active, mindim, coords);
+  // drawTestDropLayer(ctx, room, state.active, mindim, coords);
+  // drawTestJoinLayer(ctx, room, state.active, mindim, coords);
 
 
 
@@ -1357,21 +1404,24 @@ var drawPlayer = (state) => {
   ctx.stroke();
   ctx.fill();
 
+
   // ctx.beginPath();
   // drawArc(ctx, 0, 0, .1*r);
   // ctx.stroke();
-
   // const offsetY = -.025 * mindim
-
+  // ctx.beginPath();
+  // ctx.strokeStyle=colors.playline;
+  // ctx.lineWidth = .015 * mindim;
+  // drawArc(ctx,state.ox*mindim,state.oy*mindim,r*2);
+  // ctx.stroke();
   // ctx.beginPath();
   // ctx.strokeStyle=colors.playmain;
   // ctx.lineWidth = .005 * mindim;
-  // drawArc(ctx,state.ox*mindim,state.oy*mindim,r*1.5);
+  // drawArc(ctx,state.ox*mindim,state.oy*mindim,r*2);
   // ctx.stroke();
   // // use an ellipse 
   // // with a checkerboard pattern 
   // // for drop shadow
-
   // ctx.beginPath();
   // // drawArc(ctx, 0, 0, .1*r);
   // // ctx.stroke();
@@ -1381,7 +1431,6 @@ var drawPlayer = (state) => {
   // ctx.moveTo(state.ox*mindim,state.oy*mindim+offsetY);
   // ctx.lineTo(state.ox*mindim,height+offsetY+state.oy*mindim);
   // ctx.stroke();
-
   // ctx.beginPath();
   // // drawArc(ctx, 0, 0, .1*r);
   // // ctx.stroke();
@@ -1391,6 +1440,8 @@ var drawPlayer = (state) => {
   // ctx.moveTo(state.ox*mindim,state.oy*mindim+offsetY);
   // ctx.lineTo(state.ox*mindim,height+offsetY+state.oy*mindim);
   // ctx.stroke();
+  // ctx.lineCap = "butt";
+
 }
 
 
