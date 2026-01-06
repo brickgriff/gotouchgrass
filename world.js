@@ -379,9 +379,11 @@ var updatePlayer = (state) => {
   const temp = { dx: state.dx, dy: state.dy, ox: state.ox, oy: state.oy };
   // camera responds to change in distance, not distance itself
   // make the speed ramp up slowly (along with zoom level)
+  state.memory = Math.max(state.memory * .9995, state.default.memory);
   const ratio = state.memory-state.default.memory / state.memoryLimit-state.default.memory;
   // console.log(state.mindim);
-  state.speed = Math.min(state.default.speed*3, state.default.speed * (1 + .01 * ratio));
+
+  state.speed = Math.min(state.default.speed*1.5, state.default.speed * (1 + .01 * ratio));
   state.mindim = Math.max(state.default.mindim*.7, state.default.mindim * (1 - .001 * ratio));
 
   const ddx = vector.x * state.speed;
@@ -438,9 +440,10 @@ var updatePatches = (state) => {
 
       touching ? console.log("memories", state.memory, "type match? ", touching.t == plant.t) : console.log("new touch! ", plant);
 
+
       if (!touching) {
         touching = plant;
-        state.memory = state.default.memory;
+        state.memory = Math.max(state.memory * .995, state.default.memory);
       } else if (touching.t != plant.t) {
         touching = null;
       } else {
