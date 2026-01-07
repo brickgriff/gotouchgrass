@@ -13,7 +13,7 @@
 ## Overview
 Go Touch Grass is a top-down puzzle-like experience where you play as a rookie community land steward. This demo is designed as a self-paced tutorial and a proof-of-concept.
 ## Install
-**Checkout the repo (_link_) or download the zip archive(_link_)**, fetch or extract the files, then open `index.html` in your favorite browser.
+**Checkout the repo (_link_) or download the zip archive (_link_)**, fetch or extract the files, then open `index.html` in your favorite browser.
 
 ## Play
 
@@ -31,7 +31,15 @@ Go Touch Grass is a top-down puzzle-like experience where you play as a rookie c
 
 _* Feature currently under development._
 
-_Further information can be found on the wiki (_link_)._
+Observation expands experience, experience extends memory, memory enhances future observation. In game terms, the plants will show different patterns based on their type and their observation window will stay open longer the more the player interacts with their type.
+
+However the cost of observation is disturbance. Walking on the plants shrinks them slightly every time. Otherwise the plants will grow slowly until they overlap with their neighbors. The plants form and lose connections based on the gap between them. Plants that lose all their connects begin to shrink. Plants that shrink beyond the lower limit vanish, leaving bare ground. Bare ground will periodically attempt to fit a plant of a given type between the existing patches and then test if it has neighbors while not overlapping too much.
+
+Since smaller plants tend to fit small spaces more often than larger plants and grass patches tend to leave very small gaps between them, weeds may end up getting spawned more often and will either need to be addressed or embraced by the player.
+
+_Further information can be found on the wiki (link)._
+
+
 ## Support
 ### GitHub Contributions
 ### Itch.io Browser Plays
@@ -161,6 +169,68 @@ Go Touch Grass is designed to have minimalistic and intuitive play. All interact
 The map consists of the immediate area around a large park with a grass field, walking paths, trees, fences, and other features. The player will start outside the gate at the information desk. If the player does not receive a key from the desk, their observations will not grant new skills. With the key, individual plants can be distinguished, not just patches.
 There is a walking path leading from the gate to a jogging track around the center of the park. There are several small trees around the track and larger trees near the fence. There are natural paths throughout the wooded areas.
 
+
+---
+# PATCH v0.1.6
+
+
+- player
+  - view mode
+    - observe plants at the center
+    - the window opens for memory span (default: 1s)
+    - observations highlight neighbors
+    - same type is gold (matches)
+    - any other type is red (misses)
+    - observing same type plants boosts memory gain
+    - observing other type plants resets memory gain
+    - observing alike patterns is called "chaining"
+    - observing disalike patterns is called "swapping"
+  - null mode
+  - join mode
+- plants
+  - properties
+    - radius
+      - connect to neighbors within gap limit
+      - disconnect from neighbors outside gap limit
+    - x, y
+    - type (grass, clover, mint, violet, etc)
+  - growth (with connections)
+    - radius steadily grows
+    - stop at neighbors near overlap limit
+    - (or until type max size)
+  - decay (without connections)
+    - radius steadily shrinks
+    - vanish if smaller than type min size
+    - (or until type min size)
+-types
+  - grass
+    - converts memory into "enthusiasm"
+    - walk faster the longer memory span gets
+    - vision expands and camera slide extends to compensate
+  - clover
+    - converts memory into "presence"
+    - walking on non-clover causes less disturbance
+    - effect reverses when clover flowers
+  - mint
+    - converts memory into "attention"
+    - markers point towards mint plants while in memory
+    - their windows stay open signficantly longer
+  - violet
+    - converts memory into "discernment"
+    - increases radius of comparison (gold/red rings)
+    - memory bonuses for chaining other type plants
+  - rose
+    - converts memory into "resolve"
+    - pushes player away on a cooldown
+    - cooldown prevents touching non-rose
+  - daisy
+    - converts memory into "clarity"
+    - 
+    -
+
+
+
+
 ---
 # PATCH v0.1.5
 
@@ -203,7 +273,7 @@ There is a walking path leading from the gate to a jogging track around the cent
     - serves as a caution to the player
     - gives visual scale to stakes
     - represents passion
-  - dandelion (partner)
+  - daisy (partner)
     - typically average-to-low visual priortiy
     - serves as incentive to the player
     - gives visual space for action
@@ -213,5 +283,9 @@ There is a walking path leading from the gate to a jogging track around the cent
     - broken lines represent incomplete, untapped, or otherwise unavailable resources
     - I'm lazy so "animations" will be staged
 - events: intuitive integrated interface
+
+
+
+
 
 
