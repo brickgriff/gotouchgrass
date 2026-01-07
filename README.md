@@ -215,8 +215,6 @@ There is a walking path leading from the gate to a jogging track around the cent
     - converts memory into "attention"
     - greatly reduces movement speed
     - greatly increases memory gain
-    - markers point towards mint plants while in memory?
-    - their windows stay open signficantly longer?
   - violet
     - converts memory into "discernment"
     - increases observation range (gold/red rings)
