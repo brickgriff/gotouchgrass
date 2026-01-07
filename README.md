@@ -200,33 +200,35 @@ There is a walking path leading from the gate to a jogging track around the cent
     - (or until type max size)
   - decay (without connections)
     - radius steadily shrinks
-    - vanish if smaller than type min size
+    - stop at neighbors near gap limit
     - (or until type min size)
 -types
   - grass
     - converts memory into "enthusiasm"
-    - walk faster the longer memory span gets
-    - vision expands and camera slide extends to compensate
+    - greatly increases movement speed
+    - greatly reduces disturbance
   - clover
     - converts memory into "presence"
-    - walking on non-clover causes less disturbance
+    - gradually reduces disturbance
     - effect reverses when clover flowers
   - mint
     - converts memory into "attention"
-    - markers point towards mint plants while in memory
-    - their windows stay open signficantly longer
+    - greatly reduces movement speed
+    - greatly increases memory gain
+    - markers point towards mint plants while in memory?
+    - their windows stay open signficantly longer?
   - violet
     - converts memory into "discernment"
-    - increases radius of comparison (gold/red rings)
-    - memory bonuses for chaining other type plants
+    - increases observation range (gold/red rings)
+    - memory bonuses for red rings
   - rose
     - converts memory into "resolve"
-    - pushes player away on a cooldown
-    - cooldown prevents touching non-rose
+    - prevents touching neighbors
+    - greatly reduces movement speed
   - daisy
     - converts memory into "clarity"
-    - 
-    -
+    - displays status for neighbors
+    - greatly increases disturbance
 
 
 
