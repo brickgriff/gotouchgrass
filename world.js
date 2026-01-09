@@ -443,6 +443,7 @@ var updatePatches = (state) => {
 
     // FIXME always apply memory decay
     // TODO update memory numbers in a separate function
+    // updatePlayer
     // if player is beyond the patch range don't [update]
     if (hypot > (plant.r + .025)) {
 
