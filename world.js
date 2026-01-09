@@ -227,8 +227,8 @@ var resize = (state) => {
   state.cy = state.canvas.height / 2; // px
   // mindim == ~5m
   // const ratio = 1 - (state.memory - state.default.memory) / state.default.memory;
-  state.mindim = state.default.mindim = Math.min(state.canvas.width, state.canvas.height) *4; // - .1 * state.cx;
-  state.maxdim = Math.max(state.canvas.width, state.canvas.height) *4; // - .1 * state.cx;
+  state.mindim = state.default.mindim = Math.min(state.canvas.width, state.canvas.height) * 4; // - .1 * state.cx;
+  state.maxdim = Math.max(state.canvas.width, state.canvas.height) * 4; // - .1 * state.cx;
   // const othdim = Math.max(state.canvas.width, state.canvas.height);
   // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
   // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
@@ -380,11 +380,11 @@ var updatePlayer = (state) => {
   // camera responds to change in distance, not distance itself
   // make the speed ramp up slowly (along with zoom level)
   state.memory = Math.max(state.memory * .9995, state.default.memory);
-  const ratio = state.memory-state.default.memory / state.memoryLimit-state.default.memory;
+  const ratio = state.memory - state.default.memory / state.memoryLimit - state.default.memory;
   // console.log(state.mindim);
 
-  state.speed = Math.min(state.default.speed*1.5, state.default.speed * (1 + .01 * ratio));
-  state.mindim = Math.max(state.default.mindim*.7, state.default.mindim * (1 - .001 * ratio));
+  state.speed = Math.min(state.default.speed * 1.5, state.default.speed * (1 + .01 * ratio));
+  state.mindim = Math.max(state.default.mindim * .7, state.default.mindim * (1 - .001 * ratio));
 
   const ddx = vector.x * state.speed;
   const ddy = vector.y * state.speed;
@@ -426,31 +426,52 @@ var updatePlayer = (state) => {
 var updatePatches = (state) => {
   const activeLock = state.active.length ? state.active[state.active.length - 1] : null;
   const index = activeLock ? state.active.length - 1 : 1;
+   // currently observing
   let touching = (state.touching) ? state.touching : null;
 
+  // for all plant patches
   for (plant of state.plants) {
-
+    // player distance to plant before camera shift
     const hypot = Math.hypot((state.dx + plant.x), (state.dy + plant.y));
+    // initialize touched timestamp
     if (!plant.touchedTimestamp) plant.touchedTimestamp = 0;
+    // FIXME also when timestamp is forgotton
+
+    // if player is beyond the patch range don't [update]
     if (hypot > (plant.r + .025)) continue;
+    // no longer treading
+    // def no longer touching
+    // stay active/open/visible until forgotten
     // touching = null;
     // console.log("clear",touching);
+    // if player beyond the patch center and forgotten, don't [update]
     if (hypot > .025 && plant.touchedTimestamp + state.memory < Date.now()) continue;
+    // ensure treading timestamp gets set (on leave)
+    // otherwise 
+    // player is at plant center or timestamp is in the future
+    // if player is at plant center
     if (touching != plant) {
-
-      touching ? console.log("memories", state.memory, "type match? ", touching.t == plant.t) : console.log("new touch! ", plant);
-
-
+      // if the current specimen is some other plant
+      // touching ? console.log("memories", state.memory, "type match? ", touching.t == plant.t) : console.log("new touch! ", plant);
       if (!touching) {
+        // if there is no current specimen
+        // set this plant as the current specimen
         touching = plant;
+        // apply memory decay
         state.memory = Math.max(state.memory * .995, state.default.memory);
       } else if (touching.t != plant.t) {
+        // or if the specimen is of a different type
+        // clear the specimen ?
         touching = null;
+        // memory decay?
       } else {
+        // or if both touching and same-type (or non-noxious)
+        // apply memory growth
         state.memory = Math.min(state.memoryLimit, state.memory * state.memoryGrowth);
       }
 
     }
+    // update the touched/observed timestamp
     plant.touchedTimestamp = Date.now();
 
     // if (["clover","gate","lock"].includes(plant.t) ||
