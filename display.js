@@ -1035,7 +1035,7 @@ var drawNav = (state) => {
   const x = hypot * Math.cos(angle);
   const y = hypot * Math.sin(angle);
 
-  ctx.lineWidth = .08 * r;
+  ctx.lineWidth = .15 * r;
   ctx.strokeStyle = colors.playline;
   ctx.beginPath();
   drawArc(ctx, mouse.x_, mouse.y_, r * 1);
