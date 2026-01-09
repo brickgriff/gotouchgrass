@@ -498,6 +498,8 @@ var updatePatches = (state) => {
     // move to updatePlants
 
   }
+  // if specimen and active in-memory
+  // update state or clear specimen
   if (touching && touching.touchedTimestamp + state.memory > Date.now()) { state.touching = touching; } else { state.touching = null; }
 
 }
