@@ -12,10 +12,11 @@ const World = (function (/*api*/) {
       // NOTE: how _much_ , not how _fast_
       dx: 0,
       dy: 0,
+      // ox, oy: how much the camera is moved this frame
       ox: 0,
       oy: 0,
-      size: 0.025,
-      speed: 0.001,// ><
+      size: 0.025, // ~25cm radius
+      speed: 0.001,// ~1cm/frame
       // zoom: .2, // [0, 1] // ><
       //pitch: 1, // [0, 1]
       //yaw: 0, // [-1, 1]
