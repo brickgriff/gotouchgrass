@@ -38,6 +38,7 @@ const World = (function (/*api*/) {
       memoryLimit: 10000,
       memoryGrowth: 1.001,
       touching: null,
+      observing: null,
       stamina: 0,
       staminaLimit: 0, // can be an update function
       nearby: [],
@@ -426,7 +427,8 @@ var updatePlayer = (state) => {
 var updatePatches = (state) => {
   const activeLock = state.active.length ? state.active[state.active.length - 1] : null;
   const index = activeLock ? state.active.length - 1 : 1;
-   // currently observing
+  // currently observing
+  let observing = state.observing ? state.observing : null;
   let touching = (state.touching) ? state.touching : null;
 
   // for all plant patches
@@ -436,9 +438,16 @@ var updatePatches = (state) => {
     // initialize touched timestamp
     if (!plant.touchedTimestamp) plant.touchedTimestamp = 0;
     // FIXME also when timestamp is forgotton
+    // plant.isTread
+    // plant.isTouched
 
+    // FIXME always apply memory decay
+    // TODO update memory numbers in a separate function
     // if player is beyond the patch range don't [update]
-    if (hypot > (plant.r + .025)) continue;
+    if (hypot > (plant.r + .025)) {
+
+      continue;
+    }
     // no longer treading
     // def no longer touching
     // stay active/open/visible until forgotten
