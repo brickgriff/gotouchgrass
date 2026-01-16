@@ -11,19 +11,33 @@ const Display = (function (/*api*/) {
     // FIXME: these functions do not need the entire state
     // for most, ctx, mindim, and various screen params should work
     clear(state);
-    drawBackground(state);
+    // drawBackground(state);
+    // drawTest(state);
 
-    drawTest(state);
+    const paths = state.entities
+      .filter(p => {
+        return p.t == "path" && !p.isHidden;
+      })
+      .map(adjustPoint(state));
+
+    // if (!state.printflag) {
+    //   state.printflag = true;
+    //   console.log(paths);
+    // }
+    drawPaths(ctx, paths, {
+      lineWidth: 0.005 * state.mindim,
+      offset: { x: state.ox * state.mindim, y: state.oy * state.mindim }
+    });
 
     // drawRoom(state);
     // drawPark(state);
-
-    if (!state.terrain) {
-      // console.log("once");
-      saveTerrain(state);
-      state.terrain = true;
-    }
-
+    /*
+        if (!state.terrain) {
+          // console.log("once");
+          saveTerrain(state);
+          state.terrain = true;
+        }
+    */
     // drawTerrain(state);
     // TODO when drawing glass, clip out the center circle
     // then apply blur and draw the terrain again
@@ -91,6 +105,53 @@ const Display = (function (/*api*/) {
 
 }());
 
+var adjustPoint = (state) => {
+  return (p) => {
+    return {
+      x: (p.x + state.dx + state.ox) * state.mindim,
+      y: (p.y + state.dy + state.oy) * state.mindim,
+      r: p.r * state.mindim,
+      t: p.t,
+      isHidden: p.isHidden,
+      isActivePath: state.path == p,
+      n: p.n,
+    };
+  };
+}
+
+var drawPaths = (ctx, paths, options = { lineWidth, offset }) => {
+  // draw pink arc behind player
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.lineWidth = options.lineWidth;
+  ctx.fillStyle = colors.emergent;
+  for (path of paths) {
+    if (path.isHidden) continue;
+    drawArc(ctx, path.x, path.y, path.r);
+  }
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.lineWidth = options.lineWidth;
+  ctx.strokeStyle = colors.primary;
+  for (path of paths) {
+    if (!path.isActivePath) continue;
+    drawArc(ctx, path.x, path.y, path.r);
+  }
+  ctx.stroke();
+
+  for (path of paths) {
+    const hypot = Math.hypot(path.x - options.offset.x, path.y - options.offset.y);
+    ctx.beginPath();
+    ctx.lineWidth = options.lineWidth;
+    ctx.strokeStyle = hypot > path.r - options.lineWidth*5 ? colors.secondary : colors.primary;
+    ctx.moveTo(options.offset.x, options.offset.y);
+    ctx.lineTo(path.x, path.y);
+    ctx.stroke();
+  }
+  ctx.lineCap = "butt";
+
+}
 
 var drawTestRoom = (ctx, room) => {
   // terrain layer
@@ -155,11 +216,11 @@ var drawTestLocks = (ctx, room, locks, mindim = 1000) => {
   ctx.fill();
 }
 
-var drawTestViewLayer = (ctx, room, active, options={mindim:1000, coords, memory:1000}) => {
+var drawTestViewLayer = (ctx, room, active, options = { mindim: 1000, coords, memory: 1000 }) => {
 
   const mindim = options.mindim;
   const coords = options.coords;
-  const memory = options.memory; 
+  const memory = options.memory;
 
   ctx.fillStyle = colors.primary;
   ctx.strokeStyle = colors.viewline;
@@ -454,7 +515,7 @@ var drawTest = (state) => {
   //   }), mindim);
 
 
-  drawTestViewLayer(ctx, room, state.plants, {mindim:mindim, coords:coords, memory:state.memory});
+  drawTestViewLayer(ctx, room, state.plants, { mindim: mindim, coords: coords, memory: state.memory });
   // drawTestDropLayer(ctx, room, state.active, mindim, coords);
   // drawTestJoinLayer(ctx, room, state.active, mindim, coords);
 
@@ -1472,6 +1533,22 @@ var drawPlayer = (state) => {
   // ctx.lineTo(state.ox*mindim,height+offsetY+state.oy*mindim);
   // ctx.stroke();
   // ctx.lineCap = "butt";
+
+  ctx.beginPath();
+  ctx.fillStyle = colors.emergent;
+  drawArc(ctx, -state.cx + .03 * mindim, -state.cy + .03 * mindim, .025 * mindim);
+  drawArc(ctx, state.cx - .03 * mindim, -state.cy + .03 * mindim, .025 * mindim);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.strokeStyle = colors.primary;
+  ctx.lineWidth = .005 * mindim;
+  const paths = state.entities.filter(p => p.t == "path");
+
+console.log(paths);
+
+  if (paths[0].isActive===true) drawArc(ctx, -state.cx + .03 * mindim, -state.cy + .03 * mindim, .025 * mindim);
+  if (paths[1].isACtive===true) drawArc(ctx, state.cx - .03 * mindim, -state.cy + .03 * mindim, .025 * mindim);
+  ctx.stroke();
 
 }
 

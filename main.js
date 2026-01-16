@@ -3,15 +3,17 @@
 */
 
 function mainLoop(now) {
+  // grab state object from document 
   const state = document.state;
 
   // time tracking
   if (state.frame == undefined) state.frame = 0; // init frame
   const elapsed = (now - (state.time || now)); // deltaTime in millis
   const dt = elapsed > 1000 ? 1000 : elapsed; // cap deltaTime @ 1000ms
+  // avoid deltatime lagspikes
+  // may have to remove for online/multiplayer
 
   // console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
-
   World.update(dt); // update entities
   Display.draw(); // draw entities
 
@@ -31,6 +33,7 @@ function main() {
 
   // const state = { canvas: canvas, ctx: ctx }; // minimum requirement
   World.create(canvas, ctx); // initialize!
+  // creates the state object and adds it to the document
 
   requestAnimationFrame(now => mainLoop(now));
 }

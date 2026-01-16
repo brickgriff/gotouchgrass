@@ -22,11 +22,9 @@ const World = (function (/*api*/) {
       //yaw: 0, // [-1, 1]
       frame: 0,
       time: 0,
+      entities: [],
+      // visible: [],
       status: null,
-      // defaultState: "DEFAULT",
-      // lockedState: "LOCKED",
-      // brokenState: "BROKEN",
-      // unlockedState: "UNLOCKED",
       seed: 42,
       // experience (leaves & flowers)
       plants: [],
@@ -65,8 +63,13 @@ const World = (function (/*api*/) {
     // TODO make a window service or something
     resize(state);
     // TODO move to its own foliage service
-    //createPlants(state);
-    createPatches(state);
+
+    const a = { x: 0, y: 0, r: .1, t: "path", n: [] };
+    const b = { x: .15, y: 0, r: .1, t: "path", n: [] };
+    a.n.push(b);
+    b.n.push(a);
+    state.entities.push(a);
+    state.entities.push(b);
 
     document.state = state;
   };
@@ -86,11 +89,6 @@ const World = (function (/*api*/) {
     state.vector = getVector();
 
     // FIXME: control when the standing frame counter gets updated
-    // if (!state.frameStanding && state.vector.x == 0 && state.vector.y == 0) {
-    //   state.frameStanding = state.frame;
-    // } else if (state.vector.x != 0 || state.vector.y != 0) {
-    //   state.frameStanding = null;
-    // }
     // TODO leave events to events service (listeners)
     // TODO keyboard service (Keyboard.update)
     if (findInput(keybinds.primary)) {
@@ -101,42 +99,8 @@ const World = (function (/*api*/) {
     }
 
     // TODO all of these are services, too
+    // updatePaths(state);
     updatePlayer(state);// Player.update
-    updatePatches(state);
-    // updatePlants(state);// Foliage.update
-    // updateNearby(state);// included in Foliage.update
-
-    // maybe draw a larger round base
-    // and then break up the soil?
-
-    // draw like 100 green dots in the local area
-    // rectilinear? circumpolar?
-
-    // [in world] each room spawns its set of patches
-    // [in world] each patch spawns its set of plants
-
-    // - default -> locked(0) @ lock x
-    // - default -> reveal @ gate o
-    // - locked(n) -> broken @ weed x
-    // - locked(n) -> locked(n+1) @ grass o
-    // - locked(v) -> unlocked @ any x
-    // - broken -> default @ lock x
-    // - reveal -> default @ lock o
-
-    //   const defaultState = state.defaultState = "DEFAULT";
-    //   const lockedState = state.lockedState = "LOCKED";
-    //   const brokenState = state.brokenState = "BROKEN";
-    //   const unlockedState = state.unlockedState = "UNLOCKED";
-    //   // const revealState = "REVEAL";
-
-    //   const mindim = state.mindim;
-
-    //   if (state.status == null) {
-    //     state.status = defaultState;
-    //     state.activeLock = { n: [] };
-    //     state.goal = -1;
-    //     state.active = [];
-    //   }
 
     let score = 0;
     let value = 0;
@@ -155,52 +119,6 @@ const World = (function (/*api*/) {
       state.activeLock.l.isSolved = true;
     }
 
-    //   if (state.status == lockedState && state.active.length >= state.goal) {
-    //     console.log("gate unlocked! return to lock to open gate");
-    //     state.status == unlockedState;
-    //   }
-
-    //   for (plant of state.plants) {
-    //     const hypot = Math.hypot(state.dx + plant.x, state.dy + plant.y);
-
-    //     if (hypot > .05) continue;
-    //     // if (state.status == lockedState && !state.activeLock.n.includes(plant)) continue;
-
-    //     // close to a lock
-    //     if (plant.t == "lock") {
-    //       if (state.status == defaultState) {
-    //         console.log("lock found! connect foliage to unlock it!");
-    //         state.status = lockedState;
-    //         state.activeLock = plant;
-    //         if (!state.active.includes(plant)) state.active.push(plant);
-    //         state.goal = plant.v;
-    //       } else if (state.status == brokenState) {
-    //         console.log("lock restored! take a break and try again!");
-    //         state.status = defaultState;
-    //         state.active = [];
-    //         state.activeLock = { n: [] };
-    //         state.goal = -1; // void
-    //       }
-    //     } else if (plant.t == "grass") {
-    //       if (state.status == lockedState) {
-    //         console.log("lock activated! touch the grass!");
-    //         if (!state.active.includes(plant)) state.active.push(plant);
-    //         state.activeLock = plant;
-    //       } else if (state.status == brokenState) {
-    //         console.log("lock broken! go to a lock!");
-    //         state.activeLock = plant;
-    //       }
-    //     } else if (plant.t == "clover") {
-    //       if (state.status == lockedState || state.status == unlockedState) {
-    //         console.log("lock broken! avoid the clover!");
-    //         state.status = brokenState;
-    //       }
-    //     }
-    //     // close to a gate
-    //     if (plant.t == "gate" && hypot < .05 && state.status == defaultState) {
-    //       // how do we modify state? do we modify the entity itself?
-    //     }
-    //   }
   };
 
   // return the public api
@@ -228,14 +146,12 @@ var resize = (state) => {
   state.cx = state.canvas.width / 2; // px
   state.cy = state.canvas.height / 2; // px
   // mindim == ~5m
-  // const ratio = 1 - (state.memory - state.default.memory) / state.default.memory;
+
   state.mindim = state.default.mindim = Math.min(state.canvas.width, state.canvas.height) * 4; // - .1 * state.cx;
   state.maxdim = Math.max(state.canvas.width, state.canvas.height) * 4; // - .1 * state.cx;
-  // const othdim = Math.max(state.canvas.width, state.canvas.height);
-  // if (state.cx < state.cy) state.cy = Math.min(othdim * .5, state.mindim * .5 + .1 * state.cx);
-  // Math.max(state.mindim * .5 + Math.min((1-(state.cx/state.cy))*10,1) * .1 * state.cx, state.mindim * .5);
+
   state.ctx.translate(state.cx, state.cy);
-  // state.ctx.scale(.9,.7);
+
   state.offscreen = createOffscreenCanvas(state);
   window.focus();
   // console.log("once");
@@ -374,8 +290,59 @@ var createPlants = (state) => {
   }
 }
 
+var updatePaths = (state) => {
+
+  // console.log(state.entities);
+}
+
 // TODO Player.update
 var updatePlayer = (state) => {
+
+  const paths = state.entities.filter(p => p.t == "path");
+
+  // if you have no saved path, set it to the first path
+  if (!state.path) {
+    state.path = paths[0];
+  }
+  // if there is no path, crash gracefully
+
+  // if there is a saved path, use your distance from it
+  // state (dx, dy) are relative!
+  // it is the distance from the center of the current path
+  let current = Math.hypot(state.dx, state.dy);
+
+  // if the distance is beyond the current path's size
+  // reset to the center
+  if (current > state.path.r) {
+    state.dx = 0;
+    state.dy = 0;
+  }
+
+  if (current > state.path.r - state.size) state.path.isActive = false;
+  else state.path.isActive = true;
+
+  // check neighbors for handoffs
+  for (neighbor of state.path.n) {
+    const hypot = Math.hypot(neighbor.x + state.dx, neighbor.y + state.dy);
+    console.log(hypot);
+
+    neighbor.isHidden = true;
+    neighbor.isActive = false;
+
+    if (hypot > neighbor.r + state.size) continue; // outside visible range
+    neighbor.isHidden = false;
+
+    if (current > neighbor.r - state.size) continue; // outside active range
+    neighbor.isActive = true;
+
+    if (hypot > current) continue; // not nearest path
+    current = hypot;
+    state.path = neighbor;
+
+    state.dx -= neighbor.x + state.path.x;
+    state.dy -= neighbor.y + state.path.y;
+  }
+
   const vector = state.vector;
   // state.events.isDragged = (vector.x != 0 || vector.y != 0);
   const temp = { dx: state.dx, dy: state.dy, ox: state.ox, oy: state.oy };
@@ -396,9 +363,22 @@ var updatePlayer = (state) => {
   temp.ox -= ddx;
   temp.oy -= ddy;
 
+
   // prevent distance from reaching past the weed barrier
-  const distlimit = .5 - state.size;
-  const dist = Math.min(distlimit, Math.hypot(temp.dx, temp.dy)); // distance from room center
+  // console.log(state);
+  const distcurr = Math.hypot(temp.dx, temp.dy);
+  let isOnPath = false;
+
+  for (n of state.path.n) {
+    const hypot = Math.hypot(n.x + state.dx, n.y + state.dy);
+    if (hypot > n.r - state.size * .25) continue;
+    isOnPath = true;
+    break;
+  }
+
+  // console.log(isOnPath);
+  const distlimit = isOnPath ? distcurr : (state.path.r) - state.size;
+  const dist = Math.min(distlimit, distcurr); // distance from room center
   const angle = Math.atan2(temp.dy, temp.dx);
   state.dx = dist * Math.cos(angle);
   state.dy = dist * Math.sin(angle);
@@ -484,29 +464,6 @@ var updatePatches = (state) => {
     }
     // update the touched/observed timestamp
     plant.touchedTimestamp = Date.now();
-
-    // if (["clover","gate","lock"].includes(plant.t) ||
-    //   !activeLock ||
-    //   (activeLock.l.isBroken || activeLock.l.wasBroken) ||
-    //   !(activeLock.n.includes(plant) ||
-    //     activeLock.l.n.includes(plant))) continue;
-    // // add to active list, if not already update latest active node
-
-
-    // if (["lock", "gate"].includes(plant.t)) {
-    //   state.active[0] = plant;
-    // } else {
-    //   // console.log(activeLock);
-
-    //   if (!state.active.length) state.active.push({ name: "placeholder" });
-    //   if (state.active.includes(plant))
-    //     state.active.splice(state.active.indexOf(plant), 1);
-    //   state.active.splice(index, 0, plant);
-    //   plant.l = state.active[0];
-
-    // }
-    // state.activeLock = plant; // may not be needed
-    // move to updatePlants
 
   }
   // if specimen and active in-memory
