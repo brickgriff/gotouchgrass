@@ -1,31 +1,27 @@
-/*
-  @Author: BrickGriff@GitHub.Com
-*/
 // main.js
-// import { draw } from './display.js';
-// import { create, update } from './world.js';
+
+import { state } from './state.js';
+import { Viewport } from './viewport.js';
+// import { Display } from './display.js';
+import { World } from './world.js';
+
 
 function mainLoop(now) {
-  const state = document.state;
 
-  // time tracking
-  if (state.frame == undefined) state.frame = 0; // init frame
-  const elapsed = (now - (state.time || now)); // deltaTime in millis
-  const dt = elapsed > 1000 ? 1000 : elapsed; // cap deltaTime @ 1000ms
+  // deltaTime in millis, clamped to 1000
+  const dt = Math.min(now - (state.time || now),1000);
 
-  // console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
+  console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
-  // update(dt);
-  World.update(dt); // update entities
-  // draw();
-  Display.draw(); // draw entities
+  // World.update(dt); // update entities
+  // Display.draw(); // draw entities
 
   if (state.isQuit) return console.log("quit");
 
-  // update time for tracking
   state.time = now;
   state.frame++;
-  requestAnimationFrame(now => mainLoop(now));
+
+  requestAnimationFrame(mainLoop);
 }
 
 function main() {
@@ -33,10 +29,18 @@ function main() {
   const ctx = canvas.getContext("2d", { willReadFrequently: true }); // now we can draw
 
   document.body.appendChild(canvas); // add to body
+  state.canvas = canvas;
+  state.ctx = ctx;
 
-  // const state = { canvas: canvas, ctx: ctx }; // minimum requirement
-  // create(canvas, ctx);
-  World.create(canvas, ctx); // initialize!
+  Viewport.resize(state);
 
-  requestAnimationFrame(now => mainLoop(now));
+  window.addEventListener("resize", () => {
+    Viewport.resize(state);
+  });
+  
+  // World.create(); // initialize!
+
+  requestAnimationFrame(mainLoop);
 }
+
+main();
