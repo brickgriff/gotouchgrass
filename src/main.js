@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { Viewport } from './viewport.js';
-// import { Display } from './display.js';
+import { Display } from './display.js';
 import { World } from './world.js';
 
 
@@ -11,10 +11,10 @@ function mainLoop(now) {
   // deltaTime in millis, clamped to 1000
   const dt = Math.min(now - (state.time || now),1000);
 
-  console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
+  // console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
   // World.update(dt); // update entities
-  // Display.draw(); // draw entities
+  Display.draw(state); // draw entities
 
   if (state.isQuit) return console.log("quit");
 
@@ -37,7 +37,7 @@ function main() {
   window.addEventListener("resize", () => {
     Viewport.resize(state);
   });
-  
+
   // World.create(); // initialize!
 
   requestAnimationFrame(mainLoop);

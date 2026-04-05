@@ -18,7 +18,7 @@ export const Viewport = {
 
     // pixel buffer ???
     canvas.width = width * dpr;
-    canvas.height = width * dpr;
+    canvas.height = height * dpr;
 
     // reset transform ???
     ctx.resetTransform();
