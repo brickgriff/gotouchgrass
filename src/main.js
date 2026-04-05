@@ -1,60 +1,42 @@
-import './style.css'
-import javascriptLogo from './assets/javascript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import { setupCounter } from './counter.js'
+/*
+  @Author: BrickGriff@GitHub.Com
+*/
+// main.js
+// import { draw } from './display.js';
+// import { create, update } from './world.js';
 
-document.querySelector('#app').innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${javascriptLogo}" class="framework" alt="JavaScript logo"/>
-    <img src=${viteLogo} class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.js</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+function mainLoop(now) {
+  const state = document.state;
 
-<div class="ticks"></div>
+  // time tracking
+  if (state.frame == undefined) state.frame = 0; // init frame
+  const elapsed = (now - (state.time || now)); // deltaTime in millis
+  const dt = elapsed > 1000 ? 1000 : elapsed; // cap deltaTime @ 1000ms
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src=${viteLogo} alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-          <img class="button-icon" src="${javascriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+  // console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+  // update(dt);
+  World.update(dt); // update entities
+  // draw();
+  Display.draw(); // draw entities
 
-setupCounter(document.querySelector('#counter'))
+  if (state.isQuit) return console.log("quit");
+
+  // update time for tracking
+  state.time = now;
+  state.frame++;
+  requestAnimationFrame(now => mainLoop(now));
+}
+
+function main() {
+  const canvas = document.createElement("canvas"); // default canvas
+  const ctx = canvas.getContext("2d", { willReadFrequently: true }); // now we can draw
+
+  document.body.appendChild(canvas); // add to body
+
+  // const state = { canvas: canvas, ctx: ctx }; // minimum requirement
+  // create(canvas, ctx);
+  World.create(canvas, ctx); // initialize!
+
+  requestAnimationFrame(now => mainLoop(now));
+}
