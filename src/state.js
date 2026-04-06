@@ -14,7 +14,7 @@ export const state = {
     cy: 0,
     unit: 0, // unit distance in pixels
     pixels: 0, // pixels per single meter
-    meters: 5, // initial unit distance in meters
+    meters: 10, // initial unit distance in meters
   },
 
   camera: {
@@ -22,5 +22,12 @@ export const state = {
     y: 0,
     zoom: 1,
     tilt: 0,
-  }
+  },
+
+  player: {
+    x: 0,
+    y: 0,
+    r: .25, // radius
+    v: .5, // vision
+  },
 };
