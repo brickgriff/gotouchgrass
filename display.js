@@ -1222,7 +1222,7 @@ var drawPlayer = (state) => {
   ctx.beginPath();
   // console.log(state.dx,state.dy);
   drawArc(ctx, (state.ox) * mindim, (state.oy) * mindim, r);
-  ctx.stroke();
+  //ctx.stroke();
   ctx.fill();
 
   // ctx.beginPath();
