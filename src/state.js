@@ -29,8 +29,10 @@ export const state = {
     y: 0,
     r: .25, // radius
     v: .5, // vision
+    speed: .001,
   },
 
   plants: [],
+  vector: {x:0,y:0},
   
 };

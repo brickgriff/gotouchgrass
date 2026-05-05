@@ -13,6 +13,11 @@ export const World = {
 
     updatePlants(state.plants, dt);
     // console.log(Input.buttons);
+    // updateVector(state.vector, state.player.speed, dt);
+    // checkCollisions(state.player, state.vector, state.plants);
+    updatePlayer(state.player, state.vector, dt); 
+    // remove above dt after updateVector is made
+    updateCamera(state.camera, state.player);
 
   },  
   // TODO: positionGrid for faster overlap checks
@@ -51,4 +56,16 @@ function updatePlants(plants, dt, min=.25) {
     }
   }
 
+};
+
+function updatePlayer(player, vector, dt) {
+  console.log(player, vector);
+  player.x += vector.x * player.speed * dt;
+  player.y += vector.y * player.speed * dt;
+};
+
+function updateCamera(camera, player) {
+  console.log(camera, player);
+  camera.x = player.x;
+  camera.y = player.y;
 };

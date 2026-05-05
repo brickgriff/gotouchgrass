@@ -18,14 +18,20 @@ export const Player = {
 
 
     // basically, 
-    state.vector = {};
+    state.vector = vKeyboard;
   },
 
 };
 
 function keyboard(buttons) {
+  // console.log(buttons);
 
-  console.log(buttons);
+  // ESDF
+  // y = D - E
+  // x = F - S 
 
-  return {x:0, y:0};
+  return {
+    x: (buttons.includes("KeyF") - buttons.includes("KeyS")),
+    y: (buttons.includes("KeyD") - buttons.includes("KeyE"))
+  };
 };
