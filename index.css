@@ -2,24 +2,11 @@
   --circle-color: #5f4c8b;
   --background-color: #88b24b;
 }
-
-html,
-body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  border: 0;
-  overflow: hidden;
-  display: block;
-  background-color: #3c3c3c; // three-central aka smart guize
-
-}
-
 canvas {
   padding: 0;
   margin: auto;
   display: block;
-  border: 2px solid #c3c3c3; // reversed
+  border: 2px solid #c3c3c3; /*// reversed*/
 
   /*
     image-rendering: pixelated;
@@ -32,8 +19,13 @@ canvas {
     top: 0;
     */
 }
-
-.pixelart-to-css {
-  box-shadow: 0 0 0 0 rgba(247,233,200,1), 20px 10px 0 0 rgba(95,76,139,1), 30px 10px 0 0 rgba(136,178,75,1), 40px 10px 0 0 rgba(254,111,97,1), 10px 20px 0 0 rgba(136,178,75,1), 20px 20px 0 0 rgba(254,111,97,1), 30px 20px 0 0 rgba(247,233,200,1), 40px 20px 0 0 rgba(95,76,139,1), 10px 30px 0 0 rgba(95,76,139,1), 20px 30px 0 0 rgba(136,178,75,1), 30px 30px 0 0 rgba(254,111,97,1), 40px 30px 0 0 rgba(247,233,200,1), 10px 40px 0 0 rgba(254,111,97,1), 20px 40px 0 0 rgba(247,233,200,1), 30px 40px 0 0 rgba(95,76,139,1), 40px 40px 0 0 rgba(136,178,75,1);
-  
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  overflow: hidden;
+  display: block;
+  background-color: #3c3c3c; /*// three-central aka smart guize*/
 }
