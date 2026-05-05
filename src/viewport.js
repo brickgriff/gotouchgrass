@@ -21,11 +21,11 @@ export const Viewport = {
     canvas.height = height * dpr;
 
     // reset transform ???
-    ctx.resetTransform();
+    //ctx.resetTransform();
     // no need to use identity matrix
 
     // DPI scale ???
-    ctx.scale(dpr, dpr);
+    //ctx.scale(dpr, dpr);
     // also probably not necessary right now
 
 
@@ -33,7 +33,7 @@ export const Viewport = {
     const vp = state.viewport;
     vp.cx = width/2;
     vp.cy = height/2;
-    ctx.translate(vp.cx, vp.cy);
+    //ctx.translate(vp.cx, vp.cy);
 
     state.width = width;
     state.height = height;
@@ -49,8 +49,8 @@ export const Viewport = {
 
     const scale = vp.pixels * cam.zoom;
 
-    const sx = (wx - cam.x) * scale;
-    const sy = (wy - cam.y) * scale;
+    const sx = (wx - cam.x) * scale+vp.cx;
+    const sy = (wy - cam.y) * scale+vp.cy;
 
     return [sx, sy];
   },

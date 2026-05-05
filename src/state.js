@@ -30,4 +30,7 @@ export const state = {
     r: .25, // radius
     v: .5, // vision
   },
+
+  plants: [],
+  
 };

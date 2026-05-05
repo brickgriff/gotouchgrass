@@ -1,45 +1,131 @@
 // display.js
 
 import { Viewport } from './viewport.js';
-import { colors } from './colors.js';
+import { Colors } from './colors.js';
 
 export const Display = {
 
   draw(state) {
-
-    const ctx = state.ctx;
-    // const vp = state.viewport;
-
-    // clear screen
-    ctx.save();
-    ctx.resetTransform();
-    ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
-    this.drawBackground(state);
-    ctx.restore();
-
-    this.drawPlayer(state);
+    clear(state);
+    drawBackground(state);
+    drawDebug(state);
+    // drawTerrain(state); // draw soil layer under foliage
+    drawPlants(state);
+    drawRings(state);
+    drawPlayer(state);
   },
 
-  drawPlayer(state) {
-    const ctx = state.ctx;
-    const vp = state.viewport;
-    const cam = state.camera;
-    const p = state.player;
 
-    const [sx, sy] = Viewport.worldToScreen(state, p.x, p.y);
-    const scale = vp.pixels * cam.zoom;
+};
 
-    ctx.beginPath();
-    ctx.fillStyle = colors.player;
-    ctx.arc(sx, sy, p.r * scale, 0, Math.PI * 2);
-    ctx.fill();
-  },
+function clear(state) {
+  const ctx = state.ctx;
+  //ctx.save();
+  //ctx.resetTransform();
+  ctx.clearRect(0,0,state.canvas.width,state.canvas.height);
+  //ctx.restore();
+};
 
-  drawBackground(state) {
+function drawBackground(state) {
+  const ctx = state.ctx;
 
-    const ctx = state.ctx;
+  ctx.fillStyle = Colors.background;
+  ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
+ 
+ };
 
-    ctx.fillStyle = colors.background;
-    ctx.fillRect(0, 0, state.canvas.width, state.canvas.height);
-  },
+function drawDebug(state) {
+  
+  const ctx = state.ctx;
+  const vp = state.viewport;
+  const cam = state.camera;
+  const p = state.player;
+
+  const [sx, sy] = Viewport.worldToScreen(state, p.x, p.y);
+  const scale = vp.pixels * cam.zoom;
+
+  // draw four circles around the player dot
+  ctx.beginPath();
+  ctx.fillStyle = Colors.crop;
+  drawArc(ctx,sx,2*scale+sy,scale);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.fillStyle = Colors.weed;
+  drawArc(ctx,sx,-2*scale+sy,scale);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.fillStyle = Colors.grass;
+  drawArc(ctx,2*scale+sx,sy,scale);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.fillStyle = Colors.player;
+  drawArc(ctx,-2*scale+sx,sy,scale);
+  ctx.fill();
+
+};
+
+function drawPlants(state) {
+
+  const ctx = state.ctx;
+  const scale = state.viewport.pixels * state.camera.zoom;
+
+  ctx.beginPath();
+  ctx.fillStyle = Colors.grass;
+
+  for (let plant of state.plants) {
+    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+    ctx.moveTo(sx+plant.r, sy);
+    ctx.arc(sx, sy, plant.r * scale, 0, Math.PI * 2);
+
+  }
+
+  ctx.fill();
+};
+
+function drawRings(state) {
+  const ctx = state.ctx;
+  const scale = state.viewport.pixels * state.camera.zoom;
+
+  ctx.beginPath();
+  ctx.strokeStyle = Colors.crop;
+  ctx.lineWidth = .05*scale;
+
+  for (let plant of state.plants) {
+    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+    ctx.moveTo(sx+plant.r * scale-ctx.lineWidth*2, sy);
+    ctx.arc(sx, sy, plant.r * scale-ctx.lineWidth*2, 0, Math.PI * 2);
+    ctx.moveTo(sx+ctx.lineWidth*2, sy);
+    ctx.arc(sx, sy, ctx.lineWidth*2, 0, Math.PI * 2);
+
+  }
+
+  ctx.stroke();
+
+};
+
+function drawPlayer(state) {
+  const ctx = state.ctx;
+  const vp = state.viewport;
+  const cam = state.camera;
+  const p = state.player;
+
+  const [sx, sy] = Viewport.worldToScreen(state, p.x, p.y);
+  const scale = vp.pixels * cam.zoom;
+
+  ctx.beginPath();
+  ctx.fillStyle = Colors.player;
+  ctx.arc(sx, sy, p.r * scale, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.lineWidth = .05*scale;
+  ctx.strokeStyle = Colors.player;
+  ctx.arc(sx, sy, p.r * 2 * scale, 0, Math.PI * 2);
+  ctx.stroke();
+
+};
+
+
+function drawArc(ctx, x, y, r, opts = {start:0, end:2*Math.PI}) {
+  ctx.arc(x,y,r,opts.start,opts.end);
 };

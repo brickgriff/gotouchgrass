@@ -13,7 +13,7 @@ function mainLoop(now) {
 
   // console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
-  // World.update(dt); // update entities
+  World.update(state, dt); // update entities
   Display.draw(state); // draw entities
 
   if (state.isQuit) return console.log("quit");
@@ -38,7 +38,7 @@ function main() {
     Viewport.resize(state);
   });
 
-  // World.create(); // initialize!
+  World.create(state); // initialize!
 
   requestAnimationFrame(mainLoop);
 }
