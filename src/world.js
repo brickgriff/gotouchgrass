@@ -6,20 +6,48 @@ export const World = {
     // create game objects
 
     // create plants
-    for (let i = 0; i < 5; i++) {      
-      state.plants.push(createPlant("grass",-2+i,-1,.2*(i+1)));
-      state.plants.push(createPlant("grass", 2-i, 1, .2*(i+1)));
-    }
-
+    state.plants = createPlants();
   },
   update(state, dt) {
     // update game objects
+
+    updatePlants(state.plants, dt);
 
   },  
   // TODO: positionGrid for faster overlap checks
   // TODO: entityPool for faster respawning
 };
 
+function createPlants() {
+  const resp = [];
+  for (let i = 0; i < 5; i++) {      
+    resp.push(createPlant("grass",-3+1.5*i,-1,.25*(i+1)));
+    resp.push(createPlant("grass", 3-1.5*i, 1, .25*(i+1)));
+  }
+  return resp;
+};
+
 function createPlant(type,x,y,r) {
   return {type, x, y, r};
+};
+
+function updatePlants(plants, dt, min=.25) {
+
+  // the time since last tick is given in millis
+  // plants have a decay rate based on? millis, for now
+  // let's just pick a value for now
+  // we want a plant dot to shrink at a rate of roughly
+  // 1cm per second or .0001 m/milli
+
+  const rate = .00001*dt;
+
+  for (let plant of plants) {
+    let rNew = plant.r * (1 - rate);
+    if (rNew <= min) {
+      plant.r = min;
+    } else {
+      plant.r = rNew;
+    }
+  }
+
 };
