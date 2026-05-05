@@ -1,9 +1,11 @@
 // main.js
 
 import { state } from './state.js';
+import { input } from './input.js';
 import { Viewport } from './viewport.js';
 import { Display } from './display.js';
 import { World } from './world.js';
+import { Player } from './player.js';
 
 
 function mainLoop(now) {
@@ -13,6 +15,7 @@ function mainLoop(now) {
 
   // console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
+  Player.play(state, input);
   World.update(state, dt); // update entities
   Display.draw(state); // draw entities
 
@@ -37,6 +40,9 @@ function main() {
   window.addEventListener("resize", () => {
     Viewport.resize(state);
   });
+
+  // suppress system right click menu
+  window.addEventListener("contextmenu", (e) => { e.preventDefault() });
 
   World.create(state); // initialize!
 

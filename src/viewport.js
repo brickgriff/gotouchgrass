@@ -3,7 +3,7 @@
 export const Viewport = {
   resize(state) {
 
-    console.log("resize");
+    // console.log("resize");
 
     const canvas = state.canvas;
     const ctx = state.ctx;
@@ -43,6 +43,9 @@ export const Viewport = {
   },
 
   worldToScreen(state, wx, wy) {
+
+    // console.log("worldToScreen");
+
 
     const cam = state.camera;
     const vp = state.viewport;

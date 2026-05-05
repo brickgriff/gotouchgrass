@@ -47,19 +47,19 @@ function drawDebug(state) {
   // draw four circles around the player dot
   ctx.beginPath();
   ctx.fillStyle = Colors.crop;
-  drawArc(ctx,sx,2*scale+sy,scale);
+  ctx.arc(sx,2*scale+sy,scale,0,2*Math.PI);
   ctx.fill();
   ctx.beginPath();
   ctx.fillStyle = Colors.weed;
-  drawArc(ctx,sx,-2*scale+sy,scale);
+  ctx.arc(sx,-2*scale+sy,scale,0,2*Math.PI);
   ctx.fill();
   ctx.beginPath();
   ctx.fillStyle = Colors.grass;
-  drawArc(ctx,2*scale+sx,sy,scale);
+  ctx.arc(2*scale+sx,sy,scale,0,2*Math.PI);
   ctx.fill();
   ctx.beginPath();
   ctx.fillStyle = Colors.player;
-  drawArc(ctx,-2*scale+sx,sy,scale);
+  ctx.arc(-2*scale+sx,sy,scale,0,2*Math.PI);
   ctx.fill();
 
 };
@@ -141,7 +141,3 @@ function drawPlayer(state) {
 
 };
 
-
-function drawArc(ctx, x, y, r, opts = {start:0, end:2*Math.PI}) {
-  ctx.arc(x,y,r,opts.start,opts.end);
-};

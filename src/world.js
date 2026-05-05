@@ -12,6 +12,7 @@ export const World = {
     // update game objects
 
     updatePlants(state.plants, dt);
+    // console.log(Input.buttons);
 
   },  
   // TODO: positionGrid for faster overlap checks
