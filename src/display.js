@@ -8,7 +8,7 @@ export const Display = {
   draw(state) {
     clear(state);
     drawBackground(state);
-    drawDebug(state);
+    // drawDebug(state);
     // drawTerrain(state); // draw soil layer under foliage
     drawPlants(state);
     drawRings(state);

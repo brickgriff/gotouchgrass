@@ -11,11 +11,11 @@ export const World = {
   update(state, dt) {
     // update game objects
 
-    updatePlants(state.plants, dt);
     // console.log(Input.buttons);
     // updateVector(state.vector, state.player.speed, dt);
-    // checkCollisions(state.player, state.vector, state.plants);
+    // resolveInteractions(state, dt);
     updatePlayer(state.player, state.vector, dt); 
+    updatePlants(state.plants, dt);
     // remove above dt after updateVector is made
     updateCamera(state.camera, state.player);
 
