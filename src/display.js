@@ -95,19 +95,20 @@ function drawRings(state) {
     ctx.moveTo(sx+plant.r * scale-ctx.lineWidth*2.5, sy);
     ctx.arc(sx, sy, plant.r * scale-ctx.lineWidth*2.5, 0, Math.PI * 2);
   }
-  ctx.stroke();
 
-  ctx.beginPath();
-  ctx.fillStyle = Colors.grass;
+  // ctx.stroke();
 
-  for (let plant of state.plants) {
-    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
-    ctx.moveTo(sx+plant.r * scale-ctx.lineWidth*3, sy);
-    ctx.arc(sx, sy, plant.r * scale-ctx.lineWidth*3, 0, Math.PI * 2);
-  }
-  ctx.fill();
+  // ctx.beginPath();
+  // ctx.fillStyle = Colors.grass;
 
-  ctx.beginPath();
+  // for (let plant of state.plants) {
+  //   const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+  //   ctx.moveTo(sx+plant.r * scale-ctx.lineWidth*3, sy);
+  //   ctx.arc(sx, sy, plant.r * scale-ctx.lineWidth*3, 0, Math.PI * 2);
+  // }
+  // ctx.fill();
+
+  // ctx.beginPath();
 
   for (let plant of state.plants) {
     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
