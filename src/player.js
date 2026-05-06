@@ -7,7 +7,8 @@ export const Player = {
 
     // take the inputs and normalize them
     // keyboard
-    const vKeyboard = keyboard(input.buttons);
+    const mk = moveKeyboard(input.buttons);
+
     // mouse
     // touch
 
@@ -18,20 +19,31 @@ export const Player = {
 
 
     // basically, 
-    state.vector = vKeyboard;
+    state.vector = mk;
   },
 
 };
 
-function keyboard(buttons) {
+function moveKeyboard(buttons) {
   // console.log(buttons);
 
   // ESDF
   // y = D - E
   // x = F - S 
 
-  return {
-    x: (buttons.includes("KeyF") - buttons.includes("KeyS")),
-    y: (buttons.includes("KeyD") - buttons.includes("KeyE"))
-  };
+
+  return normalize ({
+    x: buttons.includes("KeyF") - buttons.includes("KeyS"),
+    y: buttons.includes("KeyD") - buttons.includes("KeyE")
+  });
+};
+
+function normalize(vect={x:0, y:0}) {
+  let lengthSq = vect.x*vect.x + vect.y*vect.y;
+  if (lengthSq > 1) {
+    let invLen = 1 / Math.sqrt(lengthSq);
+    vect.x *= invLen;
+    vect.y *= invLen;
+  }
+  return {x:vect.x,y:vect.y};
 };

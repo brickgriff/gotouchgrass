@@ -27,8 +27,10 @@ export const World = {
 function createPlants() {
   const resp = [];
   for (let i = 0; i < 5; i++) {      
-    resp.push(createPlant("grass",-3+1.5*i,-1,.25*(i+1)));
-    resp.push(createPlant("grass", 3-1.5*i, 1, .25*(i+1)));
+    // resp.push(createPlant("grass",-3+1.5*i,-1,.25*(i+1)));
+    // resp.push(createPlant("grass", 3-1.5*i, 1, .25*(i+1)));
+    resp.push(createPlant("grass",-3+1.5*i,-1,.25));
+    resp.push(createPlant("grass", 3-1.5*i, 1, .25));
   }
   return resp;
 };
@@ -37,7 +39,12 @@ function createPlant(type,x,y,r) {
   return {type, x, y, r};
 };
 
-function updatePlants(plants, dt, min=.25) {
+function resolveInteractions(state, dt) {
+  // for each plant, check if the player vision range touches the plant dot
+
+};
+
+function updatePlants(plants, dt, min=.25, max=2.5) {
 
   // the time since last tick is given in millis
   // plants have a decay rate based on? millis, for now
@@ -45,12 +52,39 @@ function updatePlants(plants, dt, min=.25) {
   // we want a plant dot to shrink at a rate of roughly
   // 1cm per second or .0001 m/milli
 
-  const rate = .00001*dt;
+  const rate = .001*dt;
+  // pause plant shrink until resources exist in the terrain
+  // add a small shrink penalty for disturbance
+  // then add the seed bank
 
-  for (let plant of plants) {
-    let rNew = plant.r * (1 - rate);
+  // assume these plants are all connected to the same terrain
+  // this will prevent too many neighborhood checks
+  // try to keep the overall population of terrain entities reasonable
+
+  for (let i=0; i < plants.length; i++) {
+
+    const plant = plants[i];
+    // figure out if this plant overlaps another dot by at least 50%
+    // meaning no plant dot edge may extend w/i 50% of this dot's radius
+    // find the plant that is the most restrictive; 
+    // don't give up after the first collision
+
+    for (let j=0; j < plants.length; j++) {
+      const neighbor = plants[j];
+      // dist
+      const limit = plant.r*0.5;
+      const x = neighbor.x - plant.x;
+      const y = neighbor.y - plant.y;
+      const distSq = x*x + y*y;
+
+      
+    }
+
+    let rNew = plant.r * (1 + rate);
     if (rNew <= min) {
       plant.r = min;
+    } else if (rNew > max) {
+      plant.r = max;
     } else {
       plant.r = rNew;
     }
