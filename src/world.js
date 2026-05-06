@@ -43,8 +43,12 @@ function resolveInteractions(state, dt) {
   // for each plant, check if the player vision range touches the plant dot
   // this is actually the grass effect
   // this should go into interaction resolution
-  if (!state.player.isWalking && state.player.v < state.player.vMax) {state.player.v *= 1.001;}
-  else if (state.player.isWalking && state.player.v > state.player.vMin) {state.player.v *= .9;}
+
+  if (!state.player.isWalking) {state.player.v *= 1.001;}
+  else if (state.player.isWalking) {state.player.v *= .9;}
+
+  if (state.player.v > state.player.vMax) state.player.v = state.player.vMax;
+  else if (state.player.v < state.player.vMin) state.player.v = state.player.vMin;
 
 };
 
