@@ -50,3 +50,4 @@ export function main() {
 }
 
 // main();
+window.addEventListener("DOMContentLoaded",main);
