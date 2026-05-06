@@ -32,6 +32,8 @@ export const state = {
     vMin: .5,
     vMax: 1,
     speed: .001,
+    cycle: 3000,
+    current: 0,
   },
 
   plants: [],

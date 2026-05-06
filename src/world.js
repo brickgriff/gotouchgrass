@@ -102,8 +102,20 @@ function updatePlants(plants, dt, min=.25, max=2.5) {
 
 function updatePlayer(player, vector, dt) {
   // console.log(player, vector);
+  // console.log(player.isPulsing);
   player.x += vector.x * player.speed * dt;
   player.y += vector.y * player.speed * dt;
+
+  player.current += dt;
+  if (player.isPulsing && player.current > 500) {
+    player.current = player.current - 500;
+    player.isPulsing = false;
+  }
+  if (!player.isPulsing && player.current > player.cycle) {
+    player.current = player.current - player.cycle;
+    player.isPulsing = true;
+  }
+  
 
 };
 

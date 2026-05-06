@@ -139,5 +139,16 @@ function drawPlayer(state) {
   ctx.arc(sx, sy, p.v * scale, 0, Math.PI * 2);
   ctx.stroke();
 
+  if (p.isPulsing) {
+    ctx.beginPath();
+    ctx.strokeStyle = Colors.player;
+    ctx.lineWidth = .01 * scale;
+    ctx.moveTo(sx + p.v * scale + .05 * scale, sy);
+    ctx.arc(sx, sy, p.v * scale + .05 * scale, 0, 2*Math.PI);
+    ctx.moveTo(sx + p.v * scale - .05 * scale, sy);
+    ctx.arc(sx, sy, p.v * scale - .05 * scale, 0, 2*Math.PI);
+    ctx.stroke();
+  }
+
 };
 
