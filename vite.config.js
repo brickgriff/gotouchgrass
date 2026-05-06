@@ -1,7 +1,7 @@
 // vite.config.js
 
 export default {
-  base: "/repo-name/",
+  base: "/gotouchgrass/",
   build: {
     outDir: "docs"
   }
