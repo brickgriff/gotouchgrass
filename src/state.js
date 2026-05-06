@@ -29,6 +29,8 @@ export const state = {
     y: 0,
     r: .25, // radius
     v: .5, // vision
+    vMin: .5,
+    vMax: 1,
     speed: .001,
   },
 

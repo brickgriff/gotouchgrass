@@ -96,6 +96,8 @@ function updatePlayer(player, vector, dt) {
   // console.log(player, vector);
   player.x += vector.x * player.speed * dt;
   player.y += vector.y * player.speed * dt;
+  if (!player.isWalking && player.v < player.vMax) {player.v *= 1.001;}
+  else if (player.isWalking && player.v > player.vMin) {player.v *= .9;}
 };
 
 function updateCamera(camera, player) {

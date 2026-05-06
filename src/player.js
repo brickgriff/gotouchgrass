@@ -19,6 +19,7 @@ export const Player = {
 
 
     // basically, 
+    state.player.isWalking = mk.x != 0 || mk.y != 0;
     state.vector = mk;
   },
 
@@ -45,5 +46,5 @@ function normalize(vect={x:0, y:0}) {
     vect.x *= invLen;
     vect.y *= invLen;
   }
-  return {x:vect.x,y:vect.y};
+  return {x:vect.x, y:vect.y};
 };
