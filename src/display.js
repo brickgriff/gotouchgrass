@@ -11,7 +11,7 @@ export const Display = {
     // drawDebug(state);
     // drawTerrain(state); // draw soil layer under foliage
     drawPlants(state);
-    drawRings(state);
+    // drawRings(state);
     drawPlayer(state);
   },
 

@@ -52,7 +52,7 @@ function updatePlants(plants, dt, min=.25, max=2.5) {
   // we want a plant dot to shrink at a rate of roughly
   // 1cm per second or .0001 m/milli
 
-  const rate = .001*dt;
+  const rate = .00001*dt;
   // pause plant shrink until resources exist in the terrain
   // add a small shrink penalty for disturbance
   // then add the seed bank
