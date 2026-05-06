@@ -13,7 +13,7 @@ export const World = {
 
     // console.log(Input.buttons);
     // updateVector(state.vector, state.player.speed, dt);
-    // resolveInteractions(state, dt);
+    resolveInteractions(state, dt);
     updatePlayer(state.player, state.vector, dt); 
     updatePlants(state.plants, dt);
     // remove above dt after updateVector is made
@@ -41,6 +41,10 @@ function createPlant(type,x,y,r) {
 
 function resolveInteractions(state, dt) {
   // for each plant, check if the player vision range touches the plant dot
+  // this is actually the grass effect
+  // this should go into interaction resolution
+  if (!state.player.isWalking && state.player.v < state.player.vMax) {state.player.v *= 1.001;}
+  else if (state.player.isWalking && state.player.v > state.player.vMin) {state.player.v *= .9;}
 
 };
 
@@ -96,8 +100,7 @@ function updatePlayer(player, vector, dt) {
   // console.log(player, vector);
   player.x += vector.x * player.speed * dt;
   player.y += vector.y * player.speed * dt;
-  if (!player.isWalking && player.v < player.vMax) {player.v *= 1.001;}
-  else if (player.isWalking && player.v > player.vMin) {player.v *= .9;}
+
 };
 
 function updateCamera(camera, player) {
