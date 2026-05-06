@@ -59,13 +59,13 @@ function updatePlants(plants, dt, min=.25) {
 };
 
 function updatePlayer(player, vector, dt) {
-  console.log(player, vector);
+  // console.log(player, vector);
   player.x += vector.x * player.speed * dt;
   player.y += vector.y * player.speed * dt;
 };
 
 function updateCamera(camera, player) {
-  console.log(camera, player);
+  // console.log(camera, player);
   camera.x = player.x;
   camera.y = player.y;
 };

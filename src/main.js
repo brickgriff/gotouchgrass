@@ -27,7 +27,7 @@ function mainLoop(now) {
   requestAnimationFrame(mainLoop);
 }
 
-function main() {
+export function main() {
   const canvas = document.createElement("canvas"); // default canvas
   const ctx = canvas.getContext("2d", { willReadFrequently: true }); // now we can draw
 
@@ -49,4 +49,4 @@ function main() {
   requestAnimationFrame(mainLoop);
 }
 
-main();
+// main();
