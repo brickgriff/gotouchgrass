@@ -107,7 +107,7 @@ function updatePlayer(player, vector, dt) {
   player.y += vector.y * player.speed * dt;
 
   player.current += dt;
-  if (player.isPulsing && player.current > 1000) {
+  if (player.isPulsing && player.current > 500) {
     player.current = 0;
     player.isPulsing = false;
   }
