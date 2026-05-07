@@ -128,16 +128,28 @@ function drawPlayer(state) {
   const [sx, sy] = Viewport.worldToScreen(state, p.x, p.y);
   const scale = vp.pixels * cam.zoom;
 
-  ctx.beginPath();
   ctx.fillStyle = Colors.player;
+  ctx.strokeStyle = Colors.player;
+
+  ctx.beginPath();
   ctx.arc(sx, sy, p.r * scale, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.beginPath();
+  ctx.lineWidth = 2 * p.r * scale;
+  ctx.moveTo(sx, sy);
+  ctx.lineTo(sx, sy - p.r * scale / 2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(sx, sy - p.r * scale / 2, p.r * scale, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
   ctx.lineWidth = .05*scale;
-  ctx.strokeStyle = Colors.player;
   ctx.arc(sx, sy, p.v * scale, 0, Math.PI * 2);
   ctx.stroke();
+
 
   if (false && p.isPulsing) {
     ctx.beginPath();

@@ -32,11 +32,12 @@ export const state = {
     vMin: .5,
     vMax: 1,
     speed: .0005,
-    cycle: 3000,
+    cycle: 3000, // millis per breath (resting)
     current: 0,
   },
 
   plants: [],
+  fields: [], // disturbance, resource, etc.
   vector: {x:0,y:0},
   
 };
