@@ -7,6 +7,7 @@ export const World = {
 
     // create plants
     state.plants = createPlants();
+    state.map = updateMap(state.plants);
   },
   update(state, dt) {
     // update game objects
@@ -15,6 +16,7 @@ export const World = {
     // updateVector(state.vector, state.player.speed, dt);
     resolveInteractions(state, dt);
     updatePlayer(state.player, state.vector, dt); 
+    // updateMap ??
     updatePlants(state.plants, dt);
     // remove above dt after updateVector is made
     updateCamera(state.camera, state.player);
@@ -35,8 +37,21 @@ function createPlants() {
   return resp;
 };
 
+function updateMap(plants) {
+  const map = new Map();
+  for (let plant of plants) {
+    const cellX = Math.floor(plant.x/2.5);
+    const cellY = Math.floor(plant.y/2.5);
+    const key = `${cellX},${cellY}`;
+    if (!map.get(key)) map.set(key,[]);
+    map.get(key).push(plant);
+  }
+  console.log(map);
+  return map;
+};
+
 function createPlant(type,x,y,r) {
-  return {type, x, y, r};
+  return {type, x, y, r, isStopped:false};
 };
 
 function resolveInteractions(state, dt) {
@@ -44,12 +59,64 @@ function resolveInteractions(state, dt) {
   // this is actually the grass effect
   // this should go into interaction resolution
 
-  if (!state.player.isWalking) {state.player.v *= 1.001;}
-  else if (state.player.isWalking) {state.player.v *= .9;}
+  if (!state.player.isWalking) {state.player.v += .0001*dt;}
+  else if (state.player.isWalking) {state.player.v -= .001*dt;}
 
   if (state.player.v > state.player.vMax) state.player.v = state.player.vMax;
   else if (state.player.v < state.player.vMin) state.player.v = state.player.vMin;
 
+  // check map for growth suppression
+  for (let plant of state.plants) {
+    // plant.isStopped=false;
+    const plantsNearby = getNearby(plant,state.map);
+
+    for (let nearby of plantsNearby) {
+
+      const distX = nearby.x - plant.x;
+      const distY = nearby.y - plant.y;
+
+      const coreDistanceSq = distX*distX + distY*distY; // point-to-point distance
+
+      const combinedRadius = nearby.r + plant.r; // radius1 + radius2 for overlap checks
+      const combinedRadiusSq = combinedRadius*combinedRadius;
+
+
+      // console.log(plant,nearby, coreDistanceSq, combinedRadiusSq);
+
+      // const combinedCoreRange; // range1 + range2 for neighbor checks
+
+      // as soon as coreDistance <= combinedCoreRadius
+      // both plants should stop growing... wait... what if we don't?
+
+      if (plant!==nearby && coreDistanceSq < combinedRadiusSq) {
+        // console.log(plant,nearby, coreDistanceSq, combinedRadiusSq);
+        plant.isStopped = true;
+      }
+      // if (coreDistance <= combinedCoreRange) plant.neighbors.push(nearby);
+    }
+  }
+
+};
+
+function getNearby(plant, map) {
+
+  const results = [];
+
+  const cellX = Math.floor(plant.y/2.5);
+  const cellY = Math.floor(plant.y/2.5);
+
+  for (let dx = -1; dx <= 1; dx++) {
+    for (let dy = -1; dy <= 1; dy++) {
+      const key = `${cellX+dx},${cellY+dy}`;
+      const cell = map.get(key);
+
+      if (!cell) continue;
+
+      results.push(...cell);
+    }
+  }
+
+  return results;
 };
 
 function updatePlants(plants, dt, min=.25, max=2.5) {
@@ -60,7 +127,7 @@ function updatePlants(plants, dt, min=.25, max=2.5) {
   // we want a plant dot to shrink at a rate of roughly
   // 1cm per second or .0001 m/milli
 
-  const rate = .00001*dt;
+  const rate = .0001*dt;
   // pause plant shrink until resources exist in the terrain
   // add a small shrink penalty for disturbance
   // then add the seed bank
@@ -88,7 +155,8 @@ function updatePlants(plants, dt, min=.25, max=2.5) {
       
     }
 
-    let rNew = plant.r * (1 + rate);
+    let rNew = plant.r * (1 + (plant.isStopped?0:rate));
+    // plant.bounce = false;
     if (rNew <= min) {
       plant.r = min;
     } else if (rNew > max) {
