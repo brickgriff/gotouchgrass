@@ -91,6 +91,7 @@ function resolveInteractions(state, dt) {
       if (plant!==nearby && coreDistanceSq < combinedRadiusSq) {
         // console.log(plant,nearby, coreDistanceSq, combinedRadiusSq);
         plant.isStopped = true;
+        break;
       }
       // if (coreDistance <= combinedCoreRange) plant.neighbors.push(nearby);
     }
