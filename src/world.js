@@ -122,7 +122,7 @@ function getNeighbors(plant, map, cell) {
 
   const results = [];
 
-  const cellX = Math.floor(plant.y/cell);
+  const cellX = Math.floor(plant.x/cell);
   const cellY = Math.floor(plant.y/cell);
 
   for (let dx = -1; dx <= 1; dx++) {
