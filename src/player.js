@@ -34,8 +34,10 @@ function moveKeyboard(buttons) {
 
 
   return normalize ({
-    x: buttons.includes("KeyF") - buttons.includes("KeyS"),
-    y: buttons.includes("KeyD") - buttons.includes("KeyE")
+    x: (buttons.includes("KeyF")||buttons.includes("ArrowRight")) 
+    - (buttons.includes("KeyS")||buttons.includes("ArrowLeft")),
+    y: (buttons.includes("KeyD")||buttons.includes("ArrowDown")) 
+      - (buttons.includes("KeyE")||buttons.includes("ArrowUp"))
   });
 };
 
