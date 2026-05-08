@@ -176,7 +176,7 @@ function updatePlants(plants, dt, min=.25, max=2.5) {
 
     const rateNew = plant.isStopped ? 0 : rate;
     const playerPenalty = (plant.isPlayerNearby ? 
-      (.00006 + (plant.isPlayerNearbyWalking ? .00006 : 0)) * dt : 0 );
+      (.00002 + (plant.isPlayerNearbyWalking ? .00008 : 0)) * dt : 0 );
       
     let rNew = plant.r * (1 + (rateNew - playerPenalty));
     if (rNew <= min) {
