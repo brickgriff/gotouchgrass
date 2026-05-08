@@ -62,6 +62,61 @@ function drawDebug(state) {
   ctx.arc(-2*scale+sx,sy,scale,0,2*Math.PI);
   ctx.fill();
 
+  // ctx.beginPath();
+  // ctx.strokeStyle = Colors.grass;
+  // ctx.lineWidth = .05 * scale;
+
+  // for (let plant of state.plants) {
+  //   if (!plant.isStopped) continue;
+  //   const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+  //   ctx.moveTo(sx + (plant.r + .03) * scale, sy);
+  //   ctx.arc(sx, sy, (plant.r + .03) * scale, 0, Math.PI * 2);
+
+  // }
+  // ctx.stroke();
+
+  ctx.beginPath();
+  ctx.strokeStyle = Colors.player;
+  ctx.lineWidth = .1 * scale;
+
+  for (let plant of state.plants) {
+    if (!plant.isPlayerNearby) continue;
+    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+    ctx.moveTo(sx + (plant.r + .08) * scale, sy);
+    ctx.arc(sx, sy, (plant.r + .08) * scale, 0, Math.PI * 2);
+
+  }
+
+  ctx.stroke();
+
+      ctx.beginPath();
+  ctx.strokeStyle = Colors.weed;
+  ctx.lineWidth = .05 * scale;
+
+  for (let plant of state.plants) {
+    if (!plant.isPlayerNearbyWalking) continue;
+    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+    ctx.moveTo(sx + (plant.r + .03) * scale, sy);
+    ctx.arc(sx, sy, (plant.r + .03) * scale, 0, Math.PI * 2);
+
+  }
+
+  ctx.stroke();
+
+  //   ctx.beginPath();
+  // ctx.strokeStyle = Colors.crop;
+  // ctx.lineWidth = .01 * scale;
+
+  // for (let plant of state.plants) {
+  //   if (plant.isStopped) continue;
+  //   const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+  //   ctx.moveTo(sx + (plant.r + .02) * scale, sy);
+  //   ctx.arc(sx, sy, (plant.r + .02) * scale, 0, Math.PI * 2);
+
+  // }
+
+  // ctx.stroke();
+
 };
 
 function drawPlants(state) {
@@ -80,6 +135,7 @@ function drawPlants(state) {
   }
 
   ctx.fill();
+
 };
 
 function drawRings(state) {

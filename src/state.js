@@ -15,6 +15,7 @@ export const state = {
     unit: 0, // unit distance in pixels
     pixels: 0, // pixels per single meter
     meters: 10, // initial unit distance in meters
+    cell: 10,
   },
 
   camera: {
