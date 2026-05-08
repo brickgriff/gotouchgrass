@@ -17,7 +17,7 @@ export const World = {
     resolveInteractions(state, dt);
     updatePlayer(state.player, state.vector, dt); 
     // updateMap ??
-    updatePlants(state.plants, dt);
+    updatePlants(state.plants, dt, (state.player.v==state.player.vMax));
     // remove above dt after updateVector is made
     updateCamera(state.camera, state.player);
 
@@ -140,7 +140,7 @@ function getNeighbors(plant, map, cell) {
   return results;
 };
 
-function updatePlants(plants, dt, min=.25, max=2.5) {
+function updatePlants(plants, dt, nopen=false, min=.25, max=2.5) {
 
   // the time since last tick is given in millis
   // plants have a decay rate based on? millis, for now
@@ -175,8 +175,8 @@ function updatePlants(plants, dt, min=.25, max=2.5) {
     // }
 
     const rateNew = plant.isStopped ? 0 : rate;
-    const playerPenalty = (plant.isPlayerNearby ? 
-      (.00002 + (plant.isPlayerNearbyWalking ? .00008 : 0)) * dt : 0 );
+    const playerPenalty = (plant.isPlayerNearby && !nopen ? 
+      (.00003 + (plant.isPlayerNearbyWalking ? .00003 : 0)) * dt : 0 );
       
     let rNew = plant.r * (1 + (rateNew - playerPenalty));
     if (rNew <= min) {
