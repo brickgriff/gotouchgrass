@@ -115,6 +115,7 @@ function resolveInteractions(state, dt) {
       plant.isPlayerNearby = true;
       if (p.isWalking) plant.isPlayerNearbyWalking = true;
     }
+
   }
 };
 

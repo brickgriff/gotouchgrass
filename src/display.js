@@ -11,7 +11,7 @@ export const Display = {
     // drawDebug(state);
     // drawTerrain(state); // draw soil layer under foliage
     drawPlants(state);
-    // drawRings(state);
+    drawRings(state);
     drawPlayer(state);
   },
 
@@ -148,8 +148,13 @@ function drawRings(state) {
 
   for (let plant of state.plants) {
     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
-    ctx.moveTo(sx+plant.r * scale-ctx.lineWidth*2.5, sy);
-    ctx.arc(sx, sy, plant.r * scale-ctx.lineWidth*2.5, 0, Math.PI * 2);
+    if (!plant.isPlayerNearby) {
+      ctx.moveTo(sx+ctx.lineWidth*2.5, sy);
+      ctx.arc(sx, sy, ctx.lineWidth*2.5, 0, Math.PI * 2);
+    }else {
+      ctx.moveTo(sx+plant.r * scale-ctx.lineWidth*2.5, sy);
+      ctx.arc(sx, sy, plant.r * scale-ctx.lineWidth*2.5, 0, Math.PI * 2);
+    }
   }
 
   // ctx.stroke();
@@ -166,11 +171,6 @@ function drawRings(state) {
 
   // ctx.beginPath();
 
-  for (let plant of state.plants) {
-    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
-    ctx.moveTo(sx+ctx.lineWidth*2.5, sy);
-    ctx.arc(sx, sy, ctx.lineWidth*2.5, 0, Math.PI * 2);
-  }
   ctx.stroke();
 
 };
