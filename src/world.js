@@ -83,7 +83,7 @@ function resolveInteractions(state, dt) {
 
       const coreDistanceSq = distX*distX + distY*distY; // point-to-point distance
 
-      const combinedRadius = (neighbor.r + plant.r)*.5; // radius1 + radius2 for overlap checks
+      const combinedRadius = (neighbor.r + plant.r)*.7; // radius1 + radius2 for overlap checks
       const combinedRadiusSq = combinedRadius*combinedRadius;
 
 
