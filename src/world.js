@@ -34,7 +34,7 @@ function createPlants() {
 
     const x = i+Math.sin(j*.1)*.05 + (Math.random() - 0.5) * jitter;
     const y = j+Math.sin(i*.1)*.05 + (Math.random() - 0.5) * jitter;    
-    resp.push(createPlant("grass",(-10+x)/1.2,(-5+y)/1.2,.1));
+    resp.push(createPlant("grass",(-10+x),(-5+y),.08 + Math.random() * .04));
     }
   }
   return resp;
