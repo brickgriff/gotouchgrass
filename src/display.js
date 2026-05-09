@@ -187,9 +187,43 @@ function drawPlayer(state) {
   ctx.fillStyle = Colors.player;
   ctx.strokeStyle = Colors.player;
 
+
   ctx.beginPath();
-  ctx.arc(sx, sy, p.r * scale, 0, Math.PI * 2);
+  ctx.lineWidth = .05*scale;
+  // if (!p.isWalking && p.v !== p.vMax) ctx.strokeStyle = Colors.crop;
+  ctx.arc(sx, sy, p.v * scale, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.lineWidth = .03 * scale;
+  ctx.moveTo(sx + .05 * scale, sy - p.r * scale/1.2);
+  ctx.lineTo(sx + .03 * scale, sy);
+
+  ctx.moveTo(sx - .05 * scale, sy - p.r * scale/1.2);
+  ctx.lineTo(sx - .03 * scale, sy);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(sx, sy - p.r * scale * .5, p.r * scale * .3, 0, Math.PI * 2);
   ctx.fill();
+
+  ctx.beginPath();
+  // ctx.fillStyle=Colors.player;
+  ctx.arc(sx, sy - p.r * scale * 1, p.r * scale * .5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.fillStyle=Colors.background;
+  ctx.arc(sx, sy - p.r * scale * .9, p.r * scale * .3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.fillStyle=Colors.crop;
+  ctx.arc(sx + .04*scale, sy - p.r * scale * .9, p.r * scale * .1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  // ctx.fillStyle=Colors.background;
+  ctx.arc(sx - .04*scale, sy - p.r * scale * .9, p.r * scale * .1, 0, Math.PI * 2);
+  ctx.fill();
+
 
   if (false && p.isForcedPerspective) {
     ctx.beginPath();
@@ -203,11 +237,6 @@ function drawPlayer(state) {
     ctx.fill();
   }
 
-  ctx.beginPath();
-  ctx.lineWidth = .05*scale;
-  // if (!p.isWalking && p.v !== p.vMax) ctx.strokeStyle = Colors.crop;
-  ctx.arc(sx, sy, p.v * scale, 0, Math.PI * 2);
-  ctx.stroke();
 
 
   if (false && p.isPulsing) {
