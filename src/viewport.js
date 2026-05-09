@@ -19,13 +19,14 @@ export const Viewport = {
     // pixel buffer ???
     canvas.width = width * dpr;
     canvas.height = height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     // reset transform ???
     //ctx.resetTransform();
     // no need to use identity matrix
 
     // DPI scale ???
-    //ctx.scale(dpr, dpr);
+    // ctx.scale(dpr, dpr);
     // also probably not necessary right now
 
 
