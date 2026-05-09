@@ -109,14 +109,21 @@ function resolveInteractions(state, dt) {
 
     const pDistSq = pX*pX + pY*pY;
     const pCombinedR = p.r+plant.r;
+    const pCombinedVR = p.v+plant.r;
     const pCombinedRSq = pCombinedR*pCombinedR;
+    const pCombinedVRSq = pCombinedVR*pCombinedVR;
     plant.isPlayerNearby = false;
     plant.isPlayerNearbyWalking = false;
+    plant.isPlayerVisible = false;
 
     if (pDistSq <= pCombinedRSq) {
       // console.log(`player! @(${plant.x},${plant.y})`);
       plant.isPlayerNearby = true;
       if (p.isWalking) plant.isPlayerNearbyWalking = true;
+    }
+    if (pDistSq <= pCombinedVRSq) {
+      // console.log(`player! @(${plant.x},${plant.y})`);
+      plant.isPlayerVisible = true;
     }
 
   }
