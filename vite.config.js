@@ -1,9 +1,15 @@
 // vite.config.js
 
-export default {
-  base: "/",
-  build: {
-    outDir: "docs"
-  }
+import { defineConfig, loadEnv } from "vite";
 
-}
+export default ({mode}) => {
+  const env = loadEnv(mode, /*process.env.cwd?.() ??*/  process.cwd(), "");
+
+  return defineConfig({
+    base: env.VITE_BASE || "/",
+    build: {
+      outDir: "docs"
+    }
+  });
+
+};
