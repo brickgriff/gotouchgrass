@@ -143,7 +143,7 @@ function getNeighbors(plant, map, cell) {
   return results;
 };
 
-function updatePlants(plants, dt, isVisionFull=false, min=.1, max=1.5) {
+function updatePlants(plants, dt, isVisionFull=false, min=.25, max=2.5) {
 
   // the time since last tick is given in millis
   // plants have a decay rate based on? millis, for now
