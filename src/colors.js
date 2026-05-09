@@ -29,5 +29,7 @@ export const Colors = {
   grass: namedColors.lawn,
   crop: namedColors.sand,
   weed: namedColors.rose,
+  dust: namedColors.pink,
+  loam: namedColors.soil,
 
 };

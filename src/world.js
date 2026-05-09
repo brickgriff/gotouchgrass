@@ -151,7 +151,7 @@ function updatePlants(plants, dt, isVisionFull=false, min=.25, max=2.5) {
   // we want a plant dot to shrink at a rate of roughly
   // 1cm per second or .0001 m/milli
 
-  const rate = .00005*dt;
+  const rate = .00002*dt;
   // pause plant shrink until resources exist in the terrain
   // add a small shrink penalty for disturbance
   // then add the seed bank
@@ -179,7 +179,7 @@ function updatePlants(plants, dt, isVisionFull=false, min=.25, max=2.5) {
 
     const rateNew = plant.isStopped ? 0 : rate;
     const playerPenalty = (plant.isPlayerNearby && !isVisionFull ? 
-      (.00002 + (plant.isPlayerNearbyWalking ? .00004 : 0)) * dt : 0 );
+      (.00001 + (plant.isPlayerNearbyWalking ? .00004 : 0)) * dt : 0 );
       
     let rNew = plant.r * (1 + (rateNew - playerPenalty));
     if (rNew <= min) {
