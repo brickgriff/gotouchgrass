@@ -28,13 +28,13 @@ export const World = {
 
 function createPlants() {
   const resp = [];
-  const jitter = 1;
-  for (let i = 0; i < 21; i++) {      
-    for (let j = 0; j < 11; j++) {
+  const jitter = 0.5;
+  for (let i = 0; i < 41; i++) {      
+    for (let j = 0; j < 41; j++) {
 
-    const x = i+Math.sin(j*.1)*.05 + (Math.random() - 0.5) * jitter;
-    const y = j+Math.sin(i*.1)*.05 + (Math.random() - 0.5) * jitter;    
-    resp.push(createPlant("grass",(-10+x),(-5+y),.08 + Math.random() * .04));
+    const x = i+Math.sin(j*.5)*.05 + (Math.random() - 0.5) * jitter;
+    const y = j+Math.sin(i*.5)*.05 + (Math.random() - 0.5) * jitter;    
+    resp.push(createPlant("grass",(-20+x),(-20+y),.35 + Math.random() * .1));
     }
   }
   return resp;
@@ -83,7 +83,7 @@ function resolveInteractions(state, dt) {
 
       const coreDistanceSq = distX*distX + distY*distY; // point-to-point distance
 
-      const combinedRadius = (neighbor.r + plant.r)*.8; // radius1 + radius2 for overlap checks
+      const combinedRadius = (neighbor.r + plant.r)*.5; // radius1 + radius2 for overlap checks
       const combinedRadiusSq = combinedRadius*combinedRadius;
 
 
