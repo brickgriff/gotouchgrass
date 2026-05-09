@@ -1,19 +1,28 @@
 // input.js
 
 export const input = {
-  buttons: [],
-  keyboard: {},
+  keys: new Set(),
+  // keyboard: {},
   mouse: {
     // mouse down
-    x_: 0,
-    y_: 0,
+    originX: 0,
+    originY: 0,
     // mousemove
-    _x: 0,
-    _y: 0,
-    // to help normalize positions
-    // TODO: should these be in terms of mindim units?
-    dragMin: .01, // mindim
-    dragMax: 1, // mindim
+    currentX: 0,
+    currentY: 0,
+    dragMin: .01,
+    dragMax: 1,
+  },
+  pointer: {
+    pointerId: null,
+    // mouse down
+    originX: 0,
+    originY: 0,
+    // mousemove
+    currentX: 0,
+    currentY: 0,
+    dragMin: .01,
+    dragMax: 1,
   },
 };
 
@@ -24,7 +33,7 @@ export const input = {
 window.addEventListener("keydown", (e) => {
   // dev
   // e.preventDefault()
-  if (!input.buttons.includes(e.code)) input.buttons.push(e.code);
+  if (!input.keys.has(e.code)) input.keys.add(e.code);
 
   // if (e.code !== keybinds.primary) return;
 
@@ -34,7 +43,37 @@ window.addEventListener("keydown", (e) => {
 });
 
 window.addEventListener("keyup", (e) => {
-  if (input.buttons.includes(e.code)) input.buttons.splice(input.buttons.indexOf(e.code), 1);
+  if (input.keys.has(e.code)) input.keys.delete(e.code);
+
+});
+
+window.addEventListener("pointerdown", e => {
+  if (input.pointer.pointerId !== null) return;
+
+  input.pointer.pointerId = e.pointerId;
+
+  input.pointer.down = true;
+
+  input.pointer.originX = e.clientX;
+  input.pointer.originY = e.clientY;
+
+  input.pointer.currentX = e.clientX;
+  input.pointer.currentY = e.clientY;
+
+});
+
+window.addEventListener("pointerup", e => {
+  if (input.pointer.pointerId === null) return;
+
+  input.pointer.pointerId = null;
+
+  input.pointer.down = false;
+
+  input.pointer.originX = 0;
+  input.pointer.originY = 0;
+
+  input.pointer.currentX = 0;
+  input.pointer.currentY = 0;
 
 });
 

@@ -7,10 +7,12 @@ export const Player = {
 
     // take the inputs and normalize them
     // keyboard
-    const mk = moveKeyboard(input.buttons);
+    const mk = moveKeyboard(input.keys);
 
     // mouse
     // touch
+
+    // console.log(input.pointer);
 
     // dist (x, y)
     // min ( dragMax , dist
@@ -25,8 +27,8 @@ export const Player = {
 
 };
 
-function moveKeyboard(buttons) {
-  // console.log(buttons);
+function moveKeyboard(keys) {
+  // console.log(keys);
 
   // ESDF
   // y = D - E
@@ -34,10 +36,10 @@ function moveKeyboard(buttons) {
 
 
   return normalize ({
-    x: (buttons.includes("KeyF")||buttons.includes("ArrowRight")) 
-    - (buttons.includes("KeyS")||buttons.includes("ArrowLeft")),
-    y: (buttons.includes("KeyD")||buttons.includes("ArrowDown")) 
-      - (buttons.includes("KeyE")||buttons.includes("ArrowUp"))
+    x: (keys.has("KeyF")||keys.has("ArrowRight")) 
+    - (keys.has("KeyS")||keys.has("ArrowLeft")),
+    y: (keys.has("KeyD")||keys.has("ArrowDown")) 
+      - (keys.has("KeyE")||keys.has("ArrowUp"))
   });
 };
 

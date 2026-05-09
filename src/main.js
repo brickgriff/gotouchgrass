@@ -10,6 +10,7 @@ import { Player } from './player.js';
 
 function mainLoop(now) {
 
+  // FIXME: use performance.now()
   // deltaTime in millis, clamped to 1000
   const dt = Math.min(now - (state.time || now),1000);
 
