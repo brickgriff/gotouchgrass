@@ -129,9 +129,8 @@ function drawPlants(state) {
 
   for (let plant of state.plants) {
     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
-    ctx.moveTo(sx+plant.r, sy);
+    ctx.moveTo(sx + plant.r * scale, sy);
     ctx.arc(sx, sy, plant.r * scale, 0, Math.PI * 2);
-
   }
 
   ctx.fill();
@@ -150,7 +149,7 @@ function drawRings(state) {
     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
     if (!plant.isPlayerNearby) continue;
     // if (!plant.isPlayerNearby) {
-      ctx.moveTo(sx+ctx.lineWidth*2.5, sy);
+      ctx.moveTo(sx + ctx.lineWidth*2.5, sy);
       ctx.arc(sx, sy, ctx.lineWidth*2.5, 0, Math.PI * 2);
     // }else {
     //   ctx.moveTo(sx+plant.r * scale-ctx.lineWidth*2.5, sy);

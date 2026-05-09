@@ -17,7 +17,7 @@ export const World = {
     resolveInteractions(state, dt);
     updatePlayer(state.player, state.vector, dt); 
     // updateMap ??
-    updatePlants(state.plants, dt, (state.player.v==state.player.vMax));
+    updatePlants(state.plants, dt, state.player.v===state.player.vMax);
     // remove above dt after updateVector is made
     updateCamera(state.camera, state.player);
 
@@ -28,11 +28,14 @@ export const World = {
 
 function createPlants() {
   const resp = [];
-  for (let i = 0; i < 5; i++) {      
-    // resp.push(createPlant("grass",-3+1.5*i,-1,.25*(i+1)));
-    // resp.push(createPlant("grass", 3-1.5*i, 1, .25*(i+1)));
-    resp.push(createPlant("grass",-3+1.5*i,-1,.25));
-    resp.push(createPlant("grass", 3-1.5*i, 1, .25));
+  const jitter = 1;
+  for (let i = 0; i < 21; i++) {      
+    for (let j = 0; j < 11; j++) {
+
+    const x = i+Math.sin(j*.1)*.05 + (Math.random() - 0.5) * jitter;
+    const y = j+Math.sin(i*.1)*.05 + (Math.random() - 0.5) * jitter;    
+    resp.push(createPlant("grass",(-10+x)/1.2,(-5+y)/1.2,.1));
+    }
   }
   return resp;
 };
@@ -80,7 +83,7 @@ function resolveInteractions(state, dt) {
 
       const coreDistanceSq = distX*distX + distY*distY; // point-to-point distance
 
-      const combinedRadius = neighbor.r + plant.r; // radius1 + radius2 for overlap checks
+      const combinedRadius = (neighbor.r + plant.r)*.8; // radius1 + radius2 for overlap checks
       const combinedRadiusSq = combinedRadius*combinedRadius;
 
 
@@ -140,7 +143,7 @@ function getNeighbors(plant, map, cell) {
   return results;
 };
 
-function updatePlants(plants, dt, nopen=false, min=.25, max=2.5) {
+function updatePlants(plants, dt, isVisionFull=false, min=.1, max=1.5) {
 
   // the time since last tick is given in millis
   // plants have a decay rate based on? millis, for now
@@ -175,8 +178,8 @@ function updatePlants(plants, dt, nopen=false, min=.25, max=2.5) {
     // }
 
     const rateNew = plant.isStopped ? 0 : rate;
-    const playerPenalty = (plant.isPlayerNearby && !nopen ? 
-      (.00003 + (plant.isPlayerNearbyWalking ? .00003 : 0)) * dt : 0 );
+    const playerPenalty = (plant.isPlayerNearby && !isVisionFull ? 
+      (.00002 + (plant.isPlayerNearbyWalking ? .00004 : 0)) * dt : 0 );
       
     let rNew = plant.r * (1 + (rateNew - playerPenalty));
     if (rNew <= min) {
@@ -223,3 +226,15 @@ function updateCamera(camera, player) {
   camera.x = player.x;
   camera.y = player.y;
 };
+
+function hash(n) {
+  return Math.sin(n * 127.1) * 43758.5453 % 1;
+};
+
+/*
+
+const jx = hash(i * 12.9898 + j * 78.233);
+const jy = hash(i * 91.123 + j * 45.164);
+
+x += (jx - 0.5) * jitter;
+y += (jy - 0.5) * jitter; */
