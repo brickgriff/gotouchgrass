@@ -271,20 +271,50 @@ function drawPlayer(state) {
   ctx.arc(sx, sy, p.v * scale, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.beginPath();
-  ctx.lineWidth = .03 * scale;
-  ctx.moveTo(sx + .04 * scale, sy - p.r * scale/1.2);
-  ctx.lineTo(sx + .03 * scale, sy);
+  if (p.v === p.vMax) {
+    ctx.beginPath();
+    ctx.strokeStyle = Colors.crop;
+    ctx.lineWidth = .01 * scale;
+    ctx.arc(sx, sy, p.v * scale, 0, Math.PI * 2);
+    ctx.stroke();
+  }
 
-  ctx.moveTo(sx - .04 * scale, sy - p.r * scale/1.2);
-  ctx.lineTo(sx - .03 * scale, sy);
+  ctx.beginPath();
+  ctx.strokeStyle = Colors.player;
+
+  ctx.lineWidth = .03 * scale;
+
+  if ((p.v === p.vMax)) {
+    ctx.moveTo(sx + .05 * scale, sy - .04 * scale);
+    ctx.lineTo(sx - .04 * scale, sy - .02 * scale);
+
+    ctx.moveTo(sx - .05 * scale, sy - .04 * scale);
+    ctx.lineTo(sx + .04 * scale, sy - .02 * scale);
+
+  } else {
+    ctx.moveTo(sx + .04 * scale, sy - .08 * scale);
+    ctx.lineTo(sx + .03 * scale, sy);
+
+    ctx.moveTo(sx - .04 * scale, sy - .08 * scale);
+    ctx.lineTo(sx - .03 * scale, sy);
+  }
   ctx.stroke();
+
+  if ((p.v === p.vMax)) {
+
+  ctx.moveTo(sx - .04 * scale, sy - .02 * scale);
+  ctx.arc(sx-.04*scale, sy- .02 * scale, .015 * scale, 0, Math.PI * 2);
+  ctx.moveTo(sx + .04 * scale, sy- .02 * scale);
+  ctx.arc(sx+.04*scale, sy- .02 * scale, .015 * scale, 0, Math.PI * 2);
+  ctx.fill();
+  } else {
 
   ctx.moveTo(sx - .03 * scale, sy);
   ctx.arc(sx-.03*scale, sy, .015 * scale, 0, Math.PI * 2);
   ctx.moveTo(sx + .03 * scale, sy);
   ctx.arc(sx+.03*scale, sy, .015 * scale, 0, Math.PI * 2);
   ctx.fill();
+  }
 
   ctx.moveTo(sx, sy - p.r * scale * .5);
   ctx.arc(sx, sy - p.r * scale * .5, p.r * scale * .3, 0, Math.PI * 2);
@@ -298,15 +328,31 @@ function drawPlayer(state) {
   ctx.fillStyle=Colors.background;
   ctx.arc(sx, sy - p.r * scale * .9, p.r * scale * .3, 0, Math.PI * 2);
   ctx.fill();
-  ctx.beginPath();
-  ctx.fillStyle=Colors.crop;
-  ctx.arc(sx + .04*scale, sy - p.r * scale * .9, p.r * scale * .1, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  // ctx.fillStyle=Colors.background;
-  ctx.arc(sx - .04*scale, sy - p.r * scale * .9, p.r * scale * .1, 0, Math.PI * 2);
-  ctx.fill();
 
+    if ((p.v === p.vMax)) {
+
+  ctx.beginPath();
+  ctx.strokeStyle=Colors.crop;
+  ctx.lineWidth = .02 * scale;
+
+    ctx.moveTo(sx + .04*scale - p.r * scale * .1, sy - p.r * scale * .8);
+    ctx.lineTo(sx + .04*scale + p.r * scale * .1, sy - p.r * scale * .8);
+
+    ctx.moveTo(sx - .04*scale + p.r * scale * .1, sy - p.r * scale * .8);
+    ctx.lineTo(sx - .04*scale - p.r * scale * .1, sy - p.r * scale * .8);
+    ctx.stroke();
+
+    } else {  
+
+    ctx.beginPath();
+    ctx.fillStyle=Colors.crop;
+    ctx.arc(sx + .04*scale, sy - p.r * scale * .9, p.r * scale * .1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    // ctx.fillStyle=Colors.background;
+    ctx.arc(sx - .04*scale, sy - p.r * scale * .9, p.r * scale * .1, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
   if (false && p.isForcedPerspective) {
     ctx.beginPath();
