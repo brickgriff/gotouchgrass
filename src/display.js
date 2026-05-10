@@ -302,6 +302,11 @@ function drawPlayer(state) {
 
   if ((p.v === p.vMax)) {
 
+  ctx.moveTo(sx - .05 * scale, sy - .04 * scale);
+  ctx.arc(sx-.05*scale, sy- .04 * scale, .015 * scale, 0, Math.PI * 2);
+  ctx.moveTo(sx + .05 * scale, sy- .04 * scale);
+  ctx.arc(sx+.05*scale, sy- .04 * scale, .015 * scale, 0, Math.PI * 2);
+
   ctx.moveTo(sx - .04 * scale, sy - .02 * scale);
   ctx.arc(sx-.04*scale, sy- .02 * scale, .015 * scale, 0, Math.PI * 2);
   ctx.moveTo(sx + .04 * scale, sy- .02 * scale);
