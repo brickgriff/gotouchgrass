@@ -26,6 +26,8 @@ export const Player = {
       // basically, 
       state.vector = mk;
     } else if (mp) {
+
+      console.log(mp);
       state.vector = mp;
     }
 
@@ -36,7 +38,17 @@ export const Player = {
 };
 
 function movePointer(pointer) {
-  return null;
+
+  const distX = pointer.currentX - pointer.originX;
+  const distY = pointer.currentY - pointer.originY;
+
+  const distSq = distX*distX*.01 + distY*distY*.01;
+
+  // const distRatio = Math.min((pointer.dragMax)/Math.sqrt(distSq), 1);
+
+  if (pointer.pointerId===null || distSq <= pointer.dragMin * pointer.dragMin) return null;
+  return normalize({x:distX*.1, y:distY*.1});
+
 
   // calculate the distance between origin and current
   // find dragMin and dragMax

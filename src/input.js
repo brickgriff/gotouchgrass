@@ -10,7 +10,7 @@ export const input = {
     // mousemove
     currentX: 0,
     currentY: 0,
-    dragMin: .01,
+    dragMin: .1,
     dragMax: 1,
   },
   pointer: {
@@ -21,8 +21,8 @@ export const input = {
     // mousemove
     currentX: 0,
     currentY: 0,
-    dragMin: .01,
-    dragMax: 1,
+    dragMin: .5,
+    dragMax: 5,
   },
 };
 
@@ -48,6 +48,7 @@ window.addEventListener("keyup", (e) => {
 });
 
 window.addEventListener("pointerdown", e => {
+    // e.preventDefault()
   if (input.pointer.pointerId !== null) return;
 
   input.pointer.pointerId = e.pointerId;
@@ -76,4 +77,20 @@ window.addEventListener("pointerup", e => {
   input.pointer.currentY = 0;
 
 });
+
+window.addEventListener("pointermove", e => {
+  if (input.pointer.pointerId === null) return;
+
+  // input.pointer.pointerId = null;
+
+  // input.pointer.down = false;
+
+  // input.pointer.originX = 0;
+  // input.pointer.originY = 0;
+
+  input.pointer.currentX = e.clientX;
+  input.pointer.currentY = e.clientY;
+
+});
+
 
