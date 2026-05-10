@@ -24,6 +24,7 @@ canvas {
   margin: 0;
   display: block;
   border: 1px solid #c3c3c3; /* reversed*/
+  touch-action: none;
 
   /*
     image-rendering: pixelated;

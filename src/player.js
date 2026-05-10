@@ -42,12 +42,11 @@ function movePointer(pointer) {
   const distX = pointer.currentX - pointer.originX;
   const distY = pointer.currentY - pointer.originY;
 
-  const distSq = distX*distX*.01 + distY*distY*.01;
-
-  // const distRatio = Math.min((pointer.dragMax)/Math.sqrt(distSq), 1);
+  const distSq = distX*distX + distY*distY;
+  const distRatio = Math.min((pointer.dragMax)/Math.sqrt(distSq), 1);
 
   if (pointer.pointerId===null || distSq <= pointer.dragMin * pointer.dragMin) return null;
-  return normalize({x:distX*.1, y:distY*.1});
+  return normalize({x:distX*distRatio, y:distY*distRatio});
 
 
   // calculate the distance between origin and current

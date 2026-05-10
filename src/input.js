@@ -53,6 +53,8 @@ window.addEventListener("pointerdown", e => {
 
   input.pointer.pointerId = e.pointerId;
 
+  e.target.setPointerCapture(e.pointerId);
+
   input.pointer.down = true;
 
   input.pointer.originX = e.clientX;
@@ -64,7 +66,7 @@ window.addEventListener("pointerdown", e => {
 });
 
 window.addEventListener("pointerup", e => {
-  if (input.pointer.pointerId === null) return;
+  if (e.pointerId !== input.pointer.pointerId) return;
 
   input.pointer.pointerId = null;
 
@@ -79,7 +81,7 @@ window.addEventListener("pointerup", e => {
 });
 
 window.addEventListener("pointermove", e => {
-  if (input.pointer.pointerId === null) return;
+  if (e.pointerId !== input.pointer.pointerId) return;
 
   // input.pointer.pointerId = null;
 
@@ -91,6 +93,13 @@ window.addEventListener("pointermove", e => {
   input.pointer.currentX = e.clientX;
   input.pointer.currentY = e.clientY;
 
+});
+
+window.addEventListener("pointercancel", e => {
+  if (e.pointerId !== input.pointer.pointerId) return;
+
+  input.pointer.pointerId = null;
+  input.pointer.down = false;
 });
 
 
