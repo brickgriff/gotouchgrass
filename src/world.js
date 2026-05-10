@@ -108,7 +108,7 @@ function resolveInteractions(state, dt) {
     const pY = p.y - plant.y;
 
     const pDistSq = pX*pX + pY*pY;
-    const pCombinedR = p.r/2+plant.r;
+    const pCombinedR = p.r+plant.r;
     const pCombinedVR = p.v+plant.r;
     const pCombinedRSq = pCombinedR*pCombinedR;
     const pCombinedVRSq = pCombinedVR*pCombinedVR;
