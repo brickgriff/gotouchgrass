@@ -252,13 +252,14 @@ function drawPlayer(state) {
   const scale = vp.pixels * cam.zoom;
 
 
-
-  ctx.beginPath();
-  ctx.strokeStyle=Colors.background;
-  ctx.lineWidth=0.01 * scale;
-  ctx.moveTo(sx+p.r*scale,sy);
-  ctx.arc(sx, sy, p.r * scale, 0, Math.PI * 2);
-  ctx.stroke();
+  
+    ctx.beginPath();
+    ctx.strokeStyle=Colors.background;
+    ctx.lineWidth=((p.v !== p.vMax) ? 0.01 : 0.005) * scale;
+    ctx.moveTo(sx+((p.v !== p.vMax) ? 1 : .5) * p.r*scale,sy);
+    ctx.arc(sx, sy, ((p.v !== p.vMax) ? 1 : .5) * p.r * scale, 0, Math.PI * 2);
+    ctx.stroke();
+  
 
   ctx.fillStyle = Colors.player;
   ctx.strokeStyle = Colors.player;
