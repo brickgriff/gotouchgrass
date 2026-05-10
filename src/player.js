@@ -8,7 +8,7 @@ export const Player = {
     // take the inputs and normalize them
     // keyboard
     const mk = moveKeyboard(input.keys);
-
+    const mp = movePointer(input.pointer);
     // mouse
     // touch
 
@@ -19,12 +19,28 @@ export const Player = {
     // angle atan2 (y, x)
     // atan2 ( dist, angle )
 
+    // state.player.isWalking=false;
+    state.vector = {x:0,y:0};
 
-    // basically, 
-    state.player.isWalking = mk.x != 0 || mk.y != 0;
-    state.vector = mk;
+    if (mk) {
+      // basically, 
+      state.vector = mk;
+    } else if (mp) {
+      state.vector = mp;
+    }
+
+    state.player.isWalking = state.vector.x != 0 || state.vector.y != 0;
+      
   },
 
+};
+
+function movePointer(pointer) {
+  return null;
+
+  // calculate the distance between origin and current
+  // find dragMin and dragMax
+  // tweak speed by percent of dragMax as a vector
 };
 
 function moveKeyboard(keys) {
@@ -34,6 +50,11 @@ function moveKeyboard(keys) {
   // y = D - E
   // x = F - S 
 
+  if (!(keys.has("KeyF")||keys.has("ArrowRight")||keys.has("KeyS")||keys.has("ArrowLeft")||
+    keys.has("KeyD")||keys.has("ArrowDown")||keys.has("KeyE")||keys.has("ArrowUp"))) {
+
+    return null;
+  }
 
   return normalize ({
     x: (keys.has("KeyF")||keys.has("ArrowRight")) 

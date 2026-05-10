@@ -49,7 +49,7 @@ function updateMap(plants, cell) {
     if (!map.get(key)) map.set(key,[]);
     map.get(key).push(plant);
   }
-  console.log(map);
+  // console.log(map);
   return map;
 };
 
