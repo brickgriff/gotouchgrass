@@ -205,7 +205,7 @@ function updatePlants(plants, dt, isVisionFull=false, min=.25, max=2.5) {
     const vMin = min/4;
     const vMax = plant.r;
     const rateV = .0005 * dt;
-    const rateVNew = plant.isPlayerOn ? rateV*10 : (plant.isPlayerVisible ? (plant.isPlayerNearbyFull ? rateV : (plant.isPlayerNearbyWalking ? -rateV*.3 : rateV*.2)) : -rateV*.1);
+    const rateVNew = plant.isPlayerOn ? rateV*10 : (plant.isPlayerVisible ? (plant.isPlayerNearbyFull ? rateV : (plant.isPlayerNearby ? (plant.isPlayerNearbyWalking ? rateV*.1 : rateV*.3) : rateV*.2)) : -rateV*.1);
     let vNew = plant.v * (1 + (rateVNew));
     if (vNew <= vMin) {
       plant.v = vMin;

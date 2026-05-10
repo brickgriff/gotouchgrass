@@ -125,24 +125,24 @@ function drawPlants(state) {
   const scale = state.viewport.pixels * state.camera.zoom;
 
 
-  ctx.beginPath();
-  ctx.fillStyle = Colors.loam;
+//   ctx.beginPath();
+//   ctx.fillStyle = Colors.background;
 
-  for (let plant of state.plants) {
-    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+//   for (let plant of state.plants) {
+//     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
 
-    if (
-  sx + plant.r < -state.canvas.width*.1 ||
-  sy + plant.r < -state.canvas.width*.1 ||
-  sx - plant.r > state.canvas.width*1.1 ||
-  sy - plant.r > state.canvas.height*1.1
-) continue;
+//     if (
+//   sx + plant.r < -state.canvas.width*.1 ||
+//   sy + plant.r < -state.canvas.width*.1 ||
+//   sx - plant.r > state.canvas.width*1.1 ||
+//   sy - plant.r > state.canvas.height*1.1
+// ) continue;
 
-    ctx.moveTo(sx + plant.r * scale, sy);
-    ctx.arc(sx, sy, plant.r * scale * 1.5, 0, Math.PI * 2);
-  }
+//     ctx.moveTo(sx + plant.r * scale, sy);
+//     ctx.arc(sx, sy, plant.r * scale * 1.05, 0, Math.PI * 2);
+//   }
 
-  ctx.fill();
+//   ctx.fill();
 
   ctx.beginPath();
   ctx.fillStyle = Colors.grass;
@@ -183,14 +183,10 @@ if (
   sy - plant.r > state.canvas.height
 ) continue;
 
-    if (!plant.isPlayerVisible) {
+    if (!plant.isPlayerVisible && plant.v === .25/4) {
 
-      if (plant.v === .25/4) continue;
+       continue;
 
-      ctx.moveTo(sx + .25/4*scale, sy);
-      ctx.arc(sx, sy, .25/4*scale, 0, Math.PI * 2);
-
-      continue;
     }
     // if (!plant.isPlayerNearby) {
       ctx.moveTo(sx + plant.v*scale, sy);
@@ -230,14 +226,10 @@ if (
   sy - plant.r > state.canvas.height
 ) continue;
 
-    if (!plant.isPlayerVisible) {
+    if (!plant.isPlayerVisible && plant.v === .25/4) {
 
-      if (plant.v === .25/4) continue;
+       continue;
 
-      ctx.moveTo(sx + .25/4*scale, sy);
-      ctx.arc(sx, sy, .25/4*scale, 0, Math.PI * 2);
-
-      continue;
     }
     // if (!plant.isPlayerNearby) {
       ctx.moveTo(sx + plant.v*scale, sy);

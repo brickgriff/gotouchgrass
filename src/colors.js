@@ -9,7 +9,9 @@ const namedColors = {
   clay: '#864C3F',
   sand: '#F4E790',
   lawn: '#E0E4AC',
+  */
   tree: '#222D13',
+  /*
   cool: '#ACE0E4',
   */
 
@@ -31,5 +33,6 @@ export const Colors = {
   weed: namedColors.rose,
   dust: namedColors.pink,
   loam: namedColors.soil,
+  moss: namedColors.tree,
 
 };
