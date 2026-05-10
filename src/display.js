@@ -271,14 +271,20 @@ function drawPlayer(state) {
 
   ctx.beginPath();
   ctx.lineWidth = .03 * scale;
-  ctx.moveTo(sx + .05 * scale, sy - p.r * scale/1.2);
+  ctx.moveTo(sx + .04 * scale, sy - p.r * scale/1.2);
   ctx.lineTo(sx + .03 * scale, sy);
 
-  ctx.moveTo(sx - .05 * scale, sy - p.r * scale/1.2);
+  ctx.moveTo(sx - .04 * scale, sy - p.r * scale/1.2);
   ctx.lineTo(sx - .03 * scale, sy);
   ctx.stroke();
 
-  ctx.beginPath();
+  ctx.moveTo(sx - .03 * scale, sy);
+  ctx.arc(sx-.03*scale, sy, .015 * scale, 0, Math.PI * 2);
+  ctx.moveTo(sx + .03 * scale, sy);
+  ctx.arc(sx+.03*scale, sy, .015 * scale, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.moveTo(sx, sy - p.r * scale * .5);
   ctx.arc(sx, sy - p.r * scale * .5, p.r * scale * .3, 0, Math.PI * 2);
   ctx.fill();
 
