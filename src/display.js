@@ -124,11 +124,39 @@ function drawPlants(state) {
   const ctx = state.ctx;
   const scale = state.viewport.pixels * state.camera.zoom;
 
+
+  ctx.beginPath();
+  ctx.fillStyle = Colors.loam;
+
+  for (let plant of state.plants) {
+    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+
+    if (
+  sx + plant.r < -state.canvas.width*.1 ||
+  sy + plant.r < -state.canvas.width*.1 ||
+  sx - plant.r > state.canvas.width*1.1 ||
+  sy - plant.r > state.canvas.height*1.1
+) continue;
+
+    ctx.moveTo(sx + plant.r * scale, sy);
+    ctx.arc(sx, sy, plant.r * scale * 1.5, 0, Math.PI * 2);
+  }
+
+  ctx.fill();
+
   ctx.beginPath();
   ctx.fillStyle = Colors.grass;
 
   for (let plant of state.plants) {
     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+
+    if (
+  sx + plant.r < -state.canvas.width*.1 ||
+  sy + plant.r < -state.canvas.width*.1 ||
+  sx - plant.r > state.canvas.width*1.1 ||
+  sy - plant.r > state.canvas.height*1.1
+) continue;
+
     ctx.moveTo(sx + plant.r * scale, sy);
     ctx.arc(sx, sy, plant.r * scale, 0, Math.PI * 2);
   }
@@ -143,11 +171,27 @@ function drawRings(state) {
 
   ctx.beginPath();
   ctx.strokeStyle = Colors.player;
-  ctx.lineWidth = .05*scale;
+  ctx.lineWidth = .03*scale;
 
   for (let plant of state.plants) {
     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
-    if (!plant.isPlayerVisible) continue;
+
+if (
+  sx + plant.r < 0 ||
+  sy + plant.r < 0 ||
+  sx - plant.r > state.canvas.width ||
+  sy - plant.r > state.canvas.height
+) continue;
+
+    if (!plant.isPlayerVisible) {
+
+      if (plant.v === .25/4) continue;
+
+      ctx.moveTo(sx + .25/4*scale, sy);
+      ctx.arc(sx, sy, .25/4*scale, 0, Math.PI * 2);
+
+      continue;
+    }
     // if (!plant.isPlayerNearby) {
       ctx.moveTo(sx + plant.v*scale, sy);
       ctx.arc(sx, sy, plant.v*scale, 0, Math.PI * 2);
@@ -172,6 +216,37 @@ function drawRings(state) {
   // ctx.beginPath();
 
   ctx.stroke();
+
+    ctx.beginPath();
+  ctx.fillStyle = Colors.grass;
+
+  for (let plant of state.plants) {
+    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+
+if (
+  sx + plant.r < 0 ||
+  sy + plant.r < 0 ||
+  sx - plant.r > state.canvas.width ||
+  sy - plant.r > state.canvas.height
+) continue;
+
+    if (!plant.isPlayerVisible) {
+
+      if (plant.v === .25/4) continue;
+
+      ctx.moveTo(sx + .25/4*scale, sy);
+      ctx.arc(sx, sy, .25/4*scale, 0, Math.PI * 2);
+
+      continue;
+    }
+    // if (!plant.isPlayerNearby) {
+      ctx.moveTo(sx + plant.v*scale, sy);
+      ctx.arc(sx, sy, plant.v*scale, 0, Math.PI * 2);
+    //
+  }
+
+  ctx.fill();
+
 
 };
 

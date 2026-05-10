@@ -108,7 +108,7 @@ function resolveInteractions(state, dt) {
     const pY = p.y - plant.y;
 
     const pDistSq = pX*pX + pY*pY;
-    const pCombinedR = p.r+plant.r;
+    const pCombinedR = p.r/2+plant.r;
     const pCombinedVR = p.v+plant.r;
     const pCombinedRSq = pCombinedR*pCombinedR;
     const pCombinedVRSq = pCombinedVR*pCombinedVR;
@@ -116,17 +116,20 @@ function resolveInteractions(state, dt) {
     plant.isPlayerNearbyWalking = false;
     plant.isPlayerNearbyFull = false;
     plant.isPlayerVisible = false;
+    plant.isPlayerOn = false;
 
     if (pDistSq <= pCombinedRSq) {
       // console.log(`player! @(${plant.x},${plant.y})`);
       plant.isPlayerNearby = true;
       if (p.isWalking) plant.isPlayerNearbyWalking = true;
-      else if (p.v == p.vMax) plant.isPlayerNearbyFull = true;
+      if (p.v == p.vMax) plant.isPlayerNearbyFull = true;
     }
     if (pDistSq <= pCombinedVRSq) {
       // console.log(`player! @(${plant.x},${plant.y})`);
       plant.isPlayerVisible = true;
     }
+
+    if (pDistSq <= .01) plant.isPlayerOn = true;
 
   }
 };
@@ -201,8 +204,8 @@ function updatePlants(plants, dt, isVisionFull=false, min=.25, max=2.5) {
 
     const vMin = min/4;
     const vMax = plant.r;
-    const rateV = plant.isStopped ? .0005 * dt : .0005 * dt;
-    const rateVNew = (plant.isPlayerNearby) ? (plant.isPlayerNearbyFull ? rateV : (plant.isPlayerNearbyWalking ? -rateV : 0)) : -rateV*2;
+    const rateV = .0005 * dt;
+    const rateVNew = plant.isPlayerOn ? rateV*10 : (plant.isPlayerVisible ? (plant.isPlayerNearbyFull ? rateV : (plant.isPlayerNearbyWalking ? -rateV*.3 : rateV*.2)) : -rateV*.1);
     let vNew = plant.v * (1 + (rateVNew));
     if (vNew <= vMin) {
       plant.v = vMin;
