@@ -251,6 +251,15 @@ function drawPlayer(state) {
   const [sx, sy] = Viewport.worldToScreen(state, p.x, p.y);
   const scale = vp.pixels * cam.zoom;
 
+
+
+  ctx.beginPath();
+  ctx.strokeStyle=Colors.background;
+  ctx.lineWidth=0.01 * scale;
+  ctx.moveTo(sx+p.r*scale,sy);
+  ctx.arc(sx, sy, p.r * scale, 0, Math.PI * 2);
+  ctx.stroke();
+
   ctx.fillStyle = Colors.player;
   ctx.strokeStyle = Colors.player;
 
