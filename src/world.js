@@ -54,7 +54,7 @@ function updateMap(plants, cell) {
 };
 
 function createPlant(type,x,y,r) {
-  return {type, x, y, r, isStopped:false};
+  return {type, x, y, r, v:.0005, isStopped:false};
 };
 
 function resolveInteractions(state, dt) {
@@ -114,12 +114,14 @@ function resolveInteractions(state, dt) {
     const pCombinedVRSq = pCombinedVR*pCombinedVR;
     plant.isPlayerNearby = false;
     plant.isPlayerNearbyWalking = false;
+    plant.isPlayerNearbyFull = false;
     plant.isPlayerVisible = false;
 
     if (pDistSq <= pCombinedRSq) {
       // console.log(`player! @(${plant.x},${plant.y})`);
       plant.isPlayerNearby = true;
       if (p.isWalking) plant.isPlayerNearbyWalking = true;
+      else if (p.v == p.vMax) plant.isPlayerNearbyFull = true;
     }
     if (pDistSq <= pCombinedVRSq) {
       // console.log(`player! @(${plant.x},${plant.y})`);
@@ -196,6 +198,20 @@ function updatePlants(plants, dt, isVisionFull=false, min=.25, max=2.5) {
     } else {
       plant.r = rNew;
     }
+
+    const vMin = min/4;
+    const vMax = plant.r;
+    const rateV = plant.isStopped ? .0005 * dt : .0005 * dt;
+    const rateVNew = (plant.isPlayerNearby) ? (plant.isPlayerNearbyFull ? rateV : (plant.isPlayerNearbyWalking ? -rateV : 0)) : -rateV*2;
+    let vNew = plant.v * (1 + (rateVNew));
+    if (vNew <= vMin) {
+      plant.v = vMin;
+    } else if (vNew > vMax) {
+      plant.v = vMax;
+    } else {
+      plant.v = vNew;
+    }
+
   }
 
 };

@@ -149,8 +149,8 @@ function drawRings(state) {
     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
     if (!plant.isPlayerVisible) continue;
     // if (!plant.isPlayerNearby) {
-      ctx.moveTo(sx + ctx.lineWidth * 1, sy);
-      ctx.arc(sx, sy, ctx.lineWidth * 1, 0, Math.PI * 2);
+      ctx.moveTo(sx + plant.v*scale, sy);
+      ctx.arc(sx, sy, plant.v*scale, 0, Math.PI * 2);
     // }else {
     //   ctx.moveTo(sx+plant.r * scale-ctx.lineWidth*2.5, sy);
     //   ctx.arc(sx, sy, plant.r * scale-ctx.lineWidth*2.5, 0, Math.PI * 2);
