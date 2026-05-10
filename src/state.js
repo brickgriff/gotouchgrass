@@ -32,7 +32,7 @@ export const state = {
     v: .5, // vision
     vMin: .5,
     vMax: 1,
-    speed: .0005,
+    speed: .0003,
     cycle: 3000, // millis per breath (resting)
     current: 0,
   },

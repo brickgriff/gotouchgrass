@@ -8,6 +8,8 @@ export const Viewport = {
     const canvas = state.canvas;
     const ctx = state.ctx;
 
+    canvas.style.touchAction = "none";
+
     const dpr = window.devicePixelRatio || 1;
     const width = window.innerWidth;
     const height = window.innerHeight;
