@@ -17,10 +17,10 @@ const namedColors = {
 
   rose: '#fe6f61',
   pink: '#f7cac8',
-  plum: '#5f4c8b',
+  plum: '#5f4c8b',//'SlateBlue',
   soil: '#8b5f4c',
   sand: '#f7e9c8',
-  lawn: '#88b24b',
+  lawn: '#88b24b',//'MediumSeaGreen',
 
 };
 

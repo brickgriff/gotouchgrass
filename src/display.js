@@ -151,11 +151,11 @@ function drawPlants(state) {
     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
 
     if (
-  sx + plant.r < -state.canvas.width*.1 ||
-  sy + plant.r < -state.canvas.width*.1 ||
-  sx - plant.r > state.canvas.width*1.1 ||
-  sy - plant.r > state.canvas.height*1.1
-) continue;
+      sx + plant.r < -state.canvas.width*.2 ||
+      sy + plant.r < -state.canvas.width*.2 ||
+      sx - plant.r > state.canvas.width*1.2 ||
+      sy - plant.r > state.canvas.height*1.2
+    ) continue;
 
     ctx.moveTo(sx + plant.r * scale, sy);
     ctx.arc(sx, sy, plant.r * scale, 0, Math.PI * 2);
@@ -163,6 +163,39 @@ function drawPlants(state) {
 
   ctx.fill();
 
+/*  
+  ctx.beginPath();
+  ctx.strokeStyle = Colors.background;
+  ctx.lineWidth = .002 * scale;
+
+  for (let plant of state.plants) {
+    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+ if (
+      sx + plant.r < -state.canvas.width*.2 ||
+      sy + plant.r < -state.canvas.width*.2 ||
+      sx - plant.r > state.canvas.width*1.2 ||
+      sy - plant.r > state.canvas.height*1.2
+    ) continue;
+
+
+    // draw one circle for every cm
+    // pick a random location within plant's radius
+    // avoid collisions by retrying
+
+    const numberOfRings = plant.r * 20;
+
+    for (let i = 0; i < numberOfRings; i++) {
+
+      const t = i / (numberOfRings);
+      const curved = t * t;
+      const radius = plant.r * (1 - curved*.2);
+
+      ctx.moveTo(sx + radius * scale, sy);   
+      ctx.arc(sx, sy, radius * scale, 0, Math.PI * 2);
+    }
+  }
+  ctx.stroke();
+*/
 };
 
 function drawRings(state) {
@@ -177,10 +210,10 @@ function drawRings(state) {
     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
 
 if (
-  sx + plant.r < 0 ||
-  sy + plant.r < 0 ||
-  sx - plant.r > state.canvas.width ||
-  sy - plant.r > state.canvas.height
+  sx + plant.r < -state.canvas.width*.2 ||
+  sy + plant.r < -state.canvas.width*.2 ||
+  sx - plant.r > state.canvas.width*1.2 ||
+  sy - plant.r > state.canvas.height*1.2
 ) continue;
 
     if (!plant.isPlayerVisible && plant.v === .25/4) {
@@ -220,10 +253,10 @@ if (
     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
 
 if (
-  sx + plant.r < 0 ||
-  sy + plant.r < 0 ||
-  sx - plant.r > state.canvas.width ||
-  sy - plant.r > state.canvas.height
+  sx + plant.r < -state.canvas.width*.2 ||
+  sy + plant.r < -state.canvas.width*.2 ||
+  sx - plant.r > state.canvas.width*1.2 ||
+  sy - plant.r > state.canvas.height*1.2
 ) continue;
 
     if (!plant.isPlayerVisible && plant.v === .25/4) {
@@ -252,21 +285,28 @@ function drawPlayer(state) {
   const scale = vp.pixels * cam.zoom;
 
 
-  
-    ctx.beginPath();
-    ctx.strokeStyle=Colors.background;
-    ctx.lineWidth=((p.v !== p.vMax) ? 0.01 : 0.005) * scale;
-    ctx.moveTo(sx+((p.v !== p.vMax) ? 1 : .5) * p.r*scale,sy);
-    ctx.arc(sx, sy, ((p.v !== p.vMax) ? 1 : .5) * p.r * scale, 0, Math.PI * 2);
-    ctx.stroke();
-  
+  // shadow
+  /*ctx.beginPath();
+  ctx.fillStyle=Colors.background;
+  ctx.lineWidth=((p.v !== p.vMax) ? 0.005 : 0.005) * scale;
+  ctx.moveTo(sx+((p.v !== p.vMax) ? 1 : .5) * p.r*scale,sy);
+  ctx.arc(sx, sy, ((p.v !== p.vMax) ? 1 : .5) * p.r * scale, 0, Math.PI * 2);
+  ctx.fill();
+*/
+
+  ctx.beginPath();
+  ctx.fillStyle=Colors.player;
+  // ctx.lineWidth=((p.v !== p.vMax) ? 0.005 : 0.005) * scale;
+  // ctx.moveTo(sx+((p.v !== p.vMax) ? 1 : .5) * p.r*scale,sy);
+  ctx.arc(sx, sy, /*((p.v !== p.vMax) ? 1 : .5) **/ p.r * scale, 0, Math.PI * 2);
+  ctx.fill();
 
   ctx.fillStyle = Colors.player;
   ctx.strokeStyle = Colors.player;
 
 
   ctx.beginPath();
-  ctx.lineWidth = .05*scale;
+  ctx.lineWidth = .03*scale;
   // if (!p.isWalking && p.v !== p.vMax) ctx.strokeStyle = Colors.crop;
   ctx.arc(sx, sy, p.v * scale, 0, Math.PI * 2);
   ctx.stroke();
@@ -279,6 +319,8 @@ function drawPlayer(state) {
     ctx.stroke();
   }
 
+  // humanoid
+/*
   ctx.beginPath();
   ctx.strokeStyle = Colors.player;
 
@@ -358,7 +400,7 @@ function drawPlayer(state) {
     ctx.arc(sx - .04*scale, sy - p.r * scale * .9, p.r * scale * .1, 0, Math.PI * 2);
     ctx.fill();
   }
-
+*/
   if (false && p.isForcedPerspective) {
     ctx.beginPath();
     ctx.lineWidth = 2 * p.r * scale;

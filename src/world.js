@@ -74,7 +74,7 @@ function resolveInteractions(state, dt) {
   // check map for growth suppression
   for (let plant of plants) {
     const neighbors = getNeighbors(plant,state.map, state.viewport.cell);
-    plant.isStopped = false;
+    plant.isStopped = plant.r >= 2.5;
 
     for (let neighbor of neighbors) {
 
@@ -112,6 +112,7 @@ function resolveInteractions(state, dt) {
     const pCombinedVR = p.v+plant.r;
     const pCombinedRSq = pCombinedR*pCombinedR;
     const pCombinedVRSq = pCombinedVR*pCombinedVR;
+
     plant.isPlayerNearby = false;
     plant.isPlayerNearbyWalking = false;
     plant.isPlayerNearbyFull = false;
@@ -129,7 +130,7 @@ function resolveInteractions(state, dt) {
       plant.isPlayerVisible = true;
     }
 
-    if (pDistSq <= .01) plant.isPlayerOn = true;
+    if (pDistSq <= p.r*p.r) plant.isPlayerOn = true;
 
   }
 };
@@ -205,6 +206,7 @@ function updatePlants(plants, dt, isVisionFull=false, min=.25, max=2.5) {
     const vMin = min/4;
     const vMax = plant.r;
     const rateV = .0005 * dt;
+    // FIXME: separate isPlayerNearbyFull into a plant.isPlayerNearby check
     const rateVNew = plant.isPlayerOn ? rateV*10 : (plant.isPlayerVisible ? (plant.isPlayerNearbyFull ? rateV : (plant.isPlayerNearby ? (plant.isPlayerNearbyWalking ? rateV*.1 : rateV*.3) : rateV*.2)) : -rateV*.1);
     let vNew = plant.v * (1 + (rateVNew));
     if (vNew <= vMin) {
