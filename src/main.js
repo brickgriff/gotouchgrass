@@ -31,6 +31,7 @@ function mainLoop(now) {
 export function main() {
   const canvas = document.createElement("canvas"); // default canvas
   const ctx = canvas.getContext("2d", { willReadFrequently: true }); // now we can draw
+  canvas.style.touchAction = "none";
   
   document.body.appendChild(canvas); // add to body
   state.canvas = canvas;
