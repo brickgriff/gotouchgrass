@@ -1,4 +1,4 @@
-// display.js
+// src/display.js
 
 import { Viewport } from './viewport.js';
 import { Colors } from './colors.js';

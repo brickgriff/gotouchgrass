@@ -1,4 +1,4 @@
-// colors.js
+// src/colors.js
 
 const namedColors = {
 

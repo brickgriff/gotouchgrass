@@ -1,4 +1,4 @@
-// main.js
+// src/main.js
 
 import { state } from './state.js';
 import { input } from './input.js';

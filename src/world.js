@@ -1,4 +1,4 @@
-// world.js
+// src/world.js
 
 export const World = {
 

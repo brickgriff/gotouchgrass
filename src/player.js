@@ -1,4 +1,4 @@
-// player.js
+// src/player.js
 
 export const Player = {
 

@@ -1,4 +1,4 @@
-// input.js
+// src/input.js
 
 export const input = {
   keys: new Set(),

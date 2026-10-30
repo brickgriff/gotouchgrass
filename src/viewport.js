@@ -1,4 +1,4 @@
-// viewport.js
+// src/viewport.js
 
 export const Viewport = {
   resize(state) {

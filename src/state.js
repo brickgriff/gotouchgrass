@@ -1,4 +1,4 @@
-// state.js
+// src/state.js
 
 export const state = {
   frame: 0,
