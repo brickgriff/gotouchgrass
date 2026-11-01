@@ -34,8 +34,40 @@ export const Player = {
     state.player.isWalking = state.vector.x != 0 || state.vector.y != 0;
       
   },
+  update(player, input) {
+
+    // take the inputs and normalize them
+    // keyboard
+    const mk = moveKeyboard(input.keys);
+    const mp = movePointer(input.pointer);
+    // mouse
+    // touch
+
+    // console.log(input.pointer);
+
+    // dist (x, y)
+    // min ( dragMax , dist
+    // angle atan2 (y, x)
+    // atan2 ( dist, angle )
+
+    // state.player.isWalking=false;
+    player.vector = {x:0,y:0};
+
+    if (mk) {
+      // basically, 
+      player.vector = mk;
+    } else if (mp) {
+
+      console.log(mp);
+      player.vector = mp;
+    }
+
+    player.isWalking = player.vector.x != 0 || player.vector.y != 0;  
+    
+  }
 
 };
+
 
 function movePointer(pointer) {
 

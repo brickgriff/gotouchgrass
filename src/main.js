@@ -1,8 +1,8 @@
 // src/main.js
 
 import { state } from './state.js';
-import { input } from './input.js';
-import { Viewport } from './viewport.js';
+import { createInput } from './input.js';
+import { resize } from './viewport.js';
 import { Display } from './display.js';
 import { World } from './world.js';
 import { Player } from './player.js';
@@ -16,7 +16,8 @@ function mainLoop(now) {
 
   // console.log(`gameLoop(now=${now}, frame=${state.frame}, deltaTime=${dt}, framesPerSecond=${dt==0?"START":Math.floor(1000/dt)})`);
 
-  Player.play(state, input);
+  // Player.play(state, state.input);
+  Player.update(state.player, state.input);
   World.update(state, dt); // update entities
   Display.draw(state); // draw entities
 
@@ -37,10 +38,12 @@ export function main() {
   state.canvas = canvas;
   state.ctx = ctx;
 
-  Viewport.resize(state);
+  state.input = createInput(canvas);
+
+  resize(state);
 
   window.addEventListener("resize", () => {
-    Viewport.resize(state);
+    resize(state);
   });
 
   // suppress system right click menu
@@ -53,3 +56,7 @@ export function main() {
 
 // main();
 window.addEventListener("DOMContentLoaded",main);
+
+/**
+  Add functions for units of work (addResizeListener, incrementFrame, etc)
+*/

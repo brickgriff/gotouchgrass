@@ -1,7 +1,6 @@
 // src/viewport.js
 
-export const Viewport = {
-  resize(state) {
+export function resize (state) {
 
     // console.log("resize");
 
@@ -43,9 +42,9 @@ export const Viewport = {
 
     vp.unit = Math.min(width, height);
     vp.pixels = vp.unit / vp.meters;
-  },
+  }
 
-  worldToScreen(state, wx, wy) {
+  export function worldToScreen(state, wx, wy) {
 
     // console.log("worldToScreen");
 
@@ -59,6 +58,4 @@ export const Viewport = {
     const sy = (wy - cam.y) * scale+vp.cy;
 
     return [sx, sy];
-  },
-
-};
+  }

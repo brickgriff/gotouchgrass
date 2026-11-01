@@ -1,6 +1,6 @@
 // src/display.js
 
-import { Viewport } from './viewport.js';
+import { resize, worldToScreen } from './viewport.js';
 import { Colors } from './colors.js';
 
 export const Display = {
@@ -41,7 +41,7 @@ function drawDebug(state) {
   const cam = state.camera;
   const p = state.player;
 
-  const [sx, sy] = Viewport.worldToScreen(state, p.x, p.y);
+  const [sx, sy] =  worldToScreen(state, p.x, p.y);
   const scale = vp.pixels * cam.zoom;
 
   // draw four circles around the player dot
@@ -68,7 +68,7 @@ function drawDebug(state) {
 
   // for (let plant of state.plants) {
   //   if (!plant.isStopped) continue;
-  //   const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+  //   const [sx, sy] =  worldToScreen(state, plant.x, plant.y);
   //   ctx.moveTo(sx + (plant.r + .03) * scale, sy);
   //   ctx.arc(sx, sy, (plant.r + .03) * scale, 0, Math.PI * 2);
 
@@ -81,7 +81,7 @@ function drawDebug(state) {
 
   for (let plant of state.plants) {
     if (!plant.isPlayerNearby) continue;
-    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+    const [sx, sy] =  worldToScreen(state, plant.x, plant.y);
     ctx.moveTo(sx + (plant.r + .08) * scale, sy);
     ctx.arc(sx, sy, (plant.r + .08) * scale, 0, Math.PI * 2);
 
@@ -95,7 +95,7 @@ function drawDebug(state) {
 
   for (let plant of state.plants) {
     if (!plant.isPlayerNearbyWalking) continue;
-    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+    const [sx, sy] =  worldToScreen(state, plant.x, plant.y);
     ctx.moveTo(sx + (plant.r + .03) * scale, sy);
     ctx.arc(sx, sy, (plant.r + .03) * scale, 0, Math.PI * 2);
 
@@ -109,7 +109,7 @@ function drawDebug(state) {
 
   // for (let plant of state.plants) {
   //   if (plant.isStopped) continue;
-  //   const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+  //   const [sx, sy] =  worldToScreen(state, plant.x, plant.y);
   //   ctx.moveTo(sx + (plant.r + .02) * scale, sy);
   //   ctx.arc(sx, sy, (plant.r + .02) * scale, 0, Math.PI * 2);
 
@@ -129,7 +129,7 @@ function drawPlants(state) {
 //   ctx.fillStyle = Colors.background;
 
 //   for (let plant of state.plants) {
-//     const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+//     const [sx, sy] =  worldToScreen(state, plant.x, plant.y);
 
 //     if (
 //   sx + plant.r < -state.canvas.width*.1 ||
@@ -148,7 +148,7 @@ function drawPlants(state) {
   ctx.fillStyle = Colors.grass;
 
   for (let plant of state.plants) {
-    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+    const [sx, sy] =  worldToScreen(state, plant.x, plant.y);
 
     if (
       sx + plant.r < -state.canvas.width*.2 ||
@@ -169,7 +169,7 @@ function drawPlants(state) {
   ctx.lineWidth = .002 * scale;
 
   for (let plant of state.plants) {
-    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+    const [sx, sy] =  worldToScreen(state, plant.x, plant.y);
  if (
       sx + plant.r < -state.canvas.width*.2 ||
       sy + plant.r < -state.canvas.width*.2 ||
@@ -207,7 +207,7 @@ function drawRings(state) {
   ctx.lineWidth = .03*scale;
 
   for (let plant of state.plants) {
-    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+    const [sx, sy] =  worldToScreen(state, plant.x, plant.y);
 
 if (
   sx + plant.r < -state.canvas.width*.2 ||
@@ -236,7 +236,7 @@ if (
   // ctx.fillStyle = Colors.grass;
 
   // for (let plant of state.plants) {
-  //   const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+  //   const [sx, sy] =  worldToScreen(state, plant.x, plant.y);
   //   ctx.moveTo(sx+plant.r * scale-ctx.lineWidth*3, sy);
   //   ctx.arc(sx, sy, plant.r * scale-ctx.lineWidth*3, 0, Math.PI * 2);
   // }
@@ -250,7 +250,7 @@ if (
   ctx.fillStyle = Colors.grass;
 
   for (let plant of state.plants) {
-    const [sx, sy] = Viewport.worldToScreen(state, plant.x, plant.y);
+    const [sx, sy] =  worldToScreen(state, plant.x, plant.y);
 
 if (
   sx + plant.r < -state.canvas.width*.2 ||
@@ -281,7 +281,7 @@ function drawPlayer(state) {
   const cam = state.camera;
   const p = state.player;
 
-  const [sx, sy] = Viewport.worldToScreen(state, p.x, p.y);
+  const [sx, sy] =  worldToScreen(state, p.x, p.y);
   const scale = vp.pixels * cam.zoom;
 
 

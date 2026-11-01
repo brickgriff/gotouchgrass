@@ -1,105 +1,108 @@
 // src/input.js
 
-export const input = {
-  keys: new Set(),
-  // keyboard: {},
-  mouse: {
-    // mouse down
-    originX: 0,
-    originY: 0,
-    // mousemove
-    currentX: 0,
-    currentY: 0,
-    dragMin: .1,
-    dragMax: 1,
-  },
-  pointer: {
-    pointerId: null,
-    // mouse down
-    originX: 0,
-    originY: 0,
-    // mousemove
-    currentX: 0,
-    currentY: 0,
-    dragMin: .5,
-    dragMax: 5,
-  },
-};
+export function createInput(canvas) {
+  const input = {
+    keys: new Set(),
+    // keyboard: {},
+    mouse: {
+      // mouse down
+      originX: 0,
+      originY: 0,
+      // mousemove
+      currentX: 0,
+      currentY: 0,
+      dragMin: .1,
+      dragMax: 1,
+    },
+    pointer: {
+      pointerId: null,
+      // mouse down
+      originX: 0,
+      originY: 0,
+      // mousemove
+      currentX: 0,
+      currentY: 0,
+      dragMin: .5,
+      dragMax: 5,
+    },
+  };
 
-// catch keyboard events
-// store/remove keys accordingly
-// when the player asks, give them input state
+  // catch keyboard events
+  // store/remove keys accordingly
+  // when the player asks, give them input state
 
-window.addEventListener("keydown", (e) => {
-  // dev
-  // e.preventDefault()
-  if (!input.keys.has(e.code)) input.keys.add(e.code);
-
-  // if (e.code !== keybinds.primary) return;
-
-  // inputs.keyboard.x_ = inputs.keyboard._x = inputs.mouse._x || 0;
-  // inputs.keyboard.y_ = inputs.keyboard._y = inputs.mouse._y || 0;
-
-});
-
-window.addEventListener("keyup", (e) => {
-  if (input.keys.has(e.code)) input.keys.delete(e.code);
-
-});
-
-window.addEventListener("pointerdown", e => {
+  window.addEventListener("keydown", (e) => {
+    // dev
     // e.preventDefault()
-  if (input.pointer.pointerId !== null) return;
+    if (!input.keys.has(e.code)) input.keys.add(e.code);
 
-  input.pointer.pointerId = e.pointerId;
+    // if (e.code !== keybinds.primary) return;
 
-  e.target.setPointerCapture(e.pointerId);
+    // inputs.keyboard.x_ = inputs.keyboard._x = inputs.mouse._x || 0;
+    // inputs.keyboard.y_ = inputs.keyboard._y = inputs.mouse._y || 0;
 
-  input.pointer.down = true;
+  });
 
-  input.pointer.originX = e.clientX;
-  input.pointer.originY = e.clientY;
+  window.addEventListener("keyup", (e) => {
+    if (input.keys.has(e.code)) input.keys.delete(e.code);
 
-  input.pointer.currentX = e.clientX;
-  input.pointer.currentY = e.clientY;
+  });
 
-});
+  window.addEventListener("pointerdown", e => {
+      // e.preventDefault()
+    if (input.pointer.pointerId !== null) return;
 
-window.addEventListener("pointerup", e => {
-  if (e.pointerId !== input.pointer.pointerId) return;
+    input.pointer.pointerId = e.pointerId;
 
-  input.pointer.pointerId = null;
+    e.target.setPointerCapture(e.pointerId);
 
-  input.pointer.down = false;
+    input.pointer.down = true;
 
-  input.pointer.originX = 0;
-  input.pointer.originY = 0;
+    input.pointer.originX = e.clientX;
+    input.pointer.originY = e.clientY;
 
-  input.pointer.currentX = 0;
-  input.pointer.currentY = 0;
+    input.pointer.currentX = e.clientX;
+    input.pointer.currentY = e.clientY;
 
-});
+  });
 
-window.addEventListener("pointermove", e => {
-  if (e.pointerId !== input.pointer.pointerId) return;
+  window.addEventListener("pointerup", e => {
+    if (e.pointerId !== input.pointer.pointerId) return;
 
-  // input.pointer.pointerId = null;
+    input.pointer.pointerId = null;
 
-  // input.pointer.down = false;
+    input.pointer.down = false;
 
-  // input.pointer.originX = 0;
-  // input.pointer.originY = 0;
+    input.pointer.originX = 0;
+    input.pointer.originY = 0;
 
-  input.pointer.currentX = e.clientX;
-  input.pointer.currentY = e.clientY;
+    input.pointer.currentX = 0;
+    input.pointer.currentY = 0;
 
-});
+  });
 
-window.addEventListener("pointercancel", e => {
-  if (e.pointerId !== input.pointer.pointerId) return;
+  window.addEventListener("pointermove", e => {
+    if (e.pointerId !== input.pointer.pointerId) return;
 
-  input.pointer.pointerId = null;
-  input.pointer.down = false;
-});
+    // input.pointer.pointerId = null;
 
+    // input.pointer.down = false;
 
+    // input.pointer.originX = 0;
+    // input.pointer.originY = 0;
+
+    input.pointer.currentX = e.clientX;
+    input.pointer.currentY = e.clientY;
+
+  });
+
+  window.addEventListener("pointercancel", e => {
+    if (e.pointerId !== input.pointer.pointerId) return;
+
+    input.pointer.pointerId = null;
+    input.pointer.down = false;
+  });
+
+  return input;
+
+};

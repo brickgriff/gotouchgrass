@@ -15,7 +15,7 @@ export const World = {
     // console.log(Input.buttons);
     // updateVector(state.vector, state.player.speed, dt);
     resolveInteractions(state, dt);
-    updatePlayer(state.player, state.vector, dt); 
+    updatePlayer(state.player, dt); 
     // updateMap ??
     updatePlants(state.plants, dt, state.player.v===state.player.vMax);
     // remove above dt after updateVector is made
@@ -24,7 +24,27 @@ export const World = {
   },  
   // TODO: positionGrid for faster overlap checks
   // TODO: entityPool for faster respawning
+
 };
+
+/**
+  Reusable distanceSq, overlaps, and withinRange functions 
+  TODO: move to src/collisions.js
+ */
+
+export function distanceSq(a, b) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  return dx * dx + dy * dy;
+}
+export function overlaps(a, b, factor = 1) {
+  const radius = (a.r + b.r) * factor;
+  return distanceSq(a, b) <= radius * radius;
+}
+export function withinRange(a, b, range) {
+  return distaneceSq(a, b) <= range * range;
+}
+
 
 function createPlants() {
   const resp = [];
@@ -221,11 +241,11 @@ function updatePlants(plants, dt, isVisionFull=false, min=.25, max=2.5) {
 
 };
 
-function updatePlayer(player, vector, dt) {
+function updatePlayer(player, dt) {
   // console.log(player, vector);
   // console.log(player.isPulsing);
-  player.x += vector.x * player.speed * dt;
-  player.y += vector.y * player.speed * dt;
+  player.x += player.vector.x * player.speed * dt;
+  player.y += player.vector.y * player.speed * dt;
 
   player.current += dt;
   if (player.isPulsing && player.current > 500) {
@@ -266,3 +286,4 @@ const jy = hash(i * 91.123 + j * 45.164);
 
 x += (jx - 0.5) * jitter;
 y += (jy - 0.5) * jitter; */
+
