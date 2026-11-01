@@ -14,5 +14,5 @@ export function overlaps(a, b, factor = 1) {
   return distanceSq(a, b) <= radius * radius;
 }
 export function withinRange(a, b, range) {
-  return distaneceSq(a, b) <= range * range;
+  return distanceSq(a, b) <= range * range;
 }
